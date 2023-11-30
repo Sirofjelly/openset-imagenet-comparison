@@ -265,7 +265,7 @@ def summary_table(maxima, summary_file):
         filepath = summary_file.format(algorithm)
         with open(filepath, "w") as f:
             # write header
-            f.write("\\bf Protocol & \\bf Loss & ")
+            f.write("\\bf Protocol & \\bf Training & ")
             f.write(HEADERS[algorithm])
             f.write("$\\Sigma$ \\\\\\hline\\hline\n")
             for protocol in maxima[algorithm]:

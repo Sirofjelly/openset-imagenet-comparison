@@ -117,7 +117,7 @@ def commands(args):
             config.log_name = loss_function + "_" + algorithm + "_" + str(dummy_count) + ".log"
 
             if args.continue_training:
-              checkpoint_file = config.algorithm.output_model_path.format(config.output_directory, config.loss.type, config.algorithm.type, config.epochs, config.dummy_counts, "curr")
+              checkpoint_file = config.algorithm.output_model_path.format(config.output_directory, config.loss.type, config.algorithm.type, config.epochs, dummy_count, "curr")
               if os.path.exists(checkpoint_file):
                 config.checkpoint = checkpoint_file
 

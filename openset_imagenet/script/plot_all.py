@@ -153,7 +153,7 @@ def plot_OSCR(args, scores, ground_truths):
     openset_imagenet.util.oscr_legend(
         args.losses, args.algorithms, fig,
         bbox_to_anchor=(0.5,-0.03), handletextpad=0.6, columnspacing=1.5,
-        title="How to Read: Line Style -> Loss; Color -> Algorithm"
+        title="How to Read: Line Style -> training; Color -> post-processing"
     )
 
 
@@ -304,7 +304,7 @@ def ccr_table(args, scores, gt):
 
         with open(latex_file, "w") as f:
             # write header
-            f.write("\\multirow{2}{*}{\\bf Algorithm} & \\multirow{2}{*}{\\bf Loss} & \\multicolumn{4}{c||}{\\bf Negative} & \\multicolumn{4}{c||}{\\bf Unknown} & \\bf Acc \\\\\\cline{3-11}\n & & ")
+            f.write("\\multirow{2}{*}{\\bf Post-pr.} & \\multirow{2}{*}{\\bf Training} & \\multicolumn{4}{c||}{\\bf Negative} & \\multicolumn{4}{c||}{\\bf Unknown} & \\bf Acc \\\\\\cline{3-11}\n & & ")
             f.write(" & ".join((["\\bf AUROC"] + [THRESHOLDS[t] for t in args.fpr_thresholds[:-1]]) * 2 + [THRESHOLDS[1]]))
             f.write("\\\\\\hline\\hline\n")
             for algorithm in args.algorithms:
