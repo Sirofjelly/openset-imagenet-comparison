@@ -64,17 +64,17 @@ optimized: # the parameter settings that provide optimal values on the val set
     output_model_path: "{}/{}_{}_{}_{}_{}.pth" # directory/loss.type_alg.type_epoch_dummycount_curr.pth
 
     p1:
-      softmax: {epochs: 20, dummy_count: 1}
-      entropic: {epochs: 20, dummy_count: 1}
-      garbage: {epochs: 20, dummy_count: 1}
+      softmax: {epochs: 20, dummy_count: 100}
+      entropic: {epochs: 20, dummy_count: 5}
+      garbage: {epochs: 20, dummy_count: 2}
 
     p2:
       softmax: {epochs: 20, dummy_count: 1}
-      entropic: {epochs: 20, dummy_count: 1}
-      garbage: {epochs: 20, dummy_count: 1}
+      entropic: {epochs: 20, dummy_count: 10}
+      garbage: {epochs: 20, dummy_count: 5}
 
     # To be corrected
     p3:
-      softmax: {epochs: 20, dummy_count: 1}
-      entropic: {epochs: 20, dummy_count: 1}
-      garbage: {epochs: 20, dummy_count: 1}
+      softmax: {epochs: 20, dummy_count: 10}
+      entropic: {epochs: 20, dummy_count: 100}
+      garbage: {epochs: 20, dummy_count: 10}
