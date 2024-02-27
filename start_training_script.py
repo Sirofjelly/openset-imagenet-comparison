@@ -16,7 +16,7 @@ def check_gpu_availability():
             utilization = int(re.findall(r'\d+ %', line)[0][:-1])
             memory_usage = int(re.findall(r'\d+ / \d+ MB', line)[0].split('/')[0].strip())
             if utilization < 20 and memory_usage < 3000:  # Adjust these thresholds as needed
-                available_gpus.append(i)
+                available_gpus.append(i + 1)
     return available_gpus
 
 def start_training_script(gpu_ids):
