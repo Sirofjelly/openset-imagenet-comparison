@@ -35,7 +35,7 @@ def start_training_script(gpu_ids):
 if __name__ == "__main__":
     start_training_script(check_gpu_availability())
 
-import subprocess
+import subprocess 
 import re
 import time
 

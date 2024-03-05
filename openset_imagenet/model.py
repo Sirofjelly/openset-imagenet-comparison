@@ -23,7 +23,7 @@ class ResNet50(nn.Module):
 
         self.number_of_classes = out_features
 
-        # Change the dimension of out features
+        # Change the dimension of out_features
         self.resnet_base = models.resnet50(pretrained=False)
         fc_in_features = self.resnet_base.fc.in_features
         self.resnet_base.fc = nn.Linear(in_features=fc_in_features, out_features=fc_layer_dim)

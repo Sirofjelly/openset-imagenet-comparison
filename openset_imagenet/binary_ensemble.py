@@ -20,7 +20,7 @@ from .losses import AverageMeter, EarlyStopping, EntropicOpensetLoss
 import tqdm
 
 
-def train(model, data_loader, optimizer, loss_fn, trackers, cfg):
+def train_ensemble(model, data_loader, optimizer, loss_fn, trackers, cfg):
     """ Main training loop.
 
     Args:
@@ -58,7 +58,7 @@ def train(model, data_loader, optimizer, loss_fn, trackers, cfg):
         optimizer.step()
 
 
-def validate(model, data_loader, loss_fn, n_classes, trackers, cfg):
+def validate_ensemble(model, data_loader, loss_fn, n_classes, trackers, cfg):
     """ Validation loop.
     Args:
         model (torch.model): Model
@@ -202,6 +202,7 @@ def worker(cfg):
     train_file = pathlib.Path(cfg.data.train_file.format(cfg.protocol))
     val_file = pathlib.Path(cfg.data.val_file.format(cfg.protocol))
 
+
     if train_file.exists() and val_file.exists():
         train_ds = ImagenetDataset(
             csv_file=train_file,
@@ -224,6 +225,34 @@ def worker(cfg):
             train_ds.remove_negative_label()
     else:
         raise FileNotFoundError("train/validation file does not exist")
+    
+    # create dataset splits for training and validation to train the ensembles
+    num_classes = train_ds.label_count
+    unique_classes = train_ds.unique_classes
+
+    # create an even class split for each binary model
+    class_splits = []
+    shuffled_classes = []
+    split_size = len(unique_classes) // 2
+
+    for i in range(cfg.algorithm.num_models):
+        classes = random.shuffle(unique_classes)
+        split_0 = classes[:split_size]
+        split_1 = classes[split_size:]
+        # check if we had the same shuffle before or the exact opposite
+        while tuple(split_0, split_1) in shuffled_classes:
+            random.shuffle(classes)
+            split_0 = classes[:split_size]
+            split_1 = classes[split_size:]
+        shuffled_classes.append((split_0, split_1))
+        # add the contrary
+        shuffled_classes.append((split_1, split_0))
+
+        #finally add the split to the list
+        class_splits.append({0: split_0, 1: split_1})
+
+
+
 
     train_loader = DataLoader(
         train_ds,
@@ -261,6 +290,9 @@ def worker(cfg):
     if cfg.loss.type == "entropic":
         # number of classes - 1 since we have no label for unknown
         n_classes = train_ds.label_count - 1
+    elif cfg.loss.type == "bce":
+        # one probability only because we can model the prob for negative class as 1-prob
+        n_classes = 1
     else:
         # number of classes when training with extra garbage class for unknowns, or when unknowns are removed
         n_classes = train_ds.label_count
@@ -275,44 +307,53 @@ def worker(cfg):
         # We use balanced class weights
         class_weights = device(train_ds.calculate_class_weights())
         loss = torch.nn.CrossEntropyLoss(weight=class_weights)
+    # bce loss for ensemble
+    elif cfg.loss.type == "bce":
+        loss = torch.nn.BCELoss()
 
-    # Create the model
-    model = ResNet50(fc_layer_dim=n_classes,
-                     out_features=n_classes,
-                     logit_bias=False)
-    device(model)
 
-    # Create optimizer
-    if cfg.opt.type == "sgd":
-        opt = torch.optim.SGD(params=model.parameters(), lr=cfg.opt.lr, momentum=0.9)
-    else:
-        opt = torch.optim.Adam(params=model.parameters(), lr=cfg.opt.lr)
+    # Create the models and save them in a
+    models = []
+    for i in range(cfg.algorithm.num_models):
+        model = ResNet50(fc_layer_dim=n_classes,
+                         out_features=n_classes,
+                         logit_bias=False)
+        device(model)
+        models.append(model)
 
-    # Learning rate scheduler
-    if cfg.opt.decay > 0:
-        scheduler = lr_scheduler.StepLR(
-            opt,
-            step_size=cfg.opt.decay,
-            gamma=cfg.opt.gamma,
-            verbose=True)
-    else:
-        scheduler = None
+    # Create optimizer and scheduler for each model
+    opts = []
+    schedulers = []
+    for model in models:
+        if cfg.opt.type == "sgd":
+            opt = torch.optim.SGD(params=model.parameters(), lr=cfg.opt.lr, momentum=0.9)
+        else:
+            opt = torch.optim.Adam(params=model.parameters(), lr=cfg.opt.lr)
+        opts.append(opt)
 
+        # Learning rate scheduler
+        if cfg.opt.decay > 0:
+            scheduler = lr_scheduler.StepLR(
+                opt,
+                step_size=cfg.opt.decay,
+                gamma=cfg.opt.gamma,
+                verbose=True)
+        else:
+            scheduler = None
+        schedulers.append(scheduler)
 
     # Resume a training from a checkpoint
     if cfg.checkpoint is not None:
         # Get the relative path of the checkpoint wrt train.py
         START_EPOCH, BEST_SCORE = load_checkpoint(
-            model=model,
+            model=models[0],
             checkpoint=cfg.checkpoint,
-            opt=opt,
-            scheduler=scheduler)
+            opt=opts[0],
+            scheduler=schedulers[0])
         logger.info(f"Best score of loaded model: {BEST_SCORE:.3f}. 0 is for fine tuning")
         logger.info(f"Loaded {cfg.checkpoint} at epoch {START_EPOCH}")
 
-
     # Print info to console and setup summary writer
-
     # Info on console
     logger.info("============ Data ============")
     logger.info(f"train_len:{len(train_ds)}, labels:{train_ds.label_count}")
@@ -326,52 +367,47 @@ def worker(cfg):
     logger.info(f"optimizer: {cfg.opt.type}")
     logger.info(f"Learning rate: {cfg.opt.lr}")
     logger.info(f"Device: {cfg.gpu}")
+    logger.info(f"number of models: {cfg.algorithm.num_models}")
     logger.info("Training...")
     writer = SummaryWriter(log_dir=cfg.output_directory, filename_suffix="-"+cfg.log_name)
-
     for epoch in range(START_EPOCH, cfg.epochs):
         epoch_time = time.time()
-
         # training loop
-        train(
-            model=model,
-            data_loader=train_loader,
-            optimizer=opt,
-            loss_fn=loss,
-            trackers=t_metrics,
-            cfg=cfg)
-
+        for model, opt in zip(models, opts):
+            train_ensemble(
+                model=model,
+                data_loader=train_loader,
+                optimizer=opt,
+                loss_fn=loss,
+                trackers=t_metrics,
+                cfg=cfg)
         train_time = time.time() - epoch_time
-
         # validation loop
-        validate(
-            model=model,
-            data_loader=val_loader,
-            loss_fn=loss,
-            n_classes=n_classes,
-            trackers=v_metrics,
-            cfg=cfg)
-
+        for model in models:
+            validate_ensemble(
+                model=model,
+                data_loader=val_loader,
+                loss_fn=loss,
+                n_classes=n_classes,
+                trackers=v_metrics,
+                cfg=cfg)
         curr_score = v_metrics["conf_kn"].avg + v_metrics["conf_unk"].avg
-
         # learning rate scheduler step
-        if cfg.opt.decay > 0:
-            scheduler.step()
-
+        for scheduler in schedulers:
+            if scheduler is not None:
+                scheduler.step()
         # Logging metrics to tensorboard object
         writer.add_scalar("train/loss", t_metrics["j"].avg, epoch)
         writer.add_scalar("val/loss", v_metrics["j"].avg, epoch)
         # Validation metrics
         writer.add_scalar("val/conf_kn", v_metrics["conf_kn"].avg, epoch)
         writer.add_scalar("val/conf_unk", v_metrics["conf_unk"].avg, epoch)
-
         #  training information on console
         # validation+metrics writer+save model time
         val_time = time.time() - train_time - epoch_time
         def pretty_print(d):
             #return ",".join(f'{k}: {float(v):1.3f}' for k,v in dict(d).items())
             return dict(d)
-
         logger.info(
             f"loss:{cfg.loss.type} "
             f"protocol:{cfg.protocol} "
@@ -380,25 +416,21 @@ def worker(cfg):
             f"val:{pretty_print(v_metrics)} "
             f"t:{train_time:.1f}s "
             f"v:{val_time:.1f}s")
-
         # save best model and current model
         ckpt_name = cfg.model_path.format(cfg.output_directory, cfg.loss.type, "threshold", "curr")
-        save_checkpoint(ckpt_name, model, epoch, opt, curr_score, scheduler=scheduler)
-
+        save_checkpoint(ckpt_name, models[0], epoch, opts[0], curr_score, scheduler=schedulers[0])
         if curr_score > BEST_SCORE:
             BEST_SCORE = curr_score
             ckpt_name = cfg.model_path.format(cfg.output_directory, cfg.loss.type, "threshold", "best")
             # ckpt_name = f"{cfg.name}_best.pth"  # best model
             logger.info(f"Saving best model {ckpt_name} at epoch: {epoch}")
-            save_checkpoint(ckpt_name, model, epoch, opt, BEST_SCORE, scheduler=scheduler)
-
+            save_checkpoint(ckpt_name, models[0], epoch, opts[0], BEST_SCORE, scheduler=schedulers[0])
         # Early stopping
         if cfg.patience > 0:
             early_stopping(metrics=curr_score, loss=False)
             if early_stopping.early_stop:
                 logger.info("early stop")
                 break
-
     # clean everything
-    del model
+    del models
     logger.info("Training finished")
