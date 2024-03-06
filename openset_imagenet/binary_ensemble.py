@@ -19,8 +19,24 @@ from .model import ResNet50, load_checkpoint, save_checkpoint, set_seeds
 from .losses import AverageMeter, EarlyStopping, EntropicOpensetLoss
 import tqdm
 
+def get_class_from_label(label, class_dict):
+    """ Get the class from the label.
+    
+    Args:
+        label (int): Label
+        class_dict (dict): Dictionary with the class splits
+    Returns:
+        torch.int64: Class
+    """
+    # Check which class the label belongs to and replace the label with that class
+    for key, value in class_dict.items():
+        if label in value:
+            # convert int label to tensor
+            found_label = torch.as_tensor(int(key), dtype=torch.int64)
+            return found_label
+    return None
 
-def train_ensemble(model, data_loader, optimizer, loss_fn, trackers, cfg):
+def train_ensemble(model, data_loader, class_dict, optimizer, loss_fn, trackers, cfg):
     """ Main training loop.
 
     Args:
@@ -41,7 +57,13 @@ def train_ensemble(model, data_loader, optimizer, loss_fn, trackers, cfg):
     if not cfg.parallel:
         data_loader = tqdm.tqdm(data_loader)
     for images, labels in data_loader:
-        model.train()  # To collect batch-norm statistics
+        # Check which class the label belongs to and replace the label with that class
+        for i in range(len(labels)):
+            label = labels[i].item()
+            # replace the label with the class 0 or 1
+            labels[i] = get_class_from_label(label, class_dict)
+        
+        model.train()  # To collect batch-norm statistics set model to train mode
         batch_len = labels.shape[0]  # Samples in current batch
         optimizer.zero_grad()
         images = device(images)
@@ -162,6 +184,34 @@ def get_arrays(model, loader, garbage, pretty=False):
             all_feat.numpy(),
             all_scores.numpy())
 
+def get_sets_for_ensemble(unique_classes, num_models):
+    """ Create the splits for the ensemble training.
+    Args:
+        unique_classes (list): List of unique classes
+        num_models (int): Number of models in the ensemble
+    Returns:
+        list: List of dictionaries with the class splits
+    """
+    class_splits = []
+    shuffled_classes = []
+    split_size = len(unique_classes) // 2
+
+    for i in range(num_models):
+        # check if we had the same shuffle before or the exact opposite
+        while True:
+            classes = random.sample(unique_classes, len(unique_classes))
+            split_0 = classes[:split_size]
+            split_1 = classes[split_size:]
+            split_0.sort()
+            split_1.sort()
+            if (split_0, split_1) not in shuffled_classes and (split_1, split_0) not in shuffled_classes:
+                shuffled_classes.append((split_0, split_1))
+                # finally add the split to the list
+                class_splits.append({0: split_0, 1: split_1})
+                break
+            else:
+                print("this split does already exist: ", split_1, split_0)
+    return class_splits
 
 
 
@@ -226,30 +276,9 @@ def worker(cfg):
     else:
         raise FileNotFoundError("train/validation file does not exist")
     
-    # create dataset splits for training and validation to train the ensembles
-    num_classes = train_ds.label_count
-    unique_classes = train_ds.unique_classes
 
-    # create an even class split for each binary model
-    class_splits = []
-    shuffled_classes = []
-    split_size = len(unique_classes) // 2
-
-    for i in range(cfg.algorithm.num_models):
-        classes = random.shuffle(unique_classes)
-        split_0 = classes[:split_size]
-        split_1 = classes[split_size:]
-        # check if we had the same shuffle before or the exact opposite
-        while tuple(split_0, split_1) in shuffled_classes:
-            random.shuffle(classes)
-            split_0 = classes[:split_size]
-            split_1 = classes[split_size:]
-        shuffled_classes.append((split_0, split_1))
-        # add the contrary
-        shuffled_classes.append((split_1, split_0))
-
-        #finally add the split to the list
-        class_splits.append({0: split_0, 1: split_1})
+    # Create unique class splits for ensemble set-vs-set training
+    class_splits = get_sets_for_ensemble(train_ds.unique_classes, cfg.algorithm.num_models)
 
 
 
@@ -280,9 +309,9 @@ def worker(cfg):
     if cfg.patience > 0:
         early_stopping = EarlyStopping(patience=cfg.patience)
 
-    # Set dictionaries to keep track of the losses
-    t_metrics = defaultdict(AverageMeter)
-    v_metrics = defaultdict(AverageMeter)
+    # Set dictionaries to keep track of the losses for each model
+    t_metrics = [defaultdict(AverageMeter) for _ in range(cfg.algorithm.num_models)]
+    v_metrics = [defaultdict(AverageMeter) for _ in range(cfg.algorithm.num_models)]
 
     # set loss
     # todo add binary cross entropy loss
@@ -309,13 +338,13 @@ def worker(cfg):
         loss = torch.nn.CrossEntropyLoss(weight=class_weights)
     # bce loss for ensemble
     elif cfg.loss.type == "bce":
-        loss = torch.nn.BCELoss()
+        loss = torch.nn.BCEWithLogitsLoss()
 
 
     # Create the models and save them in a
     models = []
     for i in range(cfg.algorithm.num_models):
-        model = ResNet50(fc_layer_dim=n_classes,
+        model = ResNet50(fc_layer_dim=train_ds.label_count - 1, # todo probably wrong, or change this to n_classes
                          out_features=n_classes,
                          logit_bias=False)
         device(model)
@@ -373,13 +402,14 @@ def worker(cfg):
     for epoch in range(START_EPOCH, cfg.epochs):
         epoch_time = time.time()
         # training loop
-        for model, opt in zip(models, opts):
+        for model, opt, class_split, t_metric in zip(models, opts, class_splits, t_metrics):
             train_ensemble(
                 model=model,
                 data_loader=train_loader,
+                class_dict=class_split,
                 optimizer=opt,
                 loss_fn=loss,
-                trackers=t_metrics,
+                trackers=t_metric,
                 cfg=cfg)
         train_time = time.time() - epoch_time
         # validation loop
