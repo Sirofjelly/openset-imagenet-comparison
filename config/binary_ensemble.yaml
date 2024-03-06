@@ -2,7 +2,7 @@
 checkpoint:             # set the checkpoint from where to continue, leave empty to start from scratch
 log_name: training.log  # name of the file with training info
 gpu:                    # index of a GPU, if available
-output_directory: experiments  # the directory where to write the model file
+output_directory: dev_experiments  # the directory where to write the model file
 parallel: false
 
 model_path: "{}/{}_{}_{}.pth" #for those which use pretrained models
@@ -22,7 +22,7 @@ patience: 0     # Number of epochs to wait before stopping the training. 0 means
 
 # loss parameters
 loss:
-  type: softmax  # either {entropic, softmax, garbage}
+  type: bce  # either {entropic, softmax, garbage, bce}
   # Entropic Parameters
   w: 1.
 

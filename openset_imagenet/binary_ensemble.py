@@ -21,7 +21,7 @@ import tqdm
 
 def get_class_from_label(label, class_dict):
     """ Get the class from the label.
-    
+
     Args:
         label (int): Label
         class_dict (dict): Dictionary with the class splits
@@ -314,7 +314,6 @@ def worker(cfg):
     v_metrics = [defaultdict(AverageMeter) for _ in range(cfg.algorithm.num_models)]
 
     # set loss
-    # todo add binary cross entropy loss
     loss = None
     if cfg.loss.type == "entropic":
         # number of classes - 1 since we have no label for unknown
@@ -344,7 +343,7 @@ def worker(cfg):
     # Create the models and save them in a
     models = []
     for i in range(cfg.algorithm.num_models):
-        model = ResNet50(fc_layer_dim=train_ds.label_count - 1, # todo probably wrong, or change this to n_classes
+        model = ResNet50(fc_layer_dim=train_ds.label_count - 1, # TODO probably wrong, or change this to n_classes
                          out_features=n_classes,
                          logit_bias=False)
         device(model)
@@ -412,6 +411,7 @@ def worker(cfg):
                 trackers=t_metric,
                 cfg=cfg)
         train_time = time.time() - epoch_time
+        break # TODO remove before commit
         # validation loop
         for model in models:
             validate_ensemble(
