@@ -7,3 +7,4 @@ from . import proser
 from . import metrics
 from . import losses
 from . import openmax_evm
+from . import binary_ensemble

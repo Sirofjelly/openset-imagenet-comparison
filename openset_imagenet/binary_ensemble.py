@@ -26,13 +26,13 @@ def get_class_from_label(label, class_dict):
         label (int): Label
         class_dict (dict): Dictionary with the class splits
     Returns:
-        torch.int64: Class
+        torch.float32: Class
     """
     # Check which class the label belongs to and replace the label with that class
     for key, value in class_dict.items():
         if label in value:
             # convert int label to tensor
-            found_label = torch.as_tensor(int(key), dtype=torch.int64)
+            found_label = torch.as_tensor(key, dtype=torch.float32)
             return found_label
     return None
 
@@ -73,7 +73,9 @@ def train_ensemble(model, data_loader, class_dict, optimizer, loss_fn, trackers,
         logits, features = model(images)
 
         # Calculate loss
-        j = loss_fn(logits, labels)
+        targets = labels.view(-1, 1)
+        targets = targets.type(torch.float32)
+        j = loss_fn(logits, targets)
         trackers["j"].update(j.item(), batch_len)
         # Backward pass
         j.backward()
@@ -195,6 +197,8 @@ def get_sets_for_ensemble(unique_classes, num_models):
     class_splits = []
     shuffled_classes = []
     split_size = len(unique_classes) // 2
+    # print(unique_classes, type(unique_classes))
+    unique_classes = list(unique_classes)
 
     for i in range(num_models):
         # check if we had the same shuffle before or the exact opposite
@@ -211,6 +215,7 @@ def get_sets_for_ensemble(unique_classes, num_models):
                 break
             else:
                 print("this split does already exist: ", split_1, split_0)
+    print(class_splits)
     return class_splits
 
 
@@ -411,7 +416,7 @@ def worker(cfg):
                 trackers=t_metric,
                 cfg=cfg)
         train_time = time.time() - epoch_time
-        break # TODO remove before commit
+        
         # validation loop
         for model in models:
             validate_ensemble(

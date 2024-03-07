@@ -1,0 +1,14 @@
+07_03_12:36 openset_imagenet.binary_ensemble INFO: ============ Data ============
+07_03_12:36 openset_imagenet.binary_ensemble INFO: train_len:60689, labels:31
+07_03_12:36 openset_imagenet.binary_ensemble INFO: val_len:15173, labels:31
+07_03_12:36 openset_imagenet.binary_ensemble INFO: ========== Training ==========
+07_03_12:36 openset_imagenet.binary_ensemble INFO: Initial epoch: 0
+07_03_12:36 openset_imagenet.binary_ensemble INFO: Last epoch: 5
+07_03_12:36 openset_imagenet.binary_ensemble INFO: Batch size: 32
+07_03_12:36 openset_imagenet.binary_ensemble INFO: workers: 4
+07_03_12:36 openset_imagenet.binary_ensemble INFO: Loss: bce
+07_03_12:36 openset_imagenet.binary_ensemble INFO: optimizer: sgd
+07_03_12:36 openset_imagenet.binary_ensemble INFO: Learning rate: 0.001
+07_03_12:36 openset_imagenet.binary_ensemble INFO: Device: 0
+07_03_12:36 openset_imagenet.binary_ensemble INFO: number of models: 5
+07_03_12:36 openset_imagenet.binary_ensemble INFO: Training...
