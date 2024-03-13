@@ -1,0 +1,14 @@
+13_03_16:20 openset_imagenet.binary_ensemble_emnist INFO: ============ Data ============
+13_03_16:20 openset_imagenet.binary_ensemble_emnist INFO: train_len:60000, labels:10
+13_03_16:20 openset_imagenet.binary_ensemble_emnist INFO: val_len:10000, labels:10
+13_03_16:20 openset_imagenet.binary_ensemble_emnist INFO: ========== Training ==========
+13_03_16:20 openset_imagenet.binary_ensemble_emnist INFO: Initial epoch: 0
+13_03_16:20 openset_imagenet.binary_ensemble_emnist INFO: Last epoch: 1
+13_03_16:20 openset_imagenet.binary_ensemble_emnist INFO: Batch size: 32
+13_03_16:20 openset_imagenet.binary_ensemble_emnist INFO: workers: 4
+13_03_16:20 openset_imagenet.binary_ensemble_emnist INFO: Loss: bce
+13_03_16:20 openset_imagenet.binary_ensemble_emnist INFO: optimizer: sgd
+13_03_16:20 openset_imagenet.binary_ensemble_emnist INFO: Learning rate: 0.001
+13_03_16:20 openset_imagenet.binary_ensemble_emnist INFO: Device: 5
+13_03_16:20 openset_imagenet.binary_ensemble_emnist INFO: number of models: 2
+13_03_16:20 openset_imagenet.binary_ensemble_emnist INFO: Training...

@@ -9,7 +9,7 @@ def confidence(scores, target_labels, offset=0., unknown_class = -1, last_valid_
     """ Returns model's confidence, Taken from https://github.com/Vastlab/vast/tree/main/vast.
 
     Args:
-        scores(tensor): Softmax scores of the samples.
+        scores(tensor): Softmax/sigmoid scores of the samples.
         target_labels(tensor): Target label of the samples.
         offset(float): Confidence offset value, typically 1/number_of_classes.
         unknown_class(int) which index to consider as unknown
@@ -23,14 +23,67 @@ def confidence(scores, target_labels, offset=0., unknown_class = -1, last_valid_
     """
     with torch.no_grad():
         unknown = target_labels == unknown_class
-        known = torch.logical_and(target_labels >= 0, ~unknown)
+        known = torch.logical_and(target_labels >= 0, ~unknown) # tilde seems unnecessary
         kn_count = sum(known).item()    # Total known samples in data
         neg_count = sum(unknown).item()  # Total negative samples in data
         kn_conf = 0.0
         neg_conf = 0.0
         if kn_count:
             # Average confidence known samples
+            print(scores[known, target_labels[known]])
+            print(scores.shape)
+            print(target_labels.shape)
+            print(target_labels[known].shape)
+            print(scores[known, target_labels[known]].shape)
+            
+            # resulting tensor contains entries from scores where the value in scores matches the corresponding value in target_labels for the selected indices.
             kn_conf = torch.sum(scores[known, target_labels[known]]).item() / kn_count
+            # kn_conf = torch.sum(scores[known].reshape(-1,)[target_labels[known]]).item() / kn_count
+        if neg_count:
+            # we have negative labels in the validation set
+            neg_conf = torch.sum(
+                1.0
+                + offset
+                - torch.max(scores[unknown,:last_valid_class], dim=1)[0]
+            ).item() / neg_count
+
+    return kn_conf, kn_count, neg_conf, neg_count
+
+def confidence_binary(scores, target_labels, offset=0., unknown_class = -1, last_valid_class = None):
+    """ Returns model's confidence for bce, Taken from https://github.com/Vastlab/vast/tree/main/vast.
+
+    Args:
+        scores(tensor): Softmax/sigmoid scores of the samples.
+        target_labels(tensor): Target label of the samples.
+        offset(float): Confidence offset value, typically 1/number_of_classes.
+        unknown_class(int) which index to consider as unknown
+        last_valid_class(int or None) which classes to predict; can be None for all and -1 for BG approach
+
+    Returns:
+        kn_conf: Confidence of known samples.
+        kn_count: Count of known samples.
+        neg_conf: Confidence of negative samples.
+        neg_count Count of negative samples.
+    """
+    with torch.no_grad():
+        unknown = target_labels == unknown_class
+        known = torch.logical_and(target_labels >= 0, ~unknown) 
+        kn_count = sum(known).item()    # Total known samples in data
+        neg_count = sum(unknown).item()  # Total negative samples in data
+        kn_conf = 0.0
+        neg_conf = 0.0
+
+        if kn_count:
+            # Average confidence known samples
+            print(scores.shape)
+            print(target_labels.shape)
+            print(target_labels[known].shape)
+            print(scores)
+            print(target_labels)
+            # resulting tensor contains entries from scores where the value in scores matches the corresponding value in target_labels for the selected indices.
+            known_scores = scores[known]
+            target_labels_known = target_labels[known]
+            kn_conf = torch.eq(known_scores.view(-1,), target_labels_known.view(-1,)).sum().item() / kn_count # this works only for binary classification
         if neg_count:
             # we have negative labels in the validation set
             neg_conf = torch.sum(

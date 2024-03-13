@@ -8,3 +8,4 @@ from . import metrics
 from . import losses
 from . import openmax_evm
 from . import binary_ensemble
+from . import binary_ensemble_emnist

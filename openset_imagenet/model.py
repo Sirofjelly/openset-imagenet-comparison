@@ -3,6 +3,7 @@ from torchvision import models
 from torch.nn.parallel import DistributedDataParallel
 import torch
 from torch import nn
+import torch.nn.functional as F
 import random
 import numpy as np
 import pathlib
@@ -48,6 +49,41 @@ class ResNet50(nn.Module):
         features = self.resnet_base(image)
         logits = self.logits(features)
         return logits, features
+    
+class LeNet5(nn.Module):
+    """Represents a LeNet5 model
+    taken from https://github.com/lychengrex/LeNet-5-Implementation-Using-Pytorch/blob/master/LeNet-5%20Implementation%20Using%20Pytorch.ipynb"""
+
+    def __init__(self, fc_layer_dim=84, out_features=2, logit_bias=True):
+        super(LeNet5, self).__init__()
+        self.conv1 = nn.Conv2d(1, 6, 5, padding=2)
+        self.conv2 = nn.Conv2d(6, 16, 5)
+        self.fc1   = nn.Linear(16*5*5, 120)
+        self.fc2   = nn.Linear(120, fc_layer_dim)
+        self.fc3   = nn.Linear(fc_layer_dim, out_features, bias=logit_bias)
+
+    def forward(self, x):
+        '''
+        One forward pass through the network.
+        
+        Args:
+            x: input
+        '''
+        x = F.max_pool2d(F.relu(self.conv1(x)), (2, 2))
+        x = F.max_pool2d(F.relu(self.conv2(x)), (2, 2))
+        x = x.view(-1, self.num_flat_features(x))
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        features = x
+        logits = self.fc3(x)
+        return logits, features
+    
+    def num_flat_features(self, x):
+        '''
+        Get the number of features in a batch of tensors `x`.
+        '''
+        size = x.size()[1:]
+        return np.prod(size)
 
 
 class ResNet50Proser(nn.Module):

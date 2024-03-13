@@ -13,9 +13,9 @@ from torchvision import transforms
 from vast.tools import set_device_gpu, set_device_cpu, device
 import vast
 from loguru import logger
-from .metrics import confidence, auc_score_binary, auc_score_multiclass
-from .dataset import ImagenetDataset
-from .model import ResNet50, load_checkpoint, save_checkpoint, set_seeds
+from .metrics import confidence_binary, auc_score_binary, auc_score_multiclass
+from .dataset_emnist import Dataset_EMNIST
+from .model import LeNet5, load_checkpoint, save_checkpoint, set_seeds
 from .losses import AverageMeter, EarlyStopping, EntropicOpensetLoss
 import tqdm
 
@@ -119,35 +119,38 @@ def validate_ensemble(model, data_loader, class_dict, loss_fn, n_classes, tracke
             images = device(images)
             labels = device(labels)
             logits, features = model(images)
-            scores = torch.nn.functional.sigmoid(logits) # changed from softmax to sigmoid for bce
+            scores = torch.nn.functional.sigmoid(logits) #TODO changed from softmax to sigmoid for bce
 
             # we need scores to be either 0 or 1
             threshold = 0.5
 
             # Apply thresholding to get binary values 0 or 1
-            scores = (scores >= threshold).type(torch.float32)
+            scores = (scores >= threshold).type(torch.int64)
             
              # get the class from the label either 0 or 1
-            for i in range(len(labels)):
-                label = labels[i].item()
+            for index in range(len(labels)):
+                label = labels[index].item()
                 # replace the label with the class 0 or 1
-                labels[i] = get_class_from_label(label, class_dict)
+                labels[index] = get_class_from_label(label, class_dict)
 
-            targets = labels.view(-1, 1)
-            targets = targets.type(torch.float32)
-            j = loss_fn(logits, targets)
+            # targets = labels.view(-1,)
+            targets = labels.type(torch.float32)
+            j = loss_fn(logits, targets.view(-1, 1))
             trackers["j"].update(j.item(), batch_len)
 
             # accumulate partial results in empty tensors
             start_ix = i * cfg.batch_size # i does not have to be = 1
-
-            all_targets[start_ix: start_ix + batch_len] = targets.view(-1)
+            all_targets[start_ix: start_ix + batch_len] = targets
             all_scores[start_ix: start_ix + batch_len] = scores
+        
+        # show difference between all_scores and all_targets
+        print(len(all_scores), len(all_targets))
+        print("The Tensors match in number of cases: ", torch.eq(all_scores.view(-1,), all_targets.view(-1,)).sum())
 
-        kn_conf, kn_count, neg_conf, neg_count = confidence(
+        kn_conf, kn_count, neg_conf, neg_count = confidence_binary(
             scores=all_scores,
             target_labels=all_targets,
-            offset=min_unk_score,
+            offset=min_unk_score, # TODO change this to 0.5 for bce?
             unknown_class = unknown_class,
             last_valid_class = last_valid_class)
         if kn_count:
@@ -232,7 +235,7 @@ def get_sets_for_ensemble(unique_classes, num_models):
                 break
             else:
                 print("this split does already exist: ", split_1, split_0)
-    print(class_splits)
+    print("Ensemble training class splits: ", class_splits)
     return class_splits
 
 
@@ -257,53 +260,36 @@ def worker(cfg):
         format=msg_format,
         level="INFO",
         mode='w')
-
-    # Set image transformations
-    train_tr = transforms.Compose(
-        [transforms.Resize(256),
-         transforms.RandomCrop(224),
-         transforms.RandomHorizontalFlip(0.5),
-         transforms.ToTensor()])
-
-    val_tr = transforms.Compose(
-        [transforms.Resize(256),
-         transforms.CenterCrop(224),
-         transforms.ToTensor()])
-
-    # create datasets
-    train_file = pathlib.Path(cfg.data.train_file.format(cfg.protocol))
-    val_file = pathlib.Path(cfg.data.val_file.format(cfg.protocol))
-
     
-    if train_file.exists() and val_file.exists():
-        train_ds = ImagenetDataset(
-            csv_file=train_file,
-            imagenet_path=cfg.data.imagenet_path,
-            transform=train_tr
-        )
-        val_ds = ImagenetDataset(
-            csv_file=val_file,
-            imagenet_path=cfg.data.imagenet_path,
-            transform=val_tr
-        )
+    # create datasets
+    # train_file = pathlib.Path(cfg.data.train_file.format(cfg.protocol))
+    # val_file = pathlib.Path(cfg.data.val_file.format(cfg.protocol))
+
+    train_ds = Dataset_EMNIST(
+        dataset_root=cfg.data.dataset_path,
+        which_set="train",
+        include_unknown=False,  #TODO: change this to True for bce
+        has_garbage_class=False)
+    
+    val_ds = Dataset_EMNIST(
+        dataset_root=cfg.data.dataset_path,
+        which_set="validation",
+        include_unknown=False,  #TODO: change this to True for bce
+        has_garbage_class=False)
 
         # If using garbage class, replaces label -1 to maximum label + 1
-        if cfg.loss.type == "garbage":
+    if cfg.loss.type == "garbage":
             # Only change the unknown label of the training dataset
             train_ds.replace_negative_label()
             val_ds.replace_negative_label()
-        elif cfg.loss.type == "softmax": #TODO remove negatives from training and validation set for bce too?
+    elif cfg.loss.type == "softmax": #TODO remove negatives from training and validation set for bce too?
             # remove the negative label from softmax training set, not from val set!
             train_ds.remove_negative_label()
-    else:
-        raise FileNotFoundError("train/validation file does not exist")
     
 
     # Create unique class splits for ensemble set-vs-set training
+    print(train_ds.unique_classes, cfg.algorithm.num_models)
     class_splits = get_sets_for_ensemble(train_ds.unique_classes, cfg.algorithm.num_models)
-
-
-
 
     train_loader = DataLoader(
         train_ds,
@@ -365,7 +351,7 @@ def worker(cfg):
     # Create the models and save them in a
     models = []
     for i in range(cfg.algorithm.num_models):
-        model = ResNet50(fc_layer_dim=train_ds.label_count - 1, # TODO probably wrong, or change this to n_classes
+        model = LeNet5(fc_layer_dim=84,
                          out_features=n_classes,
                          logit_bias=False)
         device(model)
@@ -444,7 +430,7 @@ def worker(cfg):
                 n_classes=n_classes,
                 trackers=v_metric,
                 cfg=cfg)
-        curr_score = v_metrics["conf_kn"].avg + v_metrics["conf_unk"].avg
+        curr_score = v_metric["conf_kn"].avg + v_metric["conf_unk"].avg
         # learning rate scheduler step
         for scheduler in schedulers:
             if scheduler is not None:
@@ -463,7 +449,6 @@ def worker(cfg):
             return dict(d)
         logger.info(
             f"loss:{cfg.loss.type} "
-            f"protocol:{cfg.protocol} "
             f"ep:{epoch} "
             f"train:{pretty_print(t_metrics)} "
             f"val:{pretty_print(v_metrics)} "

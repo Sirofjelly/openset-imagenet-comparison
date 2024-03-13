@@ -61,6 +61,8 @@ def main(command_line_options = None):
         openset_imagenet.proser.worker(config)
     elif config.algorithm.type == "binary_ensemble":
         openset_imagenet.binary_ensemble.worker(config)
+    elif config.algorithm.type == "binary_ensemble_emnist":
+        openset_imagenet.binary_ensemble_emnist.worker(config)
     else:
         raise ValueError(f"The training configuration type '{config.algorithm.type}' is not known to the system")
 
