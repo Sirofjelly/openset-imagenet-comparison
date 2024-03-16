@@ -5,7 +5,7 @@ gpu:                    # index of a GPU, if available
 output_directory: dev_experiments  # the directory where to write the model file
 parallel: false
 
-model_path: "{}/{}_{}_{}.pth" #for those which use pretrained models
+model_path: "{}/{}_{}_{}_{}.pth" #for those which use pretrained models
 
 # Data Parameters
 data:

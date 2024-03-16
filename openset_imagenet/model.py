@@ -60,7 +60,8 @@ class LeNet5(nn.Module):
         self.conv2 = nn.Conv2d(6, 16, 5)
         self.fc1   = nn.Linear(16*5*5, 120)
         self.fc2   = nn.Linear(120, fc_layer_dim)
-        self.fc3   = nn.Linear(fc_layer_dim, out_features, bias=logit_bias)
+        self.logits   = nn.Linear(in_features=fc_layer_dim, out_features=out_features, bias=logit_bias)
+        self.class_split = None
 
     def forward(self, x):
         '''
@@ -75,7 +76,7 @@ class LeNet5(nn.Module):
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         features = x
-        logits = self.fc3(x)
+        logits = self.logits(x)
         return logits, features
     
     def num_flat_features(self, x):
@@ -84,6 +85,24 @@ class LeNet5(nn.Module):
         '''
         size = x.size()[1:]
         return np.prod(size)
+
+class EnsembleModel(nn.Module):
+    """Represents an ensemble of LeNet5 models"""
+    def __init__(self, models):
+        super(EnsembleModel, self).__init__()
+        self.models = nn.ModuleList([model for model in models])
+        self.num_models = len(models)
+        self.class_splits = [model.class_split for model in models]
+        
+    def forward(self, x):
+        '''
+        One forward pass through the ensemble.
+        Args:
+            x: input
+        '''
+        logits = torch.stack([model(x)[0] for model in self.models], dim=0)
+        features = torch.stack([model(x)[1] for model in self.models], dim=0)
+        return logits, features
 
 
 class ResNet50Proser(nn.Module):
@@ -165,7 +184,7 @@ def set_seeds(seed):
 
 
 
-def save_checkpoint(f_name, model, epoch, opt, best_score_, scheduler=None):
+def save_checkpoint(f_name, model, epoch, opt, best_score_, scheduler=None, class_split=None):
     """ Saves a training checkpoint.
 
     Args:
@@ -188,6 +207,8 @@ def save_checkpoint(f_name, model, epoch, opt, best_score_, scheduler=None):
             "best_score": best_score_}
     if scheduler is not None:
         data["scheduler"] = scheduler.state_dict()
+    if class_split is not None:
+        data["class_split"] = class_split
     torch.save(data, f_name)
 
 
@@ -223,6 +244,9 @@ def load_checkpoint(model, checkpoint, opt=None, scheduler=None):
 
         if scheduler is not None:  # Load scheduler state
             scheduler.load_state_dict(checkpoint["scheduler"])
+
+        if "class_split" in checkpoint:
+            model.class_split = checkpoint["class_split"]
 
         start_epoch = checkpoint["epoch"]
         best_score = checkpoint["best_score"]

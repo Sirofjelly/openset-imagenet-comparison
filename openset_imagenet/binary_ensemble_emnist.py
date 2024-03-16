@@ -15,7 +15,7 @@ import vast
 from loguru import logger
 from .metrics import confidence_binary, auc_score_binary, auc_score_multiclass
 from .dataset_emnist import Dataset_EMNIST
-from .model import LeNet5, load_checkpoint, save_checkpoint, set_seeds
+from .model import LeNet5, EnsembleModel, load_checkpoint, save_checkpoint, set_seeds
 from .losses import AverageMeter, EarlyStopping, EntropicOpensetLoss
 import tqdm
 
@@ -30,6 +30,8 @@ def get_class_from_label(label, class_dict):
     """
     # Check which class the label belongs to and replace the label with that class
     for key, value in class_dict.items():
+        if label == -1:
+            return torch.as_tensor(-1, dtype=torch.float32)
         if label in value:
             if key != 0 and key != 1:
                 print(key)
@@ -144,7 +146,6 @@ def validate_ensemble(model, data_loader, class_dict, loss_fn, n_classes, tracke
             all_scores[start_ix: start_ix + batch_len] = scores
         
         # show difference between all_scores and all_targets
-        print(len(all_scores), len(all_targets))
         print("The Tensors match in number of cases: ", torch.eq(all_scores.view(-1,), all_targets.view(-1,)).sum())
 
         kn_conf, kn_count, neg_conf, neg_count = confidence_binary(
@@ -170,15 +171,14 @@ def get_arrays(model, loader, garbage, pretty=False):
     model.eval()
     with torch.no_grad():
         data_len = len(loader.dataset)         # dataset length
-        logits_dim = model.logits.out_features  # logits output classes
+        logits_dim = model.models[0].logits.out_features  # logits output classes
         if garbage:
             logits_dim -= 1
-        features_dim = model.logits.in_features  # features dimensionality
+        features_dim = model.models[0].logits.in_features  # features dimensionality
         all_targets = torch.empty(data_len, device="cpu")  # store all targets
-        all_logits = torch.empty((data_len, logits_dim), device="cpu")   # store all logits
-        all_feat = torch.empty((data_len, features_dim), device="cpu")   # store all features
+        all_logits = torch.empty((model.num_models, data_len, logits_dim), device="cpu")   # store all logits
+        all_feat = torch.empty((model.num_models, data_len, features_dim), device="cpu")   # store all features
         all_scores = torch.empty((data_len, logits_dim), device="cpu")
-
         index = 0
         if pretty:
             loader = tqdm.tqdm(loader)
@@ -187,24 +187,69 @@ def get_arrays(model, loader, garbage, pretty=False):
             images = device(images)
             labels = device(labels)
             logits, feature = model(images)
+
+            # we have to get the corresponding true label for each single model since we have a stack output
+            targets = labels.view(-1,)
+    
             # compute softmax scores
-            scores = torch.nn.functional.softmax(logits, dim=1)
+            scores_sig = torch.nn.functional.sigmoid(logits) #TODO changed from softmax to sigmoid for bce
+            scores = (scores_sig >= 0.5).type(torch.int64)
+            class_binaries = get_binary_output_for_class_per_model(model.class_splits)
+            final_class_score = torch.empty((curr_b_size, logits_dim), device="cpu")
+            for i in range(scores.shape[1]):
+                final_class_score[i, :] = get_predicted_class_from_model_binary_output(scores[:, i], class_binaries, offset=0)
             # shall we remove the logits of the unknown class?
             # We do this AFTER computing softmax, of course.
             if garbage:
                 logits = logits[:,:-1]
                 scores = scores[:,:-1]
             # accumulate results in all_tensor
-            all_targets[index:index + curr_b_size] = labels.detach().cpu()
-            all_logits[index:index + curr_b_size] = logits.detach().cpu()
-            all_feat[index:index + curr_b_size] = feature.detach().cpu()
-            all_scores[index:index + curr_b_size] = scores.detach().cpu()
-            index += curr_b_size
+            all_targets[index:index + curr_b_size] = targets.detach().cpu()
+            all_logits[:,index:index + curr_b_size] = logits.detach().cpu()
+            all_feat[:,index:index + curr_b_size] = feature.detach().cpu()
+            all_scores[index:index + curr_b_size] = final_class_score.detach().cpu()
         return(
             all_targets.numpy(),
             all_logits.numpy(),
             all_feat.numpy(),
             all_scores.numpy())
+
+def get_binary_output_for_class_per_model(class_splits):
+    """ Get the binary class representation for each class."""
+    all_classes = []
+    all_classes = class_splits[0][0] + class_splits[0][1]   
+    all_classes.sort()
+
+    # get the binary class representation
+    class_binary = {}
+    for c in all_classes:
+        binary_code = []
+        for class_split in class_splits:
+            if c in class_split[0]:
+                binary_code.append(0)
+            elif c in class_split[1]:
+                binary_code.append(1)
+            else:
+                raise ValueError("Class not found in any split")
+        class_binary[c] = binary_code
+    return class_binary
+
+def get_predicted_class_from_model_binary_output(model_binary, class_binary, offset=0):
+    """
+    Get the predicted class from the binary output of the model.
+    Args:
+        model_binary (list): Binary output of the model.
+        class_binary (dict): Binary representation of the classes.
+        offset (int): Offset acts like distance on how many binary outputs are allowed to be different.
+    """
+    model_binary = model_binary.cpu()
+    model_binary = model_binary.view(-1,)
+    # get the class from the binary output
+    for c, b in class_binary.items():
+        if numpy.sum(numpy.abs(numpy.array(b) - numpy.array(model_binary))) <= offset:
+            return c
+    return -1 # unknown class
+
 
 def get_sets_for_ensemble(unique_classes, num_models):
     """ Create the splits for the ensemble training.
@@ -217,7 +262,6 @@ def get_sets_for_ensemble(unique_classes, num_models):
     class_splits = []
     shuffled_classes = []
     split_size = len(unique_classes) // 2
-    # print(unique_classes, type(unique_classes))
     unique_classes = list(unique_classes)
 
     for i in range(num_models):
@@ -248,8 +292,10 @@ def worker(cfg):
     # referencing best score and setting seeds
     set_seeds(cfg.seed)
 
-    BEST_SCORE = 0.0    # Best validation score
-    START_EPOCH = 0     # Initial training epoch
+
+    # best scores for num_models
+    BEST_SCORES = [0.0 for _ in range(cfg.algorithm.num_models)]
+    START_EPOCHS = [0 for _ in range(cfg.algorithm.num_models)]
 
     # Configure logger. Log only on first process. Validate only on first process.
     # msg_format = "{time:DD_MM_HH:mm} {message}"
@@ -378,7 +424,7 @@ def worker(cfg):
             scheduler = None
         schedulers.append(scheduler)
 
-    # Resume a training from a checkpoint
+    # Resume a training from a checkpoint #TODO: check if this is correct for multiple models
     if cfg.checkpoint is not None:
         # Get the relative path of the checkpoint wrt train.py
         START_EPOCH, BEST_SCORE = load_checkpoint(
@@ -395,7 +441,7 @@ def worker(cfg):
     logger.info(f"train_len:{len(train_ds)}, labels:{train_ds.label_count}")
     logger.info(f"val_len:{len(val_ds)}, labels:{val_ds.label_count}")
     logger.info("========== Training ==========")
-    logger.info(f"Initial epoch: {START_EPOCH}")
+    # logger.info(f"Initial epoch: {START_EPOCH}")
     logger.info(f"Last epoch: {cfg.epochs}")
     logger.info(f"Batch size: {cfg.batch_size}")
     logger.info(f"workers: {cfg.workers}")
@@ -406,10 +452,12 @@ def worker(cfg):
     logger.info(f"number of models: {cfg.algorithm.num_models}")
     logger.info("Training...")
     writer = SummaryWriter(log_dir=cfg.output_directory, filename_suffix="-"+cfg.log_name)
-    for epoch in range(START_EPOCH, cfg.epochs):
-        epoch_time = time.time()
-        # training loop
-        for model, opt, class_split, t_metric in zip(models, opts, class_splits, t_metrics):
+    for i, (model, opt, class_split, t_metric, v_metric, scheduler, BEST_SCORE, START_EPOCH) in enumerate(zip(models, opts, class_splits, t_metrics, v_metrics, schedulers, BEST_SCORES, START_EPOCHS)):
+        logger.info(f"class split: {class_split}")
+        # best score for each model
+        for epoch in range(START_EPOCH, cfg.epochs):
+            epoch_time = time.time()
+            # training loop
             train_ensemble(
                 model=model,
                 data_loader=train_loader,
@@ -418,10 +466,8 @@ def worker(cfg):
                 loss_fn=loss,
                 trackers=t_metric,
                 cfg=cfg)
-        train_time = time.time() - epoch_time
+            train_time = time.time() - epoch_time
 
-        # validation loop
-        for model, class_split, v_metric in zip(models, class_splits, v_metrics):
             validate_ensemble(
                 model=model,
                 data_loader=val_loader,
@@ -430,45 +476,45 @@ def worker(cfg):
                 n_classes=n_classes,
                 trackers=v_metric,
                 cfg=cfg)
-        curr_score = v_metric["conf_kn"].avg + v_metric["conf_unk"].avg
-        # learning rate scheduler step
-        for scheduler in schedulers:
-            if scheduler is not None:
-                scheduler.step()
-        # Logging metrics to tensorboard object
-        writer.add_scalar("train/loss", t_metrics["j"].avg, epoch)
-        writer.add_scalar("val/loss", v_metrics["j"].avg, epoch)
-        # Validation metrics
-        writer.add_scalar("val/conf_kn", v_metrics["conf_kn"].avg, epoch)
-        writer.add_scalar("val/conf_unk", v_metrics["conf_unk"].avg, epoch)
-        #  training information on console
-        # validation+metrics writer+save model time
-        val_time = time.time() - train_time - epoch_time
-        def pretty_print(d):
-            #return ",".join(f'{k}: {float(v):1.3f}' for k,v in dict(d).items())
-            return dict(d)
-        logger.info(
-            f"loss:{cfg.loss.type} "
-            f"ep:{epoch} "
-            f"train:{pretty_print(t_metrics)} "
-            f"val:{pretty_print(v_metrics)} "
-            f"t:{train_time:.1f}s "
-            f"v:{val_time:.1f}s")
-        # save best model and current model
-        ckpt_name = cfg.model_path.format(cfg.output_directory, cfg.loss.type, "threshold", "curr")
-        save_checkpoint(ckpt_name, models[0], epoch, opts[0], curr_score, scheduler=schedulers[0])
-        if curr_score > BEST_SCORE:
-            BEST_SCORE = curr_score
-            ckpt_name = cfg.model_path.format(cfg.output_directory, cfg.loss.type, "threshold", "best")
-            # ckpt_name = f"{cfg.name}_best.pth"  # best model
-            logger.info(f"Saving best model {ckpt_name} at epoch: {epoch}")
-            save_checkpoint(ckpt_name, models[0], epoch, opts[0], BEST_SCORE, scheduler=schedulers[0])
-        # Early stopping
-        if cfg.patience > 0:
-            early_stopping(metrics=curr_score, loss=False)
-            if early_stopping.early_stop:
-                logger.info("early stop")
-                break
-    # clean everything
+                
+            # compute the average score of all models per model
+            curr_score = v_metric["conf_kn"].avg + v_metric["conf_unk"].avg
+            # learning rate scheduler step
+            if cfg.opt.decay > 0 and scheduler is not None:
+                    scheduler.step()
+            # Logging metrics to tensorboard object
+            writer.add_scalar("train/loss", t_metric["j"].avg, epoch)
+            writer.add_scalar("val/loss", v_metric["j"].avg, epoch)
+            # Validation metrics
+            writer.add_scalar("val/conf_kn", v_metric["conf_kn"].avg, epoch)
+            writer.add_scalar("val/conf_unk", v_metric["conf_unk"].avg, epoch)
+            #  training information on console
+            # validation+metrics writer+save model time
+            val_time = time.time() - train_time - epoch_time
+            def pretty_print(d):
+                #return ",".join(f'{k}: {float(v):1.3f}' for k,v in dict(d).items())
+                return dict(d)
+            logger.info(
+                f"loss:{cfg.loss.type} "
+                f"ep:{epoch} "
+                f"train:{pretty_print(t_metric)} "
+                f"val:{pretty_print(v_metric)} "
+                f"t:{train_time:.1f}s "
+                f"v:{val_time:.1f}s")
+            # save best model and current model
+            ckpt_name = cfg.model_path.format(cfg.output_directory, cfg.loss.type, "threshold", "curr", i)
+            save_checkpoint(ckpt_name, model, epoch, opt, curr_score, scheduler=scheduler, class_split=class_split)
+            if curr_score > BEST_SCORE:
+                BEST_SCORE = curr_score
+                ckpt_name = cfg.model_path.format(cfg.output_directory, cfg.loss.type, "threshold", "best", i)
+                # ckpt_name = f"{cfg.name}_best.pth"  # best model
+                logger.info(f"Saving best model {ckpt_name} at epoch: {epoch}")
+                save_checkpoint(ckpt_name, model, epoch, opt, BEST_SCORE, scheduler=scheduler, class_split=class_split)
+            # Early stopping
+            if cfg.patience > 0:
+                early_stopping(metrics=curr_score, loss=False)
+                if early_stopping.early_stop:
+                    logger.info("early stop")
+                    continue
     del models
     logger.info("Training finished")

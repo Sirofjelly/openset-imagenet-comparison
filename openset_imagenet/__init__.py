@@ -1,6 +1,7 @@
 from .protocol import OpenSetProtocol
 from .dataset import ImagenetDataset
-from .model import ResNet50
+from .dataset_emnist import Dataset_EMNIST
+from .model import ResNet50, LeNet5
 from . import util
 from . import train
 from . import proser

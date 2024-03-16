@@ -214,9 +214,7 @@ def get_sets_for_ensemble(unique_classes, num_models):
     class_splits = []
     shuffled_classes = []
     split_size = len(unique_classes) // 2
-    # print(unique_classes, type(unique_classes))
     unique_classes = list(unique_classes)
-
     for i in range(num_models):
         # check if we had the same shuffle before or the exact opposite
         while True:

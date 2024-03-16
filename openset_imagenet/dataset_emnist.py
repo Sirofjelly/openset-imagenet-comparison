@@ -55,8 +55,6 @@ class Dataset_EMNIST(torch.utils.data.dataset.Dataset):
         print("MNIST targets:", np.unique(self.mnist.targets))
         print("Unique classes:", self.unique_classes)
         print("Targets:", targets)
-        print("Letter indexes:", self.letter_indexes)
-
     def __getitem__(self, index):
         if index < len(self.mnist):
             return self.mnist[index]

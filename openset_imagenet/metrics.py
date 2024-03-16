@@ -29,16 +29,9 @@ def confidence(scores, target_labels, offset=0., unknown_class = -1, last_valid_
         kn_conf = 0.0
         neg_conf = 0.0
         if kn_count:
-            # Average confidence known samples
-            print(scores[known, target_labels[known]])
-            print(scores.shape)
-            print(target_labels.shape)
-            print(target_labels[known].shape)
-            print(scores[known, target_labels[known]].shape)
-            
+            # Average confidence known sample
             # resulting tensor contains entries from scores where the value in scores matches the corresponding value in target_labels for the selected indices.
             kn_conf = torch.sum(scores[known, target_labels[known]]).item() / kn_count
-            # kn_conf = torch.sum(scores[known].reshape(-1,)[target_labels[known]]).item() / kn_count
         if neg_count:
             # we have negative labels in the validation set
             neg_conf = torch.sum(
@@ -75,11 +68,6 @@ def confidence_binary(scores, target_labels, offset=0., unknown_class = -1, last
 
         if kn_count:
             # Average confidence known samples
-            print(scores.shape)
-            print(target_labels.shape)
-            print(target_labels[known].shape)
-            print(scores)
-            print(target_labels)
             # resulting tensor contains entries from scores where the value in scores matches the corresponding value in target_labels for the selected indices.
             known_scores = scores[known]
             target_labels_known = target_labels[known]

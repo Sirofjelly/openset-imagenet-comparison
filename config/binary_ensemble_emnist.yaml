@@ -5,7 +5,7 @@ gpu:                    # index of a GPU, if available
 output_directory: dev_experiments/EMNIST  # the directory where to write the model file
 parallel: false
 
-model_path: "{}/{}_{}_{}.pth" #for those which use pretrained models
+model_path: "{}/{}_{}_{}_{}.pth" #for those which use pretrained models
 
 # Data Parameters
 data:
@@ -14,7 +14,7 @@ data:
 # Common parameters
 seed: 42        # Common seed across all source of randomness
 batch_size: 32  # If distributed training the batch size is multiplied by the number of gpus
-epochs: 1       # Number of epochs to train. 0 means 1 epoch training
+epochs: 2    # Number of epochs to train.
 workers: 4      # Dataloader number of workers
 patience: 0     # Number of epochs to wait before stopping the training. 0 means no early stopping
 
@@ -34,4 +34,4 @@ opt:
 # Algorithm parameters
 algorithm:
   type: binary_ensemble_emnist
-  num_models: 2
+  num_models: 5
