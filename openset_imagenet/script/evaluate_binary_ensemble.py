@@ -125,7 +125,7 @@ def load_model(cfg, loss, algorithm, protocol, suffix, output_directory, n_class
             out_features=n_classes,
             logit_bias=False)
 
-        model_path = cfg.model_path.format(output_directory, loss, "threshold", suffix, model_nr)
+        model_path = cfg.model_path.format(output_directory, loss, cfg.algorithm.type, suffix, model_nr)
         print(model_path)
     else:
         model = openset_imagenet.ResNet50(
@@ -234,21 +234,21 @@ def process_model(protocol, loss, algorithms, cfg, suffix, gpu, force):
 
     if any(a!="proser" for a in algorithms):
         if any(a == "binary_ensemble_emnist" for a in algorithms): #TODO Binary ensemble for ImageNet
-                base_data = None if force else load_scores(loss, "threshold", suffix, output_directory)
+                base_data = None if force else load_scores(loss, cfg.algorithm.type, suffix, output_directory)
                 if base_data is None: # when we never executed this before
                     logger.info(f"Loading base models for protocol {protocol}, {loss}")
                     # load base model
                     base_models = torch.nn.ModuleList()
                     for i in range(cfg.algorithm.num_models):
-                        base_model = load_model(cfg, loss, "threshold", protocol, suffix, cfg.output_directory, n_classes, model_nr=i)
+                        base_model = load_model(cfg, loss, cfg.algorithm.type, protocol, suffix, cfg.output_directory, n_classes, model_nr=i)
                         base_models.append(base_model)
                     # create ensemble
                     base_model = EnsembleModel(base_models)
                     if base_model is not None:
                         # extract features
                         logger.info(f"Extracting base scores for protocol {protocol}, {loss}")
-                        gt, logits, features, base_scores = extract(base_model, test_loader, "threshold", loss)
-                        write_scores(gt, logits, features, base_scores, loss, "threshold", suffix, cfg.output_directory)
+                        gt, logits, features, base_scores = extract(base_model, test_loader, cfg.algorithm.type, loss)
+                        write_scores(gt, logits, features, base_scores, loss, cfg.algorithm.type, suffix, cfg.output_directory)
                         # remove model from GPU memory
                         del base_model
                 else:

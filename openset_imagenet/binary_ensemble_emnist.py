@@ -502,11 +502,11 @@ def worker(cfg):
                 f"t:{train_time:.1f}s "
                 f"v:{val_time:.1f}s")
             # save best model and current model
-            ckpt_name = cfg.model_path.format(cfg.output_directory, cfg.loss.type, "threshold", "curr", i)
+            ckpt_name = cfg.model_path.format(cfg.output_directory, cfg.loss.type, cfg.algorithm.type, "curr", i)
             save_checkpoint(ckpt_name, model, epoch, opt, curr_score, scheduler=scheduler, class_split=class_split)
             if curr_score > BEST_SCORE:
                 BEST_SCORE = curr_score
-                ckpt_name = cfg.model_path.format(cfg.output_directory, cfg.loss.type, "threshold", "best", i)
+                ckpt_name = cfg.model_path.format(cfg.output_directory, cfg.loss.type, cfg.algorithm.type, "best", i)
                 # ckpt_name = f"{cfg.name}_best.pth"  # best model
                 logger.info(f"Saving best model {ckpt_name} at epoch: {epoch}")
                 save_checkpoint(ckpt_name, model, epoch, opt, BEST_SCORE, scheduler=scheduler, class_split=class_split)
