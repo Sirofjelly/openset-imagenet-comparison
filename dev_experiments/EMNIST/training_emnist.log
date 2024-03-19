@@ -1,10 +1,10 @@
-17_03_13:50 __main__ INFO: Loaded test dataset for protocol 2 with len:20400, labels:11
-17_03_13:50 __main__ INFO: Loading base models for protocol 2, bce
-17_03_13:50 __main__ INFO: Taking model from epoch 2 that achieved best score 0.979
-17_03_13:50 __main__ INFO: Taking model from epoch 2 that achieved best score 0.949
-17_03_13:50 __main__ INFO: Taking model from epoch 2 that achieved best score 0.9469
-17_03_13:50 __main__ INFO: Taking model from epoch 2 that achieved best score 0.9652
-17_03_13:50 __main__ INFO: Taking model from epoch 2 that achieved best score 0.9271
-17_03_13:50 __main__ INFO: Extracting base scores for protocol 2, bce
-17_03_13:51 __main__ INFO: Target labels, logits, features and scores saved in: dev_experiments/EMNIST/bce_binary_ensemble_emnist_test_arr_best.npz
-17_03_13:51 __main__ INFO: Finished processing protocol 2, bce
+19_03_14:48 __main__ INFO: Loaded test dataset for protocol 2 with len:20400, labels:11
+19_03_14:48 __main__ INFO: Loading base models for protocol 2, bce
+19_03_14:48 __main__ INFO: Taking model from epoch 2 that achieved best score 0.9793
+19_03_14:48 __main__ INFO: Taking model from epoch 2 that achieved best score 0.95
+19_03_14:48 __main__ INFO: Taking model from epoch 2 that achieved best score 0.9471
+19_03_14:48 __main__ INFO: Taking model from epoch 2 that achieved best score 0.9654
+19_03_14:48 __main__ INFO: Taking model from epoch 2 that achieved best score 0.9272
+19_03_14:48 __main__ INFO: Extracting base scores for protocol 2, bce
+19_03_14:50 __main__ INFO: Target labels, logits, features and scores saved in: dev_experiments/EMNIST/bce_binary_ensemble_emnist_test_arr_best.npz
+19_03_14:50 __main__ INFO: Finished processing protocol 2, bce

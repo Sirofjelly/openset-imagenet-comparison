@@ -116,7 +116,6 @@ def load_scores(args, cfg):
 
                     if protocol not in ground_truths:
                         ground_truths[protocol] = results["gt"].astype(int)
-                        print("Ground truth for protocol", protocol, "is", ground_truths[protocol])
                     else:
                         assert numpy.all(results["gt"] == ground_truths[protocol])
 
@@ -140,7 +139,7 @@ def plot_OSCR(args, scores, ground_truths):
         openset_imagenet.util.plot_oscr(arrays=scores[protocol], gt=ground_truths[protocol], scale="semilog", title=f'$P_{protocol}$ Negative',
                     ax_label_font=font, ax=axs[2*index], unk_label=-1,)
         openset_imagenet.util.plot_oscr(arrays=scores[protocol], gt=ground_truths[protocol], scale="semilog", title=f'$P_{protocol}$ Unknown',
-                    ax_label_font=font, ax=axs[2*index+1], unk_label=-2,)
+                    ax_label_font=font, ax=axs[2*index+1], unk_label=-2,) # -2 are unknowns
     # Axis properties
     for ax in axs:
         ax.label_outer()

@@ -172,13 +172,16 @@ def get_arrays(model, loader, garbage, pretty=False):
     with torch.no_grad():
         data_len = len(loader.dataset)         # dataset length
         logits_dim = model.models[0].logits.out_features  # logits output classes
+        # we need to have the dimensionality not of the logits but of how many output classes we have
+        # num_classes = len(loader.dataset.unique_classes)
         if garbage:
             logits_dim -= 1
+        class_binaries = get_binary_output_for_class_per_model(model.class_splits)
         features_dim = model.models[0].logits.in_features  # features dimensionality
         all_targets = torch.empty(data_len, device="cpu")  # store all targets
         all_logits = torch.empty((model.num_models, data_len, logits_dim), device="cpu")   # store all logits
         all_feat = torch.empty((model.num_models, data_len, features_dim), device="cpu")   # store all features
-        all_scores = torch.empty((data_len, logits_dim), device="cpu")
+        all_scores = torch.empty((data_len, len(class_binaries)), device="cpu")
         index = 0
         if pretty:
             loader = tqdm.tqdm(loader)
@@ -192,12 +195,11 @@ def get_arrays(model, loader, garbage, pretty=False):
             targets = labels.view(-1,)
     
             # compute softmax scores
-            scores_sig = torch.nn.functional.sigmoid(logits) #TODO changed from softmax to sigmoid for bce
-            scores = (scores_sig >= 0.5).type(torch.int64)
-            class_binaries = get_binary_output_for_class_per_model(model.class_splits)
-            final_class_score = torch.empty((curr_b_size, logits_dim), device="cpu")
+            scores_sig = torch.nn.functional.sigmoid(logits) #TODO changed from softmax to sigmoid for bce, could be left out by applying threshold 0 to logits
+            scores = (scores_sig >= 0.5).type(torch.int64) # Change this for different evaluation metrics
+            final_class_score = torch.empty((curr_b_size, len(class_binaries)), device="cpu")
             for i in range(scores.shape[1]):
-                final_class_score[i, :] = get_predicted_class_from_model_binary_output(scores[:, i], class_binaries, offset=0)
+                final_class_score[i, :] = get_similarity_score_from_binary_to_label(model_binary=scores[:, i], class_binary=class_binaries)
             # shall we remove the logits of the unknown class?
             # We do this AFTER computing softmax, of course.
             if garbage:
@@ -208,6 +210,7 @@ def get_arrays(model, loader, garbage, pretty=False):
             all_logits[:,index:index + curr_b_size] = logits.detach().cpu()
             all_feat[:,index:index + curr_b_size] = feature.detach().cpu()
             all_scores[index:index + curr_b_size] = final_class_score.detach().cpu()
+            index += curr_b_size
         return(
             all_targets.numpy(),
             all_logits.numpy(),
@@ -234,7 +237,7 @@ def get_binary_output_for_class_per_model(class_splits):
         class_binary[c] = binary_code
     return class_binary
 
-def get_predicted_class_from_model_binary_output(model_binary, class_binary, offset=0):
+def get_similarity_score_from_binary_to_label(model_binary, class_binary):
     """
     Get the predicted class from the binary output of the model.
     Args:
@@ -244,11 +247,13 @@ def get_predicted_class_from_model_binary_output(model_binary, class_binary, off
     """
     model_binary = model_binary.cpu()
     model_binary = model_binary.view(-1,)
+
     # get the class from the binary output
-    for c, b in class_binary.items():
-        if numpy.sum(numpy.abs(numpy.array(b) - numpy.array(model_binary))) <= offset:
-            return c
-    return -1 # unknown class
+    class_similarities = numpy.empty(len(class_binary))
+    for i, (c, b) in enumerate(class_binary.items()):
+        similarity =  numpy.sum(numpy.abs(numpy.array(b) - numpy.array(model_binary)))
+        class_similarities[i] = similarity
+    return torch.from_numpy(class_similarities)
 
 
 def get_sets_for_ensemble(unique_classes, num_models):
@@ -314,13 +319,13 @@ def worker(cfg):
     train_ds = Dataset_EMNIST(
         dataset_root=cfg.data.dataset_path,
         which_set="train",
-        include_unknown=False,  #TODO: change this to True for bce
+        include_unknown=False,
         has_garbage_class=False)
     
     val_ds = Dataset_EMNIST(
         dataset_root=cfg.data.dataset_path,
         which_set="validation",
-        include_unknown=False,  #TODO: change this to True for bce
+        include_unknown=False,  
         has_garbage_class=False)
 
         # If using garbage class, replaces label -1 to maximum label + 1
@@ -328,7 +333,7 @@ def worker(cfg):
             # Only change the unknown label of the training dataset
             train_ds.replace_negative_label()
             val_ds.replace_negative_label()
-    elif cfg.loss.type == "softmax": #TODO remove negatives from training and validation set for bce too?
+    elif cfg.loss.type == "softmax": # not needed for bce because we have no negative atm
             # remove the negative label from softmax training set, not from val set!
             train_ds.remove_negative_label()
     
@@ -424,7 +429,7 @@ def worker(cfg):
             scheduler = None
         schedulers.append(scheduler)
 
-    # Resume a training from a checkpoint #TODO: check if this is correct for multiple models
+    # Resume a training from a checkpoint #TODO: implement this for ensemble training
     if cfg.checkpoint is not None:
         # Get the relative path of the checkpoint wrt train.py
         START_EPOCH, BEST_SCORE = load_checkpoint(

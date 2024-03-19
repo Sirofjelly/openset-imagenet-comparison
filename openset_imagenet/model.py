@@ -8,6 +8,7 @@ import random
 import numpy as np
 import pathlib
 import vast
+from collections import OrderedDict
 
 class ResNet50(nn.Module):
     """Represents a ResNet50 model"""
@@ -98,7 +99,7 @@ class EnsembleModel(nn.Module):
         '''
         One forward pass through the ensemble.
         Args:
-            x: input
+            x: input image
         '''
         logits = torch.stack([model(x)[0] for model in self.models], dim=0)
         features = torch.stack([model(x)[1] for model in self.models], dim=0)

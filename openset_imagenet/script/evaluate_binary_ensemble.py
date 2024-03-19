@@ -228,7 +228,7 @@ def process_model(protocol, loss, algorithms, cfg, suffix, gpu, force):
     if loss == "garbage":
         n_classes = test_dataset.label_count - 1 # we use one class for the negatives; the dataset has two additional  labels: negative and unknown
     elif loss == "bce":
-        n_classes = 1 # TODO check this
+        n_classes = 1 # TODO check this, needed for output of the model
     else:
         n_classes = test_dataset.label_count - 2  # number of classes - 2 when training was without garbage class
 
@@ -248,6 +248,7 @@ def process_model(protocol, loss, algorithms, cfg, suffix, gpu, force):
                         # extract features
                         logger.info(f"Extracting base scores for protocol {protocol}, {loss}")
                         gt, logits, features, base_scores = extract(base_model, test_loader, cfg.algorithm.type, loss)
+                        print(base_scores)
                         write_scores(gt, logits, features, base_scores, loss, cfg.algorithm.type, suffix, cfg.output_directory)
                         # remove model from GPU memory
                         del base_model
