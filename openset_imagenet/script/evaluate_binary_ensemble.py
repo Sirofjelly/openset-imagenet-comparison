@@ -240,7 +240,7 @@ def process_model(protocol, loss, algorithms, cfg, suffix, gpu, force):
                     # load base model
                     base_models = torch.nn.ModuleList()
                     for i in range(cfg.algorithm.num_models):
-                        base_model = load_model(cfg, loss, cfg.algorithm.type, protocol, suffix, cfg.output_directory, n_classes, model_nr=i)
+                        base_model = load_model(cfg, loss, cfg.algorithm.type, protocol, suffix, output_directory, n_classes, model_nr=i)
                         base_models.append(base_model)
                     # create ensemble
                     base_model = EnsembleModel(base_models)
@@ -248,8 +248,7 @@ def process_model(protocol, loss, algorithms, cfg, suffix, gpu, force):
                         # extract features
                         logger.info(f"Extracting base scores for protocol {protocol}, {loss}")
                         gt, logits, features, base_scores = extract(base_model, test_loader, cfg.algorithm.type, loss)
-                        print(base_scores)
-                        write_scores(gt, logits, features, base_scores, loss, cfg.algorithm.type, suffix, cfg.output_directory)
+                        write_scores(gt, logits, features, base_scores, loss, cfg.algorithm.type, suffix, output_directory)
                         # remove model from GPU memory
                         del base_model
                 else:

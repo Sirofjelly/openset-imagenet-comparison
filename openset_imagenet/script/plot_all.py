@@ -18,6 +18,7 @@ from collections import defaultdict
 from matplotlib import pyplot, cm, colors
 from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.ticker import MaxNLocator, LogLocator
+from openset_imagenet.script.parameter_selection import THRESHOLDS
 
 #def train_one(cmd):
 #  print(cmd)
@@ -165,11 +166,11 @@ def plot_OSCR_separated(args, scores, ground_truths, unk_label):
     gs = fig.add_gridspec(P, L, hspace=0.25, wspace=0.1)
     axs = gs.subplots(sharex=True, sharey=True)
     font = 15
-
+    # axs = axs.reshape(P, L) # reshape to 2D array needed when P=1 then only 1D array is returned
     for p, protocol in enumerate(args.protocols):
         for l, loss in enumerate(args.losses):
             openset_imagenet.util.plot_oscr(arrays={loss: scores[protocol][loss]}, gt=ground_truths[protocol], scale="semilog", title=f'$P_{protocol}$ {NAMES[loss]}',
-                    ax_label_font=font, ax=axs[p,l], unk_label=unk_label, line_style="solid")
+                ax_label_font=font, ax=axs[p,l], unk_label=unk_label, line_style="solid")
     # Axis properties
     for ax in axs.flat:
         ax.label_outer()
@@ -208,8 +209,6 @@ def plot_score_distributions(args, scores, ground_truths, pdf):
     fill_negative = colors.to_rgba('tab:green', 0.04)
 
     for p, protocol in enumerate(args.protocols):
-
-#        fig = pyplot.figure(figsize=(3*A+1, 2*P))
         fig = pyplot.figure(figsize=(3*A+1, 2*L))
         gs = fig.add_gridspec(L, A, hspace=0.2, wspace=0.08)
         axs = gs.subplots(sharex=True, sharey=False)
@@ -267,7 +266,6 @@ def plot_score_distributions(args, scores, ground_truths, pdf):
         pdf.savefig(bbox_inches='tight', pad_inches = 0)
 
 
-from .parameter_selection import THRESHOLDS
 def ccr_table(args, scores, gt):
 
     def nonemax(a,b):
@@ -371,3 +369,6 @@ def main(command_line_arguments = None):
     # create result table
     print("Creating CCR Tables")
     ccr_table(args, scores, ground_truths)
+
+if __name__=='__main__':
+    main()

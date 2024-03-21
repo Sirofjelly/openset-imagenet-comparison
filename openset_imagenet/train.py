@@ -15,7 +15,8 @@ import vast
 from loguru import logger
 from .metrics import confidence, auc_score_binary, auc_score_multiclass
 from .dataset import ImagenetDataset
-from .model import ResNet50, load_checkpoint, save_checkpoint, set_seeds
+from .dataset_emnist import Dataset_EMNIST
+from .model import ResNet50, LeNet5, load_checkpoint, save_checkpoint, set_seeds
 from .losses import AverageMeter, EarlyStopping, EntropicOpensetLoss
 import tqdm
 
@@ -186,44 +187,57 @@ def worker(cfg):
         level="INFO",
         mode='w')
 
-    # Set image transformations
-    train_tr = transforms.Compose(
-        [transforms.Resize(256),
-         transforms.RandomCrop(224),
-         transforms.RandomHorizontalFlip(0.5),
-         transforms.ToTensor()])
+    if not cfg.data.dataset == 'emnist':
+        # Set image transformations
+        train_tr = transforms.Compose(
+            [transforms.Resize(256),
+            transforms.RandomCrop(224),
+            transforms.RandomHorizontalFlip(0.5),
+            transforms.ToTensor()])
 
-    val_tr = transforms.Compose(
-        [transforms.Resize(256),
-         transforms.CenterCrop(224),
-         transforms.ToTensor()])
+        val_tr = transforms.Compose(
+            [transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor()])
 
-    # create datasets
-    train_file = pathlib.Path(cfg.data.train_file.format(cfg.protocol))
-    val_file = pathlib.Path(cfg.data.val_file.format(cfg.protocol))
+        # create datasets
+        train_file = pathlib.Path(cfg.data.train_file.format(cfg.protocol))
+        val_file = pathlib.Path(cfg.data.val_file.format(cfg.protocol))
 
-    if train_file.exists() and val_file.exists():
-        train_ds = ImagenetDataset(
-            csv_file=train_file,
-            imagenet_path=cfg.data.imagenet_path,
-            transform=train_tr
-        )
-        val_ds = ImagenetDataset(
-            csv_file=val_file,
-            imagenet_path=cfg.data.imagenet_path,
-            transform=val_tr
-        )
+        if train_file.exists() and val_file.exists():
+            train_ds = ImagenetDataset(
+                csv_file=train_file,
+                imagenet_path=cfg.data.imagenet_path,
+                transform=train_tr
+            )
+            val_ds = ImagenetDataset(
+                csv_file=val_file,
+                imagenet_path=cfg.data.imagenet_path,
+                transform=val_tr
+            )
 
-        # If using garbage class, replaces label -1 to maximum label + 1
-        if cfg.loss.type == "garbage":
-            # Only change the unknown label of the training dataset
-            train_ds.replace_negative_label()
-            val_ds.replace_negative_label()
-        elif cfg.loss.type == "softmax":
-            # remove the negative label from softmax training set, not from val set!
-            train_ds.remove_negative_label()
+            # If using garbage class, replaces label -1 to maximum label + 1
+            if cfg.loss.type == "garbage":
+                # Only change the unknown label of the training dataset
+                train_ds.replace_negative_label()
+                val_ds.replace_negative_label()
+            elif cfg.loss.type == "softmax":
+                # remove the negative label from softmax training set, not from val set!
+                train_ds.remove_negative_label()
+        else:
+            raise FileNotFoundError("train/validation file does not exist")
     else:
-        raise FileNotFoundError("train/validation file does not exist")
+        train_ds = Dataset_EMNIST(
+        dataset_root=cfg.data.imagenet_path,
+        which_set="train",
+        include_unknown=False,
+        has_garbage_class=False)
+    
+    val_ds = Dataset_EMNIST(
+        dataset_root=cfg.data.imagenet_path,
+        which_set="validation",
+        include_unknown=False,  
+        has_garbage_class=False)
 
     train_loader = DataLoader(
         train_ds,
@@ -277,7 +291,12 @@ def worker(cfg):
         loss = torch.nn.CrossEntropyLoss(weight=class_weights)
 
     # Create the model
-    model = ResNet50(fc_layer_dim=n_classes,
+    if cfg.data.dataset == 'emnist':
+        model = LeNet5(fc_layer_dim=n_classes,
+                     out_features=n_classes,
+                     logit_bias=False)
+    else:
+        model = ResNet50(fc_layer_dim=n_classes,
                      out_features=n_classes,
                      logit_bias=False)
     device(model)

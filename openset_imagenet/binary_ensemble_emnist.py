@@ -1,4 +1,5 @@
 import random
+import os
 import time
 import sys
 import pathlib
@@ -296,6 +297,7 @@ def worker(cfg):
     """
     # referencing best score and setting seeds
     set_seeds(cfg.seed)
+    cfg.output_directory = os.path.join(cfg.output_directory, f"Protocol_{cfg.protocol}")
 
 
     # best scores for num_models

@@ -78,12 +78,19 @@ def dataset(cfg, protocol):
         [tf.Resize(256),
          tf.CenterCrop(224),
          tf.ToTensor()])
-
-    # We only need test data here, since we assume that parameters have been selected
-    test_dataset = openset_imagenet.ImagenetDataset(
-        csv_file=cfg.data.test_file.format(protocol),
-        imagenet_path=cfg.data.imagenet_path,
-        transform=transform)
+    
+    if cfg.data.dataset == "emnist":
+        test_dataset = openset_imagenet.Dataset_EMNIST(
+            dataset_root=cfg.data.imagenet_path,
+            which_set="test",
+            include_unknown=True
+        )
+    else:
+        # We only need test data here, since we assume that parameters have been selected
+        test_dataset = openset_imagenet.ImagenetDataset(
+            csv_file=cfg.data.test_file.format(protocol),
+            imagenet_path=cfg.data.imagenet_path,
+            transform=transform)
 
     # Info on console
     logger.info(f"Loaded test dataset for protocol {protocol} with len:{len(test_dataset)}, labels:{test_dataset.label_count}")
@@ -112,10 +119,16 @@ def load_model(cfg, loss, algorithm, protocol, suffix, output_directory, n_class
 
         model_path = opt.output_model_path.format(output_directory, loss, algorithm, popt.epochs, popt.dummy_count, suffix)
     else:
-        model = openset_imagenet.ResNet50(
-            fc_layer_dim=n_classes,
-            out_features=n_classes,
-            logit_bias=False)
+        if cfg.data.dataset == "emnist":
+            model = openset_imagenet.LeNet5(
+                fc_layer_dim=n_classes,
+                out_features=n_classes,
+                logit_bias=False)
+        else:
+            model = openset_imagenet.ResNet50(
+                fc_layer_dim=n_classes,
+                out_features=n_classes,
+                logit_bias=False)
 
         model_path = cfg.model_path.format(output_directory, loss, "threshold", suffix)
 
@@ -202,6 +215,8 @@ def process_model(protocol, loss, algorithms, cfg, suffix, gpu, force):
     # load base model
     if loss == "garbage":
         n_classes = test_dataset.label_count - 1 # we use one class for the negatives; the dataset has two additional  labels: negative and unknown
+    elif cfg.data.dataset == "emnist":
+        n_classes = test_dataset.label_count - 1
     else:
         n_classes = test_dataset.label_count - 2  # number of classes - 2 when training was without garbage class
 

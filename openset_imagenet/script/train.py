@@ -52,6 +52,7 @@ def main(command_line_options = None):
     if args.gpu is not None:
         config.gpu = args.gpu
     config.protocol = args.protocol
+    
 
     if config.algorithm.type == "threshold":
         openset_imagenet.train.worker(config)

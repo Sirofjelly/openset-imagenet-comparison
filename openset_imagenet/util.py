@@ -161,13 +161,15 @@ COLORS = {
     "openmax": colors[8],
     "proser": colors[2],
     "evm": colors[3],
-    "maxlogits": colors[5]
+    "maxlogits": colors[5],
+    "binary_ensemble_emnist": colors[6],
 }
 
 STYLES = {
     "entropic": "dashed",
     "softmax": "solid",
     "garbage": "dotted",
+    "bce": "dashdot",
     "p1": "dashed",
     "p2": "dotted",
     "p3": "solid"
@@ -179,9 +181,11 @@ NAMES = {
     "proser": "PROSER*",
     "evm": "EVM",
     "maxlogits": "MLS",
+    "binary_ensemble_emnist": "BE",
     "entropic": "EOS",
     "softmax": "Softmax",
     "garbage": "Garbage",
+    "bce": "BCE",
     "p1": "P_1",
     "p2": "P_2",
     "p3": "P_3",
