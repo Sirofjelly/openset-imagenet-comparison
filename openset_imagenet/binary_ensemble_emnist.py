@@ -240,12 +240,13 @@ def get_binary_output_for_class_per_model(class_splits):
 
 def get_similarity_score_from_binary_to_label(model_binary, class_binary):
     """
-    Get the predicted class from the binary output of the model.
+    Get the predicted class from the binary output of the model. The lower the similarity the worst. Exact match is == num_models
     Args:
         model_binary (list): Binary output of the model.
         class_binary (dict): Binary representation of the classes.
         offset (int): Offset acts like distance on how many binary outputs are allowed to be different.
     """
+    num_models = len(model_binary)
     model_binary = model_binary.cpu()
     model_binary = model_binary.view(-1,)
 
@@ -253,7 +254,7 @@ def get_similarity_score_from_binary_to_label(model_binary, class_binary):
     class_similarities = numpy.empty(len(class_binary))
     for i, (c, b) in enumerate(class_binary.items()):
         similarity =  numpy.sum(numpy.abs(numpy.array(b) - numpy.array(model_binary)))
-        class_similarities[i] = similarity
+        class_similarities[i] = num_models - similarity
     return torch.from_numpy(class_similarities)
 
 
