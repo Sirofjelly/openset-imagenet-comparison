@@ -17,7 +17,12 @@ def command_line_options(command_line_arguments=None):
     """Gets the evaluation parameters."""
     parser = argparse.ArgumentParser("Get parameters for evaluation", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-
+    parser.add_argument(
+        "--threshold",
+        choices = ["threshold", "logits"],
+        default = ["threshold"],
+        help="Which evaluation criteria to use. If True, the threshold is used. If False, the logits distance is used."
+    )
     # directory parameters
     parser.add_argument(
         "--losses", "-l",
@@ -152,7 +157,7 @@ def load_model(cfg, loss, algorithm, protocol, suffix, output_directory, n_class
     return model
 
 
-def extract(model, data_loader, algorithm, loss):
+def extract(model, data_loader, algorithm, loss, threshold):
     if algorithm == 'proser':
          return openset_imagenet.proser.get_arrays(
             model=model,
@@ -164,7 +169,8 @@ def extract(model, data_loader, algorithm, loss):
             model=model,
             loader=data_loader,
             garbage=loss=="garbage",
-            pretty=True
+            pretty=True,
+            threshold=threshold
         )
 
 
@@ -211,7 +217,7 @@ def load_scores(loss, algorithm, suffix, output_directory):
         return None
 
 
-def process_model(protocol, loss, algorithms, cfg, suffix, gpu, force):
+def process_model(protocol, loss, algorithms, cfg, suffix, gpu, force, threshold):
     output_directory = Path(cfg.output_directory)/f"Protocol_{protocol}"
 
     # set device
@@ -247,7 +253,7 @@ def process_model(protocol, loss, algorithms, cfg, suffix, gpu, force):
                     if base_model is not None:
                         # extract features
                         logger.info(f"Extracting base scores for protocol {protocol}, {loss}")
-                        gt, logits, features, base_scores = extract(base_model, test_loader, cfg.algorithm.type, loss)
+                        gt, logits, features, base_scores = extract(base_model, test_loader, cfg.algorithm.type, loss, threshold)
                         write_scores(gt, logits, features, base_scores, loss, cfg.algorithm.type, suffix, output_directory)
                         # remove model from GPU memory
                         del base_model
@@ -311,7 +317,7 @@ def main(command_line_arguments = None):
         mode='w')
     for protocol in args.protocols:
         for loss in args.losses:
-            process_model(protocol, loss, args.algorithms, cfg, suffix, args.gpu, args.force)
+            process_model(protocol, loss, args.algorithms, cfg, suffix, args.gpu, args.force, args.threshold)
 
 if __name__=='__main__':
     main()

@@ -161,7 +161,7 @@ def validate_ensemble(model, data_loader, class_dict, loss_fn, n_classes, tracke
             trackers["conf_unk"].update(neg_conf, neg_count)
 
 
-def get_arrays(model, loader, garbage, pretty=False):
+def get_arrays(model, loader, garbage, pretty=False, threshold=True):
     """ Extract deep features, logits and targets for all dataset. Returns numpy arrays
 
     Args:
@@ -197,10 +197,15 @@ def get_arrays(model, loader, garbage, pretty=False):
     
             # compute softmax scores
             scores_sig = torch.nn.functional.sigmoid(logits) #TODO changed from softmax to sigmoid for bce, could be left out by applying threshold 0 to logits
-            scores = (scores_sig >= 0.5).type(torch.int64) # Change this for different evaluation metrics
             final_class_score = torch.empty((curr_b_size, len(class_binaries)), device="cpu")
-            for i in range(scores.shape[1]):
-                final_class_score[i, :] = get_similarity_score_from_binary_to_label(model_binary=scores[:, i], class_binary=class_binaries)
+            if threshold == "threshold":
+                scores = (scores_sig >= 0.5).type(torch.int64)
+                for i in range(scores.shape[1]): 
+                    final_class_score[i, :] = get_similarity_score_from_binary_to_label(model_binary=scores[:, i], class_binary=class_binaries)
+            elif threshold == "logits":
+                for i in range(scores_sig.shape[1]):
+                    final_class_score[i, :] = get_similarity_score_from_binary_to_label(model_binary=scores_sig[:, i], class_binary=class_binaries)
+                
             # shall we remove the logits of the unknown class?
             # We do this AFTER computing softmax, of course.
             if garbage:
