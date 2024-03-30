@@ -16,7 +16,7 @@ seed: 42        # Common seed across all source of randomness
 batch_size: 32  # If distributed training the batch size is multiplied by the number of gpus
 epochs: 20    # Number of epochs to train.
 workers: 4      # Dataloader number of workers
-patience: 0     # Number of epochs to wait before stopping the training. 0 means no early stopping
+patience: 0    # Number of epochs to wait before stopping the training. 0 means no early stopping
 
 # loss parameters
 loss:
@@ -34,4 +34,4 @@ opt:
 # Algorithm parameters
 algorithm:
   type: binary_ensemble_emnist
-  num_models: 10
+  num_models: 1000

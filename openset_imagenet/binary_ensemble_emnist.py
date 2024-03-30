@@ -361,8 +361,9 @@ def worker(cfg):
         val_ds,
         batch_size=cfg.batch_size,
         shuffle=False,
-        num_workers=cfg.workers,
-        pin_memory=True,)
+        num_workers=0,
+        pin_memory=True,
+        timeout=0)
 
     # setup device
     if cfg.gpu is not None:
