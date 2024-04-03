@@ -41,7 +41,7 @@ def command_line_options(command_line_arguments=None):
     )
     parser.add_argument(
         "--algorithms", "-a",
-        choices = ["threshold", "openmax", "proser", "evm", "binary_ensemble", "binary_ensemble_emnist"],
+        choices = ["threshold", "openmax", "proser", "evm", "binary_ensemble", "binary_ensemble_emnist", "binary_ensemble_combined_emnist"],
         nargs = "+",
         default = ["threshold", "openmax", "proser", "evm"],
         help = "Which algorithm to evaluate. Specific parameters should be in the yaml file"
@@ -85,7 +85,7 @@ def dataset(cfg, protocol):
          tf.CenterCrop(224),
          tf.ToTensor()])
 
-    if cfg.algorithm.type == "binary_ensemble_emnist":
+    if cfg.algorithm.type == "binary_ensemble_emnist" or cfg.algorithm.type == "binary_ensemble_combined_emnist":
         test_dataset = openset_imagenet.Dataset_EMNIST(
             dataset_root=cfg.data.dataset_path,
             which_set="test",
@@ -131,7 +131,13 @@ def load_model(cfg, loss, algorithm, protocol, suffix, output_directory, n_class
             logit_bias=False)
 
         model_path = cfg.model_path.format(output_directory, loss, cfg.algorithm.type, suffix, model_nr)
-        print(model_path)
+    elif cfg.algorithm.type == "binary_ensemble_combined_emnist":
+        model = openset_imagenet.LeNet5(
+            fc_layer_dim=84,
+            out_features=n_classes,
+            logit_bias=False)
+
+        model_path = cfg.model_path.format(output_directory, loss, "binary_ensemble_combined_emnist", suffix)
     else:
         model = openset_imagenet.ResNet50(
             fc_layer_dim=n_classes,
@@ -147,6 +153,8 @@ def load_model(cfg, loss, algorithm, protocol, suffix, output_directory, n_class
 
     if cfg.algorithm.type == "binary_ensemble_emnist":
         start_epoch, best_score = openset_imagenet.binary_ensemble_emnist.load_checkpoint(model, model_path)
+    elif cfg.algorithm.type == "binary_ensemble_combined_emnist":
+        start_epoch, best_score = openset_imagenet.binary_ensemble_combined_emnist.load_checkpoint(model, model_path)
     elif cfg.algorithm.type == "binary_ensemble":
             start_epoch, best_score = openset_imagenet.binary_ensemble.load_checkpoint(model, model_path)
     else: # all other models
@@ -164,8 +172,16 @@ def extract(model, data_loader, algorithm, loss, threshold):
             loader=data_loader,
             pretty=True
         )
-    else:
+    elif algorithm == 'binary_ensemble_emnist':
         return openset_imagenet.binary_ensemble_emnist.get_arrays(
+            model=model,
+            loader=data_loader,
+            garbage=loss=="garbage",
+            pretty=True,
+            threshold=threshold
+        )
+    elif algorithm == 'binary_ensemble_combined_emnist':
+        return openset_imagenet.binary_ensemble_combined_emnist.get_arrays(
             model=model,
             loader=data_loader,
             garbage=loss=="garbage",
@@ -175,7 +191,7 @@ def extract(model, data_loader, algorithm, loss, threshold):
 
 
 def post_process(gt, logits, features, scores, cfg, protocol, loss, algorithm, output_directory, gpu):
-    if algorithm in ("threshold", "proser", "binary_ensemble_emnist"):
+    if algorithm in ("threshold", "proser", "binary_ensemble_emnist", "binary_ensemble_combined_emnist"):
         print("shape gt", gt.shape)
         print("shape logits", logits.shape)
         print("shape features", features.shape)
@@ -260,6 +276,21 @@ def process_model(protocol, loss, algorithms, cfg, suffix, gpu, force, threshold
                 else:
                     logger.info("Using previously computed features")
                     gt, logits, features, base_scores = base_data["gt"], base_data["logits"], base_data["features"], base_data["scores"]
+        elif any(a == "binary_ensemble_combined_emnist" for a in algorithms):
+            base_data = None if force else load_scores(loss, "binary_ensemble_combined_emnist", suffix, output_directory)
+            if base_data is None:
+                logger.info(f"Loading base models for protocol {protocol}, {loss}")
+                base_model = load_model(cfg, loss, "binary_ensemble_combined_emnist", protocol, suffix, output_directory, cfg.algorithm.num_models)
+                if base_model is not None:
+                    # extract features
+                    logger.info(f"Extracting base scores for protocol {protocol}, {loss}")
+                    gt, logits, features, base_scores = extract(base_model, test_loader, "binary_ensemble_combined_emnist", loss, threshold)
+                    write_scores(gt, logits, features, base_scores, loss, "binary_ensemble_combined_emnist", suffix, output_directory)
+                    # remove model from GPU memory
+                    del base_model
+            else:
+                logger.info("Using previously computed features")
+                gt, logits, features, base_scores = base_data["gt"], base_data["logits"], base_data["features"], base_data["scores"]
         else: # when we do not need for loop
             base_data = None if force else load_scores(loss, "threshold", suffix, output_directory)
             if base_data is None:

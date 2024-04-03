@@ -10,6 +10,9 @@ from matplotlib.lines import Line2D
 from matplotlib.ticker import LogLocator, NullFormatter
 from matplotlib import colors
 import matplotlib.cm as cm
+import random
+import numpy
+import torch
 
 import yaml
 
@@ -332,3 +335,98 @@ def get_histogram(scores,
     histograms["unknown"] = np.histogram(unknowns, bins=bins)
     histograms["negative"] = np.histogram(negatives, bins=bins)
     return histograms
+
+
+# new util functions
+def get_binary_output_for_class_per_model(class_splits):
+    """ Get the binary class representation for each class."""
+    all_classes = []
+    all_classes = class_splits[0][0] + class_splits[0][1]   
+    all_classes.sort()
+
+    # get the binary class representation
+    class_binary = {}
+    for c in all_classes:
+        binary_code = []
+        for class_split in class_splits:
+            if c in class_split[0]:
+                binary_code.append(0)
+            elif c in class_split[1]:
+                binary_code.append(1)
+            else:
+                raise ValueError("Class not found in any split")
+        class_binary[c] = binary_code
+    return class_binary
+
+def get_similarity_score_from_binary_to_label(model_binary, class_binary):
+    """
+    Get the predicted class from the binary output of the model. The lower the similarity the worse. Exact match is == num_models
+    Args:
+        model_binary (list): Binary output of the model.
+        class_binary (dict): Binary representation of the classes.
+        offset (int): Offset acts like distance on how many binary outputs are allowed to be different.
+    """
+    num_models = len(model_binary)
+    model_binary = model_binary.cpu()
+    model_binary = model_binary.view(-1,)
+
+    # get the class from the binary output
+    class_similarities = numpy.empty(len(class_binary))
+    for i, (c, b) in enumerate(class_binary.items()):
+        similarity =  numpy.sum(numpy.abs(numpy.array(b) - numpy.array(model_binary)))
+        class_similarities[i] = num_models - similarity
+    return torch.from_numpy(class_similarities)
+
+
+def get_sets_for_ensemble(unique_classes, num_models):
+    """ Create the splits for the ensemble training.
+    Args:
+        unique_classes (list): List of unique classes
+        num_models (int): Number of models in the ensemble
+    Returns:
+        list: List of dictionaries with the class splits
+    """
+    class_splits = []
+    shuffled_classes = []
+    split_size = len(unique_classes) // 2
+    unique_classes = list(unique_classes)
+
+    for i in range(num_models):
+        # check if we had the same shuffle before or the exact opposite
+        while True:
+            classes = random.sample(unique_classes, len(unique_classes))
+            split_0 = classes[:split_size]
+            split_1 = classes[split_size:]
+            split_0.sort()
+            split_1.sort()
+            if (split_0, split_1) not in shuffled_classes and (split_1, split_0) not in shuffled_classes:
+                shuffled_classes.append((split_0, split_1))
+                # finally add the split to the list
+                class_splits.append({0: split_0, 1: split_1})
+                break
+            else:
+                print("this split does already exist: ", split_1, split_0)
+    print("Ensemble training class splits: ", class_splits)
+    return class_splits
+
+def get_class_from_label(label, class_dict):
+    """ Get the class from the label.
+        Based on the input class it searches for for the class and returns the label.
+
+    Args:
+        label (int): Label
+        class_dict (dict): Dictionary with the class splits
+    Returns:
+        torch.float32: Class, either 0 or 1
+    """
+    # Check which class the label belongs to and replace the label with that class
+    for key, value in class_dict.items():
+        if label == -1:
+            return torch.as_tensor(-1, dtype=torch.float32)
+        if label in value:
+            if key != 0 and key != 1:
+                print(key)
+                raise ValueError("The class label is not 0 or 1")
+            found_label = torch.as_tensor(key, dtype=torch.float32)
+            return found_label
+    return None
