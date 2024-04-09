@@ -26,11 +26,12 @@ class Dataset_EMNIST(torch.utils.data.dataset.Dataset):
     has_garbage_class: Set this to True when training softmax with background class. This way, unknown samples will get class label 10. If False (the default), unknown samples will get label -1.
     """
     def __init__(self, dataset_root, which_set="train", include_unknown=True, has_garbage_class=False):
-        self.mnist = torchvision.datasets.MNIST(
+        self.mnist = torchvision.datasets.EMNIST(
             root=dataset_root,
             train=which_set == "train",
             download=True,
-            transform=transforms.ToTensor()
+            split="mnist",
+            transform=transforms.Compose([transforms.ToTensor(), transpose])
         )
         self.letters = torchvision.datasets.EMNIST(
             root=dataset_root,
@@ -40,7 +41,7 @@ class Dataset_EMNIST(torch.utils.data.dataset.Dataset):
             transform=transforms.Compose([transforms.ToTensor(), transpose])
         )
         self.which_set = which_set
-        targets = list() if not include_unknown else list(range(1,14)) if which_set != "test" else list(range(14,27))
+        targets = list() if not include_unknown else [1,2,3,4,5,6,8,10,11,13,14] if which_set != "test" else [16,17,18,19,20,21,22,23,24,25,26]
         self.letter_indexes = [i for i, t in enumerate(self.letters.targets) if t in targets]
         self.has_garbage_class = has_garbage_class
 

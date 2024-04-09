@@ -233,11 +233,11 @@ def worker(cfg):
         include_unknown=False,
         has_garbage_class=False)
     
-    val_ds = Dataset_EMNIST(
-        dataset_root=cfg.data.imagenet_path,
-        which_set="validation",
-        include_unknown=False,  
-        has_garbage_class=False)
+        val_ds = Dataset_EMNIST(
+            dataset_root=cfg.data.imagenet_path,
+            which_set="validation",
+            include_unknown=False,  
+            has_garbage_class=False)
 
     train_loader = DataLoader(
         train_ds,
