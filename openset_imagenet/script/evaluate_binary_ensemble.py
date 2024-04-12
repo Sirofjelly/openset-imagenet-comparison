@@ -19,7 +19,7 @@ def command_line_options(command_line_arguments=None):
 
     parser.add_argument(
         "--threshold",
-        choices = ["threshold", "logits"],
+        choices = ["threshold", "logits", "logits-no-sigmoid"],
         default = ["threshold"],
         help="Which evaluation criteria to use. If True, the threshold is used. If False, the logits distance is used."
     )

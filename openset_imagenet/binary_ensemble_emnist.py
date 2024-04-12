@@ -19,7 +19,7 @@ from .dataset_emnist import Dataset_EMNIST
 from .model import LeNet5, EnsembleModel, load_checkpoint, save_checkpoint, set_seeds
 from .losses import AverageMeter, EarlyStopping, EntropicOpensetLoss
 import tqdm
-from .util import get_sets_for_ensemble, get_binary_output_for_class_per_model, get_similarity_score_from_binary_to_label, get_class_from_label
+from .util import get_sets_for_ensemble, get_binary_output_for_class_per_model, get_similarity_score_from_binary_to_label, get_class_from_label, get_similarity_score_from_binary_to_label_new
 
 def train_ensemble(model, data_loader, class_dict, optimizer, loss_fn, trackers, cfg):
     """ Main training loop.
@@ -176,16 +176,21 @@ def get_arrays(model, loader, garbage, pretty=False, threshold=True):
             targets = labels.view(-1,)
     
             # compute softmax scores
-            scores_sig = torch.nn.functional.sigmoid(logits)
             final_class_score = torch.empty((curr_b_size, len(class_binaries)), device="cpu")
             if threshold == "threshold":
+                scores_sig = torch.nn.functional.sigmoid(logits)
                 scores = (scores_sig >= 0.5).type(torch.int64) # by doing this we lose lots of information
                 for i in range(scores.shape[1]): 
                     final_class_score[i, :] = get_similarity_score_from_binary_to_label(model_binary=scores[:, i], class_binary=class_binaries)
             elif threshold == "logits":
+                scores_sig = torch.nn.functional.sigmoid(logits)
                 for i in range(scores_sig.shape[1]):
                     final_class_score[i, :] = get_similarity_score_from_binary_to_label(model_binary=scores_sig[:, i], class_binary=class_binaries)
-                
+            elif threshold == "logits-no-sigmoid":
+                for i in range(logits.shape[1]):
+                    final_class_score[i, :] = get_similarity_score_from_binary_to_label_new(logits[:, i], class_binary=class_binaries)
+
+
             # shall we remove the logits of the unknown class?
             # We do this AFTER computing softmax, of course.
             if garbage:
