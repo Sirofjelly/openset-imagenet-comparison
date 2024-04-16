@@ -5,6 +5,8 @@ import pathlib
 from collections import OrderedDict, defaultdict
 import numpy
 import torch
+import functools
+from torchvision import ops
 from torch.optim import lr_scheduler
 from torch.utils.tensorboard import SummaryWriter
 from torch.nn.parallel import DistributedDataParallel
@@ -42,7 +44,7 @@ def train(model, data_loader, class_dicts, optimizer, loss_fn, trackers, cfg):
     for images, labels in data_loader:
         images = device(images)
         labels = device(labels)
-        # Check which class the label belongs to and replace the label with that class
+        # Check which class the label belongs to and replace the label with that class either 0 or 1
         intermediate_labels = optimize_labels(labels, class_dicts)
   
         model.train()  # To collect batch-norm statistics set model to train mode
@@ -78,7 +80,7 @@ def validate(model, data_loader, class_dicts, loss_fn, n_classes, trackers, cfg)
         min_unk_score = 0.
         unknown_class = n_classes - 1
         last_valid_class = -1
-    elif cfg.loss.type == "bce":
+    elif cfg.loss.type == "bce" or cfg.loss.type == "sigmoid-focal":
         min_unk_score = 1. / 2
         unknown_class = -1
         last_valid_class = None
@@ -330,6 +332,9 @@ def worker(cfg):
     elif cfg.loss.type == "bce":
         # Binary cross entropy loss
         loss = torch.nn.BCEWithLogitsLoss()
+    elif cfg.loss.type == "sigmoid-focal":
+        # Sigmoid focal loss
+        loss = functools.partial(ops.sigmoid_focal_loss, alpha=-1, gamma=2, reduction="mean")
 
     # Create the model
     if cfg.data.dataset == 'emnist':
