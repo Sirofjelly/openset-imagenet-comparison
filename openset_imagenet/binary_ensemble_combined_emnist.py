@@ -78,6 +78,10 @@ def validate(model, data_loader, class_dicts, loss_fn, n_classes, trackers, cfg)
         min_unk_score = 0.
         unknown_class = n_classes - 1
         last_valid_class = -1
+    elif cfg.loss.type == "bce":
+        min_unk_score = 1. / 2
+        unknown_class = -1
+        last_valid_class = None
     else:
         min_unk_score = 1. / n_classes
         unknown_class = -1
@@ -107,7 +111,7 @@ def validate(model, data_loader, class_dicts, loss_fn, n_classes, trackers, cfg)
 
             # targets = labels.view(-1,)
             targets = intermediate_labels.type(torch.float32)
-            targets = targets.to('cuda:1')
+            targets = device(targets)
             j = loss_fn(logits, targets)
             trackers["j"].update(j.item(), batch_len)
 
@@ -131,7 +135,7 @@ def validate(model, data_loader, class_dicts, loss_fn, n_classes, trackers, cfg)
             trackers["conf_unk"].update(neg_conf, neg_count)
 
 
-def get_arrays(model, loader, garbage, pretty=False, threshold=True):
+def get_arrays(model, loader, garbage, pretty=False, threshold=True, remove_negative=False):
     """ Extract deep features, logits and targets for all dataset. Returns numpy arrays
 
     Args:
@@ -151,7 +155,7 @@ def get_arrays(model, loader, garbage, pretty=False, threshold=True):
         all_targets = torch.empty(data_len, device="cpu")  # store all targets
         all_logits = torch.empty((data_len, logits_dim), device="cpu")   # store all logits
         all_feat = torch.empty((data_len, features_dim), device="cpu")   # store all features
-        all_scores = torch.empty((data_len, len(class_binaries)), device="cpu")
+        all_scores = torch.empty((data_len, len(class_binaries) -1 if remove_negative else len(class_binaries)), device="cpu")
 
         index = 0
         if pretty:
@@ -176,6 +180,9 @@ def get_arrays(model, loader, garbage, pretty=False, threshold=True):
             if garbage:
                 logits = logits[:,:-1]
                 scores = scores[:,:-1]
+            if remove_negative:
+                # we remove the negative class from the final class score
+                final_class_score = final_class_score[:,1:]
             # accumulate results in all_tensor
             all_targets[index:index + curr_b_size] = labels.detach().cpu()
             all_logits[index:index + curr_b_size] = logits.detach().cpu()
@@ -255,13 +262,13 @@ def worker(cfg):
         train_ds = Dataset_EMNIST(
         dataset_root=cfg.data.dataset_path,
         which_set="train",
-        include_unknown=False,
+        include_unknown=True,
         has_garbage_class=False)
     
         val_ds = Dataset_EMNIST(
             dataset_root=cfg.data.dataset_path,
             which_set="validation",
-            include_unknown=False,  
+            include_unknown=True,  
             has_garbage_class=False)
         
     # Create unique class splits for ensemble set-vs-set training

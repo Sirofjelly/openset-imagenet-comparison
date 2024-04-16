@@ -111,14 +111,14 @@ def confidence_combined_binary(scores, target_labels, offset=0., unknown_class =
             # resulting tensor contains entries from scores where the value in scores matches the corresponding value in target_labels for the selected indices.
             known_scores = scores[known]
             target_labels_known = target_labels[known]
-            kn_conf = torch.eq(known_scores.view(-1,), target_labels_known.view(-1,)).sum().item() / kn_count # this works only for binary classification
+            kn_conf = torch.eq(known_scores, target_labels_known).sum().item() / kn_count # this works only for binary classification
         if neg_count:
+            # check if correct
             # we have negative labels in the validation set
-            neg_conf = torch.sum(
-                1.0
-                + offset
-                - torch.max(scores[unknown,:last_valid_class], dim=1)[0]
-            ).item() / neg_count
+            #TODO check code as this does not work as of rn for negatives   
+            neg_scores = scores[unknown]
+            target_labels_neg = target_labels[unknown]
+            neg_conf = torch.eq(neg_scores, target_labels_neg).sum().item() / neg_count
 
     return kn_conf, kn_count, neg_conf, neg_count
 

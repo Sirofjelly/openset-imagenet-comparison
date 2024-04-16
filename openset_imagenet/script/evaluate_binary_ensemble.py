@@ -186,7 +186,8 @@ def extract(model, data_loader, algorithm, loss, threshold):
             loader=data_loader,
             garbage=loss=="garbage",
             pretty=True,
-            threshold=threshold
+            threshold=threshold,
+            remove_negative=True
         )
 
 
@@ -309,7 +310,7 @@ def process_model(protocol, loss, algorithms, cfg, suffix, gpu, force, threshold
                 gt, logits, features, base_scores = base_data["gt"], base_data["logits"], base_data["features"], base_data["scores"]
 
     for algorithm in algorithms:
-        if algorithm not in ("proser", "threshold", "binary_ensemble_emnist"):
+        if algorithm not in ("proser", "threshold", "binary_ensemble_emnist", "binary_ensemble_combined_emnist"):
             logger.info(f"Post-processing scores for protocol {protocol}, {loss} with {algorithm}")
             # post-process scores
             scores = post_process(gt, logits, features, base_scores, cfg, protocol, loss, algorithm, output_directory, gpu)

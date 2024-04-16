@@ -360,7 +360,7 @@ def get_binary_output_for_class_per_model(class_splits):
 
 def get_similarity_score_from_binary_to_label(model_binary, class_binary):
     """
-    Get the predicted class from the binary output of the model. The lower the similarity the worse. Exact match is == num_models
+    Get the predicted class from the binary sigmoid output of the model. The lower the similarity the worse. Exact match is == num_models
     Args:
         model_binary (list): Binary output of the model.
         class_binary (dict): Binary representation of the classes.
@@ -378,6 +378,7 @@ def get_similarity_score_from_binary_to_label(model_binary, class_binary):
 
 def get_similarity_score_from_binary_to_label_new(model_outputs, class_binary):
     """
+    Used when using logits output from the model without sigmoid.
     Get the predicted class from the binary output of the model. The lower the similarity the worse. Exact match is == num_models
     Args:
         model_outputs (list): Binary output of the model.
@@ -427,19 +428,20 @@ def get_sets_for_ensemble(unique_classes, num_models):
     print("Ensemble training class splits: ", class_splits)
     return class_splits
 
-def get_class_from_label(label, class_dict):
+def get_class_from_label(label, class_dict, separate_class_for_unknown=False):
     """ Get the class from the label.
         Based on the input class it searches for for the class and returns the label.
 
     Args:
         label (int): Label
         class_dict (dict): Dictionary with the class splits
+        separate_class_for_unknown (bool): If True, the unknown class is separated from the rest. And we do have 3 classes.
     Returns:
         torch.float32: Class, either 0 or 1
     """
     # Check which class the label belongs to and replace the label with that class
     for key, value in class_dict.items():
-        if label == -1:
+        if label == -1 and separate_class_for_unknown:
             return torch.as_tensor(-1, dtype=torch.float32)
         if label in value:
             if key != 0 and key != 1:
