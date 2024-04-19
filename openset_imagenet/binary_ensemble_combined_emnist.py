@@ -23,11 +23,11 @@ from .losses import AverageMeter, EarlyStopping, EntropicOpensetLoss
 import tqdm
 from .util import get_sets_for_ensemble, get_class_from_label, get_similarity_score_from_binary_to_label, get_binary_output_for_class_per_model
 
-def optimize_labels(labels, class_dicts):
+def optimize_labels(labels, class_dicts, unknown_in_both=False):
     intermediate_labels = device(torch.zeros((len(labels), len(class_dicts))))
 
     for i, class_dict in enumerate(class_dicts):
-        intermediate_labels[:, i] = device(torch.tensor([get_class_from_label(label.item(), class_dict) for label in labels]))
+        intermediate_labels[:, i] = device(torch.tensor([get_class_from_label(label.item(), class_dict, unknown_in_both=unknown_in_both) for label in labels]))
 
     return intermediate_labels
 
@@ -45,7 +45,7 @@ def train(model, data_loader, class_dicts, optimizer, loss_fn, trackers, cfg):
         images = device(images)
         labels = device(labels)
         # Check which class the label belongs to and replace the label with that class either 0 or 1
-        intermediate_labels = optimize_labels(labels, class_dicts)
+        intermediate_labels = optimize_labels(labels, class_dicts, cfg.loss.unknown_in_both)
   
         model.train()  # To collect batch-norm statistics set model to train mode
         batch_len = labels.shape[0]  # Samples in current batch
@@ -109,7 +109,7 @@ def validate(model, data_loader, class_dicts, loss_fn, n_classes, trackers, cfg)
             scores = (scores >= threshold).type(torch.int64) # TODO do we need to do that?
             
              # get the class from the label either 0 or 1
-            intermediate_labels = optimize_labels(labels, class_dicts)
+            intermediate_labels = optimize_labels(labels, class_dicts, cfg.loss.unknown_in_both)
 
             # targets = labels.view(-1,)
             targets = intermediate_labels.type(torch.float32)
@@ -264,13 +264,13 @@ def worker(cfg):
         train_ds = Dataset_EMNIST(
         dataset_root=cfg.data.dataset_path,
         which_set="train",
-        include_unknown=True,
+        include_unknown=True, # TODO when not using unknowns, set to False
         has_garbage_class=False)
     
         val_ds = Dataset_EMNIST(
             dataset_root=cfg.data.dataset_path,
             which_set="validation",
-            include_unknown=True,  
+            include_unknown=True, # TODO when not using unknowns, set to False
             has_garbage_class=False)
         
     # Create unique class splits for ensemble set-vs-set training

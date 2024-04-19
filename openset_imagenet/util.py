@@ -428,7 +428,7 @@ def get_sets_for_ensemble(unique_classes, num_models):
     print("Ensemble training class splits: ", class_splits)
     return class_splits
 
-def get_class_from_label(label, class_dict, separate_class_for_unknown=False):
+def get_class_from_label(label, class_dict, separate_class_for_unknown=False, unknown_in_both=False):
     """ Get the class from the label.
         Based on the input class it searches for for the class and returns the label.
 
@@ -443,6 +443,9 @@ def get_class_from_label(label, class_dict, separate_class_for_unknown=False):
     for key, value in class_dict.items():
         if label == -1 and separate_class_for_unknown:
             return torch.as_tensor(-1, dtype=torch.float32)
+        if label == -1 and unknown_in_both:
+            # we want to have probability 0.5 for both
+            return torch.as_tensor(0.5, dtype=torch.float32)
         if label in value:
             if key != 0 and key != 1:
                 print(key)

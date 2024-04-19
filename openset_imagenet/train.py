@@ -230,13 +230,13 @@ def worker(cfg):
         train_ds = Dataset_EMNIST(
         dataset_root=cfg.data.imagenet_path,
         which_set="train",
-        include_unknown=False,
+        include_unknown=True, # TODO change to False
         has_garbage_class=False)
     
         val_ds = Dataset_EMNIST(
             dataset_root=cfg.data.imagenet_path,
             which_set="validation",
-            include_unknown=False,  
+            include_unknown=True, # TODO change to False  
             has_garbage_class=False)
 
     train_loader = DataLoader(
@@ -292,7 +292,7 @@ def worker(cfg):
 
     # Create the model
     if cfg.data.dataset == 'emnist':
-        model = LeNet5(fc_layer_dim=n_classes,
+        model = LeNet5(fc_layer_dim=84,
                      out_features=n_classes,
                      logit_bias=False)
     else:

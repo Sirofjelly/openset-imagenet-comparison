@@ -121,7 +121,7 @@ def load_model(cfg, loss, algorithm, protocol, suffix, output_directory, n_class
     else:
         if cfg.data.dataset == "emnist":
             model = openset_imagenet.LeNet5(
-                fc_layer_dim=n_classes,
+                fc_layer_dim=84,
                 out_features=n_classes,
                 logit_bias=False)
         else:

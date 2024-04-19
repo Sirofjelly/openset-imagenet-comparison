@@ -26,7 +26,7 @@ def command_line_options(command_line_arguments=None):
     # directory parameters
     parser.add_argument(
         "--losses", "-l",
-        choices = ["entropic", "softmax", "garbage", "bce"],
+        choices = ["entropic", "softmax", "garbage", "bce", "sigmoid-focal"],
         nargs="+",
         default = ["entropic", "softmax", "garbage"],
         help="Which loss functions to evaluate"
@@ -250,7 +250,7 @@ def process_model(protocol, loss, algorithms, cfg, suffix, gpu, force, threshold
     # load base model
     if loss == "garbage":
         n_classes = test_dataset.label_count - 1 # we use one class for the negatives; the dataset has two additional  labels: negative and unknown
-    elif loss == "bce":
+    elif loss == "bce" or loss == "sigmoid-focal":
         n_classes = 1 # TODO check this, needed for output of the model
     else:
         n_classes = test_dataset.label_count - 2  # number of classes - 2 when training was without garbage class
