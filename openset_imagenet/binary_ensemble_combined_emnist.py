@@ -334,7 +334,7 @@ def worker(cfg):
         loss = torch.nn.BCEWithLogitsLoss()
     elif cfg.loss.type == "sigmoid-focal":
         # Sigmoid focal loss
-        loss = functools.partial(ops.sigmoid_focal_loss, alpha=-1, gamma=2, reduction="mean")
+        loss = functools.partial(ops.sigmoid_focal_loss, alpha=0.25, gamma=2, reduction="mean")
 
     # Create the model
     if cfg.data.dataset == 'emnist':

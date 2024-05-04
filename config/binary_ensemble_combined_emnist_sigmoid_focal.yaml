@@ -1,6 +1,6 @@
 # General Parameters
 checkpoint:             # set the checkpoint from where to continue, leave empty to start from scratch
-log_name: training_combined_emnist.log  # name of the file with training info
+log_name: sigmoid-focal_training_combined_emnist.log  # name of the file with training info
 gpu:                    # index of a GPU, if available
 output_directory: dev_experiments/EMNIST  # the directory where to write the model file
 parallel: false
@@ -22,6 +22,7 @@ patience: 0    # Number of epochs to wait before stopping the training. 0 means 
 # loss parameters
 loss:
   type: sigmoid-focal  # either {entropic, softmax, garbage, bce, sigmoid-focal}
+  unknown_in_both: False
   # Entropic Parameters
   w: 1.
 
