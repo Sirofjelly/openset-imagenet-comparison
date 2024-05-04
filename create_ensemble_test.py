@@ -42,7 +42,6 @@ def create_matrix(number_of_classes, number_of_models):
 
         # check if a row is duplicated in matrix
         unk, count = np.unique(matrix, axis=0, return_counts=True)
-        print("Count: ", count)
         if any(count > 1):
             continue
         
@@ -68,15 +67,18 @@ def create_matrix(number_of_classes, number_of_models):
         hamming_distances.append(total_hamming_distance)
 
     # Return the matrices and their corresponding Hamming distances
-    print(set(hamming_distances))
+    print("Hamming distance new approach: ", set(hamming_distances))
     return unique_matrices, hamming_distances
 
 # New method
-create_matrix(4, 6)
+create_matrix(4, 3)
 
-"""
+
 # Old method returns no matrices directly thats why we have to do some extra steps before calculating hamming distance
-class_splits = get_sets_for_ensemble([0, 1, 2, 3], 4)
+
+number_of_models = 3
+classes = [0, 1, 2, 3]
+class_splits = get_sets_for_ensemble(classes, number_of_models)
 class_binary = get_binary_output_for_class_per_model(class_splits)
 print("class binaries: ", class_binary)
 
@@ -84,7 +86,6 @@ print("class binaries: ", class_binary)
 class_binary_tuples = list(class_binary.items())
 # Sort the tuples by the keys
 class_binary_tuples.sort(key=lambda x: x[0])
-print(class_binary_tuples)
 
 # Create a numpy array from the sorted list of tuples
 class_binary_array = np.array([value for _, value in class_binary_tuples]).T
@@ -92,12 +93,10 @@ class_binary_array = np.array([value for _, value in class_binary_tuples]).T
 
 hamming_distances = []
 total_hamming_distance = 0
-for i in range(6):
-        for j in range(i + 1, 6):
-            total_hamming_distance += np.sum(class_binary_array[:, i] != class_binary_array[:, j])
+for i in range(len(classes)):
+    for j in range(i + 1, len(classes)):
+        total_hamming_distance += np.sum(class_binary_array[:, i] != class_binary_array[:, j])
 hamming_distances.append(total_hamming_distance)
 
 # Return the matrices and their corresponding Hamming distances
-print(set(hamming_distances))
-
-"""
+print("Hamming distance old approach: ", set(hamming_distances))
