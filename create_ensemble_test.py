@@ -34,23 +34,29 @@ def create_matrix(number_of_classes, number_of_models):
             balanced_matrices.append(matrix)
     print("Balanced Matrixes: ", len(balanced_matrices))
 
-    # Filter out matrices with inverted rows
+    # Filter out matrices with inverted rows and duplicate rows
     unique_matrices = []
     for matrix in balanced_matrices:
         matrix_list = list(matrix)
         inversed_rows_exist = False
 
+        # check if a row is duplicated in matrix
+        unk, count = np.unique(matrix, axis=0, return_counts=True)
+        print("Count: ", count)
+        if any(count > 1):
+            continue
+        
         for row in matrix:
             inverted = np.ones(len(row), dtype=np.int8) - row
 
             if any(np.array_equal(inverted, m) for m in matrix_list):
                 inversed_rows_exist = True
                 break
-
+            
         if not inversed_rows_exist:
             unique_matrices.append(matrix)
-
-    print("No inversed rows: ", len(unique_matrices))
+    print("No inversed rows and no duplicate rows: ", len(unique_matrices))
+    print(unique_matrices)
 
     # Calculate the total Hamming distance between columns for each matrix
     hamming_distances = []
@@ -66,13 +72,11 @@ def create_matrix(number_of_classes, number_of_models):
     return unique_matrices, hamming_distances
 
 # New method
-# create_matrix(6, 3)
+create_matrix(4, 6)
 
-
-
-
+"""
 # Old method returns no matrices directly thats why we have to do some extra steps before calculating hamming distance
-class_splits = get_sets_for_ensemble([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 6)
+class_splits = get_sets_for_ensemble([0, 1, 2, 3], 4)
 class_binary = get_binary_output_for_class_per_model(class_splits)
 print("class binaries: ", class_binary)
 
@@ -95,3 +99,5 @@ hamming_distances.append(total_hamming_distance)
 
 # Return the matrices and their corresponding Hamming distances
 print(set(hamming_distances))
+
+"""

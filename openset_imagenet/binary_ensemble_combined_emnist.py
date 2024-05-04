@@ -45,7 +45,7 @@ def train(model, data_loader, class_dicts, optimizer, loss_fn, trackers, cfg):
         images = device(images)
         labels = device(labels)
         # Check which class the label belongs to and replace the label with that class either 0 or 1
-        intermediate_labels = optimize_labels(labels, class_dicts, cfg.loss.unknown_in_both)
+        intermediate_labels = optimize_labels(labels, class_dicts)
   
         model.train()  # To collect batch-norm statistics set model to train mode
         batch_len = labels.shape[0]  # Samples in current batch
@@ -109,7 +109,7 @@ def validate(model, data_loader, class_dicts, loss_fn, n_classes, trackers, cfg)
             scores = (scores >= threshold).type(torch.int64) # TODO do we need to do that?
             
              # get the class from the label either 0 or 1
-            intermediate_labels = optimize_labels(labels, class_dicts, cfg.loss.unknown_in_both)
+            intermediate_labels = optimize_labels(labels, class_dicts)
 
             # targets = labels.view(-1,)
             targets = intermediate_labels.type(torch.float32)
@@ -264,13 +264,13 @@ def worker(cfg):
         train_ds = Dataset_EMNIST(
         dataset_root=cfg.data.dataset_path,
         which_set="train",
-        include_unknown=True, # TODO when not using unknowns, set to False
+        include_unknown=False, # TODO when not using unknowns, set to False
         has_garbage_class=False)
     
         val_ds = Dataset_EMNIST(
             dataset_root=cfg.data.dataset_path,
             which_set="validation",
-            include_unknown=True, # TODO when not using unknowns, set to False
+            include_unknown=False, # TODO when not using unknowns, set to False
             has_garbage_class=False)
         
     # Create unique class splits for ensemble set-vs-set training

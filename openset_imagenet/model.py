@@ -60,6 +60,7 @@ class LeNet5(nn.Module):
         self.conv1 = nn.Conv2d(1, 6, 5, padding=2)
         self.conv2 = nn.Conv2d(6, 16, 5)
         self.fc1   = nn.Linear(16*5*5, 120)
+        self.fcIntermediate = nn.Linear(120, 120)
         self.fc2   = nn.Linear(120, fc_layer_dim)
         self.logits   = nn.Linear(in_features=fc_layer_dim, out_features=out_features, bias=logit_bias)
         self.class_split = None
@@ -75,6 +76,7 @@ class LeNet5(nn.Module):
         x = F.max_pool2d(F.relu(self.conv2(x)), (2, 2))
         x = x.view(-1, self.num_flat_features(x))
         x = F.relu(self.fc1(x))
+        x = F.relu(self.fcIntermediate(x))
         x = F.relu(self.fc2(x))
         features = x
         logits = self.logits(x)
