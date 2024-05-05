@@ -5,10 +5,101 @@ import random
 import itertools
 from openset_imagenet.util import get_sets_for_ensemble, get_binary_output_for_class_per_model
 
+def create_matrix(number_of_models, number_of_classes):
+    # Create a matrix containing all possible combinations of 0 and 1
+    combinations = list(product([0, 1], repeat=number_of_classes))
+    combinations = np.array(combinations)
+    print("Combinations: ", combinations)
+    print(len(combinations))  # should be 2^number_of_classes
+
+    # remove vectors that begin with 1 to avoid inversion
+    combinations = [c for c in combinations if c[0] == 0]
+
+    # check which are balanced vectors
+    balanced_combinations = []
+    for combination in combinations:
+        if (number_of_classes % 2 == 0):
+            balanced = np.sum(combination) == number_of_classes // 2
+        else:
+            balanced = np.logical_or(np.sum(combination) == number_of_classes // 2, np.sum(combination) == (number_of_classes + 1) // 2)
+        if np.all(balanced):
+            balanced_combinations.append(combination)
+    print("Balanced Combinations: ", balanced_combinations, "Length: ", len(balanced_combinations))
+
+    if len(balanced_combinations) < number_of_models:
+        raise ValueError("Number of balanced combinations is less than number of models")
+
+    # Select unique vectors from balanced_combinations to maximize Hamming distance
+    selected_vectors = []
+    remaining_vectors = balanced_combinations.copy()
+
+    for _ in range(number_of_models):
+        max_hamming_distance = 0
+        best_vector = None
+
+        for vector in remaining_vectors:
+            min_hamming_distance = float('inf')
+            for selected_vector in selected_vectors:
+                hamming_distance = np.sum(vector != selected_vector)
+                min_hamming_distance = min(min_hamming_distance, hamming_distance)
+
+            if min_hamming_distance > max_hamming_distance:
+                max_hamming_distance = min_hamming_distance
+                best_vector = vector
+
+        selected_vectors.append(best_vector)
+        remaining_vectors.remove(best_vector)
+
+    matrix = np.vstack(selected_vectors)
+    print("Selected Vectors: ", matrix)
+
+    # Calculate the Hamming distance between selected vectors
+    hamming_distances = []
+    for i in range(number_of_models):
+        for j in range(i + 1, number_of_models):
+            hamming_distance = np.sum(matrix[:, i] != matrix[:, j])
+            hamming_distances.append(hamming_distance)
+
+    print("Hamming distance: ", set(hamming_distances))
+    return matrix, hamming_distances
+
+create_matrix(6, 6)
+
+"""
+# Old method returns no matrices directly thats why we have to do some extra steps before calculating hamming distance
+
+number_of_models = 6
+classes = [0, 1, 2, 3]
+class_splits = get_sets_for_ensemble(classes, number_of_models)
+class_binary = get_binary_output_for_class_per_model(class_splits)
+print("class binaries: ", class_binary)
+
+# Convert the dictionary to a list of tuples
+class_binary_tuples = list(class_binary.items())
+# Sort the tuples by the keys
+class_binary_tuples.sort(key=lambda x: x[0])
+
+# Create a numpy array from the sorted list of tuples
+class_binary_array = np.array([value for _, value in class_binary_tuples]).T
+
+
+hamming_distances = []
+total_hamming_distance = 0
+for i in range(len(classes)):
+    for j in range(i + 1, len(classes)):
+        total_hamming_distance += np.sum(class_binary_array[:, i] != class_binary_array[:, j])
+hamming_distances.append(total_hamming_distance)
+
+# Return the matrices and their corresponding Hamming distances
+print("Hamming distance old approach: ", set(hamming_distances))
+"""
+"""
 def create_matrix(number_of_classes, number_of_models):
     # Create a matrix containing all possible combinations of 0 and 1
-    combinations = list(product([0, 1], repeat=number_of_models))
+    combinations = list(product([0, 1], repeat=number_of_classes))
     combinations = np.array(combinations)
+    print("Combinations: ", combinations)
+    print(len(combinations))
 
     # Generate all possible matrices based on the randomly selected first vector
     matrices = []
@@ -71,32 +162,5 @@ def create_matrix(number_of_classes, number_of_models):
     return unique_matrices, hamming_distances
 
 # New method
-create_matrix(4, 3)
-
-
-# Old method returns no matrices directly thats why we have to do some extra steps before calculating hamming distance
-
-number_of_models = 3
-classes = [0, 1, 2, 3]
-class_splits = get_sets_for_ensemble(classes, number_of_models)
-class_binary = get_binary_output_for_class_per_model(class_splits)
-print("class binaries: ", class_binary)
-
-# Convert the dictionary to a list of tuples
-class_binary_tuples = list(class_binary.items())
-# Sort the tuples by the keys
-class_binary_tuples.sort(key=lambda x: x[0])
-
-# Create a numpy array from the sorted list of tuples
-class_binary_array = np.array([value for _, value in class_binary_tuples]).T
-
-
-hamming_distances = []
-total_hamming_distance = 0
-for i in range(len(classes)):
-    for j in range(i + 1, len(classes)):
-        total_hamming_distance += np.sum(class_binary_array[:, i] != class_binary_array[:, j])
-hamming_distances.append(total_hamming_distance)
-
-# Return the matrices and their corresponding Hamming distances
-print("Hamming distance old approach: ", set(hamming_distances))
+create_matrix(3, 4)
+"""
