@@ -33,25 +33,9 @@ def create_matrix(number_of_models, number_of_classes):
     selected_vectors = []
     remaining_vectors = balanced_combinations.copy()
 
-    for _ in range(number_of_models):
-        max_hamming_distance = 0
-        best_vector = None
-
-        for vector in remaining_vectors:
-            min_hamming_distance = float('inf')
-            for selected_vector in selected_vectors:
-                hamming_distance = np.sum(vector != selected_vector)
-                min_hamming_distance = min(min_hamming_distance, hamming_distance)
-
-            if min_hamming_distance > max_hamming_distance:
-                max_hamming_distance = min_hamming_distance
-                best_vector = vector
-
-        selected_vectors.append(best_vector)
-        remaining_vectors.remove(best_vector)
-
-    matrix = np.vstack(selected_vectors)
-    print("Selected Vectors: ", matrix)
+"""
+    # construct all possible matrices with dim=0 equal to number_of_models$
+    matrices = 
 
     # Calculate the Hamming distance between selected vectors
     hamming_distances = []
@@ -62,8 +46,8 @@ def create_matrix(number_of_models, number_of_classes):
 
     print("Hamming distance: ", set(hamming_distances))
     return matrix, hamming_distances
-
-create_matrix(6, 6)
+"""
+create_matrix(6, 4)
 
 """
 # Old method returns no matrices directly thats why we have to do some extra steps before calculating hamming distance
