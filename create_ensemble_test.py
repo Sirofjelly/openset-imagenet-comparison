@@ -56,7 +56,8 @@ def hamming_distance_min_among_all(matrix, row=True):
     # Return the overall minimum
     return np.min(min_distances)
 
-def create_matrix(number_of_models, number_of_classes):
+def get_sets_for_ensemble_optimized(number_of_models, classes):
+    number_of_classes = len(classes)
     # Create a matrix containing all possible combinations of 0 and 1
     combinations = list(product([0, 1], repeat=number_of_classes))
     combinations = np.array(combinations)
@@ -97,12 +98,22 @@ def create_matrix(number_of_models, number_of_classes):
             matrix = matrix[:-1]
         # get the index of the minimum distance
         row_dist_and_column_dist = list(zip(minimum_row_wise_distance, minimum_column_wise_distance))
-        # find the tuple with the maximum sum
-        max_sum_tuple = max(row_dist_and_column_dist, key=lambda x: x[0] + x[1])
 
-        # get all possibles index of the maximum sum tuple
-        max_sum_index = [i for i, j in enumerate(row_dist_and_column_dist) if j == max_sum_tuple]
-        random_max_sum_index = choice(max_sum_index)
+        # get the index of the maximum minimum_column_wise_distance
+        max_min_column_wise_distance = max(minimum_column_wise_distance)
+        max_indices = [i for i, x in enumerate(minimum_column_wise_distance) if x == max_min_column_wise_distance]
+
+        if len(max_indices) > 1:
+            # if there are multiple maximum values, get the maximum of the minimum_row_wise_distance
+            max_min_row_wise_distance = max([minimum_row_wise_distance[i] for i in max_indices])
+            max_indices = [i for i in max_indices if minimum_row_wise_distance[i] == max_min_row_wise_distance]
+
+        if len(max_indices) > 1:
+            # if there are still multiple indices, choose one randomly
+            random_max_sum_index = random.choice(max_indices)
+        else:
+            random_max_sum_index = max_indices[0]
+       
         matrix = np.vstack((matrix, balanced_combinations[random_max_sum_index]))
         # remove the selected vector from the list of balanced combinations
         balanced_combinations.pop(random_max_sum_index)
@@ -112,14 +123,25 @@ def create_matrix(number_of_models, number_of_classes):
     print("Matrix shape: ", matrix.shape)
     print("Row wise min hamming distance - new algo: ", hamming_distance_min_among_all(matrix, row=True))
     print("Column wise min hamming distance - new algo: ", hamming_distance_min_among_all(matrix, row=False))
-    return matrix
+    
+    # create class splits from the matrix
+    class_splits = []
+    for i in range(number_of_models):
+        # zip the classes with the corresponding row in the matrix
+        index_and_class = list(zip(classes, matrix[i]))
+        split_0 = [x[0] for x in index_and_class if x[1] == 0]
+        split_1 = [x[0] for x in index_and_class if x[1] == 1]
+        # save the splits in dictionary
+        class_splits.append({0: split_0, 1: split_1})
 
-create_matrix(number_of_models=30, number_of_classes=10)
+    return class_splits
+
+get_sets_for_ensemble(number_of_models=15, classes=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 
 
 # Old method returns no matrices directly thats why we have to do some extra steps before calculating hamming distance
 
-number_of_models = 30
+number_of_models = 15
 classes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 class_splits = get_sets_for_ensemble(classes, number_of_models)
 class_binary = get_binary_output_for_class_per_model(class_splits)
