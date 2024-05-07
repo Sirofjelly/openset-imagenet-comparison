@@ -13,6 +13,8 @@ import matplotlib.cm as cm
 import random
 import numpy
 import torch
+from itertools import product
+from scipy.spatial.distance import pdist, squareform
 
 import yaml
 
@@ -395,6 +397,105 @@ def get_similarity_score_from_binary_to_label_new(model_outputs, class_binary):
         similarity =  numpy.sum((b * numpy.array(model_outputs)))
         class_similarities[i] = similarity
     return torch.from_numpy(class_similarities)
+
+def hamming_distance_min_among_all(matrix, row=True):
+    if row:
+        # Compute pairwise Hamming distances between rows
+        # pdist returns proportion, so we multiply by the number of columns
+        hamming_dist_matrix = squareform(pdist(matrix, 'hamming')) * matrix.shape[1]
+    else:
+        # Transpose the matrix for column-wise comparisons
+        # pdist returns proportion, so we multiply by the number of rows
+        hamming_dist_matrix = squareform(pdist(matrix.T, 'hamming')) * matrix.shape[0]
+
+    # set the diagonal to infinity since we don't want to consider distance of a row/column to itself
+    np.fill_diagonal(hamming_dist_matrix, np.inf)
+
+    # Find the minimum non-zero distance for each row/column
+    min_distances = np.min(hamming_dist_matrix, axis=1)
+
+    # Return the overall minimum
+    return np.min(min_distances)
+
+def get_sets_for_ensemble_hamming(number_of_models, classes):
+    number_of_classes = len(classes)
+    # Create a matrix containing all possible combinations of 0 and 1
+    combinations = list(product([0, 1], repeat=number_of_classes))
+    combinations = np.array(combinations)
+    print("Number of Combinations: ", len(combinations))  # should be 2^number_of_classes
+
+    # remove vectors that begin with 1 to avoid inversion
+    combinations = [c for c in combinations if c[0] == 0]
+
+    # check which are balanced vectors
+    balanced_combinations = []
+    for combination in combinations:
+        if (number_of_classes % 2 == 0):
+            balanced = np.sum(combination) == number_of_classes // 2
+        else:
+            balanced = np.logical_or(np.sum(combination) == number_of_classes // 2, np.sum(combination) == (number_of_classes + 1) // 2)
+        if np.all(balanced):
+            balanced_combinations.append(combination)
+    print("Balanced Combinations: ", balanced_combinations, "Length (Max possible Models): ", len(balanced_combinations))
+
+    if len(balanced_combinations) < number_of_models:
+        raise ValueError("Number of balanced combinations is less than number of models")
+
+    # randomly select the first vector to start the matrix
+    first_vector_index = random.randint(0, len(balanced_combinations) - 1)
+    matrix = balanced_combinations[first_vector_index]
+    # remove the start vector from the list of balanced combinations
+    balanced_combinations.pop(first_vector_index)
+
+    # calculate the optimal next vector to add to the matrix
+    for _ in range(number_of_models - 1):
+        minimum_row_wise_distance = []
+        minimum_column_wise_distance = []
+        for balanced_combination in balanced_combinations:
+            matrix = np.vstack((matrix, balanced_combination))
+            minimum_row_wise_distance.append(hamming_distance_min_among_all(matrix, row=True))
+            minimum_column_wise_distance.append(hamming_distance_min_among_all(matrix, row=False))
+            # remove the last row from the matrix
+            matrix = matrix[:-1]
+        # get the index of the minimum distance
+        row_dist_and_column_dist = list(zip(minimum_row_wise_distance, minimum_column_wise_distance))
+
+        # get the index of the maximum minimum_column_wise_distance
+        max_min_column_wise_distance = max(minimum_column_wise_distance)
+        max_indices = [i for i, x in enumerate(minimum_column_wise_distance) if x == max_min_column_wise_distance]
+
+        if len(max_indices) > 1:
+            # if there are multiple maximum values, get the maximum of the minimum_row_wise_distance
+            max_min_row_wise_distance = max([minimum_row_wise_distance[i] for i in max_indices])
+            max_indices = [i for i in max_indices if minimum_row_wise_distance[i] == max_min_row_wise_distance]
+
+        if len(max_indices) > 1:
+            # if there are still multiple indices, choose one randomly
+            random_max_sum_index = random.choice(max_indices)
+        else:
+            random_max_sum_index = max_indices[0]
+       
+        matrix = np.vstack((matrix, balanced_combinations[random_max_sum_index]))
+        # remove the selected vector from the list of balanced combinations
+        balanced_combinations.pop(random_max_sum_index)
+        print("Matrix shape: ", matrix.shape)
+    
+    print("Matrix: \n", matrix)
+    print("Matrix shape: ", matrix.shape)
+    print("Row wise min hamming distance - hamming algo: ", hamming_distance_min_among_all(matrix, row=True))
+    print("Column wise min hamming distance - hamming algo: ", hamming_distance_min_among_all(matrix, row=False))
+    
+    # create class splits from the matrix
+    class_splits = []
+    for i in range(number_of_models):
+        # zip the classes with the corresponding row in the matrix
+        index_and_class = list(zip(classes, matrix[i]))
+        split_0 = [x[0] for x in index_and_class if x[1] == 0]
+        split_1 = [x[0] for x in index_and_class if x[1] == 1]
+        # save the splits in dictionary
+        class_splits.append({0: split_0, 1: split_1})
+
+    return class_splits
 
 
 def get_sets_for_ensemble(unique_classes, num_models):

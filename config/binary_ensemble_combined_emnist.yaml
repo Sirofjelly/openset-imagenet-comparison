@@ -1,8 +1,8 @@
 # General Parameters
 checkpoint:             # set the checkpoint from where to continue, leave empty to start from scratch
-log_name: training_combined_emnist.log  # name of the file with training info
+log_name: ex1_net1.log  # name of the file with training info
 gpu:                    # index of a GPU, if available
-output_directory: dev_experiments/EMNIST  # the directory where to write the model file
+output_directory: experiments/ex_1/net_1  # the directory where to write the model file
 parallel: false
 
 model_path: "{}/{}_{}_{}.pth" #for those which use pretrained models
@@ -18,6 +18,7 @@ batch_size: 32  # If distributed training the batch size is multiplied by the nu
 epochs: 50    # Number of epochs to train.
 workers: 0      # Dataloader number of workers
 patience: 0    # Number of epochs to wait before stopping the training. 0 means no early stopping
+unknown_for_training: False  # If True, the unknown class is used for training
 
 # loss parameters
 loss:
@@ -35,4 +36,5 @@ opt:
 # Algorithm parameters
 algorithm:
   type: binary_ensemble_combined_emnist
-  num_models: 100
+  num_models: 126
+  sets: random # either random or hamming, if class distance should be optimized

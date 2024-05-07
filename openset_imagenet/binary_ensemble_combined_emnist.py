@@ -3,7 +3,7 @@ import time
 import sys
 import pathlib
 from collections import OrderedDict, defaultdict
-import numpy
+import numpy as np
 import torch
 import functools
 from torchvision import ops
@@ -21,7 +21,7 @@ from .dataset_emnist import Dataset_EMNIST
 from .model import ResNet50, LeNet5, load_checkpoint, save_checkpoint, set_seeds
 from .losses import AverageMeter, EarlyStopping, EntropicOpensetLoss
 import tqdm
-from .util import get_sets_for_ensemble, get_class_from_label, get_similarity_score_from_binary_to_label, get_binary_output_for_class_per_model
+from .util import get_sets_for_ensemble, get_sets_for_ensemble_hamming, hamming_distance_min_among_all, get_class_from_label, get_similarity_score_from_binary_to_label, get_binary_output_for_class_per_model
 
 def optimize_labels(labels, class_dicts, unknown_in_both=False):
     intermediate_labels = device(torch.zeros((len(labels), len(class_dicts))))
@@ -264,19 +264,31 @@ def worker(cfg):
         train_ds = Dataset_EMNIST(
         dataset_root=cfg.data.dataset_path,
         which_set="train",
-        include_unknown=False, # TODO when not using unknowns, set to False
+        include_unknown=cfg.unknown_for_training, # TODO when not using unknowns, set to False
         has_garbage_class=False)
     
         val_ds = Dataset_EMNIST(
             dataset_root=cfg.data.dataset_path,
             which_set="validation",
-            include_unknown=False, # TODO when not using unknowns, set to False
+            include_unknown=cfg.unknown_for_training, # TODO when not using unknowns, set to False
             has_garbage_class=False)
         
     # Create unique class splits for ensemble set-vs-set training
     print(train_ds.unique_classes, cfg.algorithm.num_models)
-    class_splits = get_sets_for_ensemble(train_ds.unique_classes, cfg.algorithm.num_models)
+    if cfg.algorithm.sets == "random":
+        class_splits = get_sets_for_ensemble(train_ds.unique_classes, cfg.algorithm.num_models)
+        class_binary = get_binary_output_for_class_per_model(class_splits)
+        # Convert the dictionary to a list of tuples
+        class_binary_tuples = list(class_binary.items())
+        # Sort the tuples by the keys
+        class_binary_tuples.sort(key=lambda x: x[0])
 
+        # Create a numpy array from the sorted list of tuples
+        class_binary_array = np.array([value for _, value in class_binary_tuples]).T
+        print("Row wise min hamming distance - random algo: ", hamming_distance_min_among_all(class_binary_array, row=True))
+        print("Column wise min hamming distance - random algo: ", hamming_distance_min_among_all(class_binary_array, row=False))
+    elif cfg.algorithm.sets == "hamming":
+        class_splits = get_sets_for_ensemble_hamming(train_ds.unique_classes, cfg.algorithm.num_models)
     train_loader = DataLoader(
         train_ds,
         batch_size=cfg.batch_size,
@@ -350,7 +362,7 @@ def worker(cfg):
     # Create optimizer
     if cfg.opt.type == "sgd":
         opt = torch.optim.SGD(params=model.parameters(), lr=cfg.opt.lr, momentum=0.9)
-    else:
+    elif cfg.opt.type == "adam":
         opt = torch.optim.Adam(params=model.parameters(), lr=cfg.opt.lr)
 
     # Learning rate scheduler
@@ -392,6 +404,7 @@ def worker(cfg):
     logger.info(f"Learning rate: {cfg.opt.lr}")
     logger.info(f"Device: {cfg.gpu}")
     logger.info(f"Number of binary outputs: {cfg.algorithm.num_models}")
+    logger.info(f"Using following approach to generate sets: {cfg.algorithm.sets}")
     logger.info("Training...")
     writer = SummaryWriter(log_dir=cfg.output_directory, filename_suffix="-"+cfg.log_name)
 
