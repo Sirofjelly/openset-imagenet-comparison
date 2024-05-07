@@ -19,7 +19,7 @@ def command_line_options(command_line_arguments=None):
 
     parser.add_argument(
         "--threshold",
-        choices = ["threshold", "logits", "logits-no-sigmoid"],
+        choices = ["threshold", "probabilities", "logits"],
         default = ["threshold"],
         help="Which evaluation criteria to use. If True, the threshold is used. If False, the logits distance is used."
     )
@@ -89,7 +89,7 @@ def dataset(cfg, protocol):
         test_dataset = openset_imagenet.Dataset_EMNIST(
             dataset_root=cfg.data.dataset_path,
             which_set="test",
-            include_unknown=True
+            include_unknown=True # we include the unknown class since its Open-Set
         )
     else:
         # We only need test data here, since we assume that parameters have been selected
@@ -235,7 +235,7 @@ def load_scores(loss, algorithm, suffix, output_directory):
 
 
 def process_model(protocol, loss, algorithms, cfg, suffix, gpu, force, threshold):
-    output_directory = Path(cfg.output_directory)/f"Protocol_{protocol}"
+    output_directory = Path(cfg.output_directory) # /f"Protocol_{protocol}"
 
     # set device
     if gpu is not None:

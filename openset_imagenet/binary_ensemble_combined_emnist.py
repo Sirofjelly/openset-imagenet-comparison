@@ -21,7 +21,7 @@ from .dataset_emnist import Dataset_EMNIST
 from .model import ResNet50, LeNet5, load_checkpoint, save_checkpoint, set_seeds
 from .losses import AverageMeter, EarlyStopping, EntropicOpensetLoss
 import tqdm
-from .util import get_sets_for_ensemble, get_sets_for_ensemble_hamming, hamming_distance_min_among_all, get_class_from_label, get_similarity_score_from_binary_to_label, get_binary_output_for_class_per_model
+from .util import get_sets_for_ensemble, get_sets_for_ensemble_hamming, hamming_distance_min_among_all, get_class_from_label, get_similarity_score_from_binary_to_label, get_similarity_score_from_binary_to_label_new, get_binary_output_for_class_per_model
 
 def optimize_labels(labels, class_dicts, unknown_in_both=False):
     intermediate_labels = device(torch.zeros((len(labels), len(class_dicts))))
@@ -174,9 +174,12 @@ def get_arrays(model, loader, garbage, pretty=False, threshold=True, remove_nega
                 scores = (scores_sig >= 0.5).type(torch.int64) # by doing this we lose lots of information
                 for i in range(scores.shape[0]): 
                     final_class_score[i, :] = get_similarity_score_from_binary_to_label(model_binary=scores[i, :], class_binary=class_binaries)
-            elif threshold == "logits":
+            elif threshold == "probabilities":
                 for i in range(scores_sig.shape[0]):
                     final_class_score[i, :] = get_similarity_score_from_binary_to_label(model_binary=scores_sig[i, :], class_binary=class_binaries)
+            elif threshold == "logits":
+                for i in range(logits.shape[0]):
+                    final_class_score[i, :] = get_similarity_score_from_binary_to_label_new(model_binary=logits[i, :], class_binary=class_binaries)
             # shall we remove the logits of the unknown class?
             # We do this AFTER computing softmax, of course.
             if garbage:
