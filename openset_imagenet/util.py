@@ -526,6 +526,20 @@ def get_sets_for_ensemble(unique_classes, num_models):
                 break
             else:
                 print("this split does already exist: ", split_1, split_0)
+
+    # we check if each class is unique if not we rerun the function
+    class_binary = get_binary_output_for_class_per_model(class_splits)
+    class_binary_tuples = list(class_binary.items())
+    # Sort the tuples by the keys
+    class_binary_tuples.sort(key=lambda x: x[0])
+
+    # Create a numpy array from the sorted list of tuples
+    class_binary_array = np.array([value for _, value in class_binary_tuples]).T
+    column_ham_dist = hamming_distance_min_among_all(class_binary_array, row=False)
+    if column_ham_dist == 0:
+        print("The columns are the same, rerun the function")
+        return get_sets_for_ensemble(unique_classes, num_models)
+    
     print("Ensemble training class splits: ", class_splits)
     return class_splits
 

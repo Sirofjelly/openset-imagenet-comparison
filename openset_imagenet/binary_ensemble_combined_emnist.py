@@ -288,7 +288,7 @@ def worker(cfg):
         print("Row wise min hamming distance - random algo: ", hamming_distance_min_among_all(class_binary_array, row=True))
         print("Column wise min hamming distance - random algo: ", hamming_distance_min_among_all(class_binary_array, row=False))
     elif cfg.algorithm.sets == "hamming":
-        class_splits = get_sets_for_ensemble_hamming(train_ds.unique_classes, cfg.algorithm.num_models)
+        class_splits = get_sets_for_ensemble_hamming(number_of_models=cfg.algorithm.num_models, classes=train_ds.unique_classes)
     train_loader = DataLoader(
         train_ds,
         batch_size=cfg.batch_size,

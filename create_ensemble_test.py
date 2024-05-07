@@ -136,12 +136,12 @@ def get_sets_for_ensemble_optimized(number_of_models, classes):
 
     return class_splits
 
-get_sets_for_ensemble(number_of_models=15, classes=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+get_sets_for_ensemble_optimized(number_of_models=4, classes=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 
 
 # Old method returns no matrices directly thats why we have to do some extra steps before calculating hamming distance
 
-number_of_models = 15
+number_of_models = 4
 classes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 class_splits = get_sets_for_ensemble(classes, number_of_models)
 class_binary = get_binary_output_for_class_per_model(class_splits)
@@ -153,6 +153,7 @@ class_binary_tuples.sort(key=lambda x: x[0])
 
 # Create a numpy array from the sorted list of tuples
 class_binary_array = np.array([value for _, value in class_binary_tuples]).T
+print(class_binary_array)
 
 
 print("Row wise min hamming distance - old algo: ", hamming_distance_min_among_all(class_binary_array, row=True))
