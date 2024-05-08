@@ -186,7 +186,7 @@ def get_arrays(model, loader, garbage, pretty=False, threshold=True, remove_nega
                 logits = logits[:,:-1]
                 scores = scores[:,:-1]
             if remove_negative:
-                # we remove the negative class from the final class score
+                # we remove the negative class from the final class score we do this only when the model does output an extra score for the negative class e.g. when training with it
                 final_class_score = final_class_score[:,1:]
             # accumulate results in all_tensor
             all_targets[index:index + curr_b_size] = labels.detach().cpu()
@@ -194,6 +194,7 @@ def get_arrays(model, loader, garbage, pretty=False, threshold=True, remove_nega
             all_feat[index:index + curr_b_size] = feature.detach().cpu()
             all_scores[index:index + curr_b_size] = final_class_score.detach().cpu()
             index += curr_b_size
+        print("Shapes: ", all_scores.shape, all_targets.shape, all_logits.shape, all_feat.shape)
         return(
             all_targets.numpy(),
             all_logits.numpy(),

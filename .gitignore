@@ -4,8 +4,7 @@
 **/__pycache__
 /analysis/fig/*
 data/*
-experiments
-dev_experiments
 protocols
 openset_imagenet.egg-info
-dev_experiments/EMNIST/training_emnist.log
+*.pth
+*.npz

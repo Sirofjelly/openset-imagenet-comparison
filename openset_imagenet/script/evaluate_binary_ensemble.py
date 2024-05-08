@@ -187,7 +187,7 @@ def extract(model, data_loader, algorithm, loss, threshold):
             garbage=loss=="garbage",
             pretty=True,
             threshold=threshold,
-            remove_negative=True
+            remove_negative=False
         )
 
 
