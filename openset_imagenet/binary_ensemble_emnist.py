@@ -4,7 +4,7 @@ import time
 import sys
 import pathlib
 from collections import OrderedDict, defaultdict
-import numpy
+import numpy as np
 import torch
 from torch.optim import lr_scheduler
 from torch.utils.tensorboard import SummaryWriter
@@ -19,7 +19,7 @@ from .dataset_emnist import Dataset_EMNIST
 from .model import LeNet5, EnsembleModel, load_checkpoint, save_checkpoint, set_seeds
 from .losses import AverageMeter, EarlyStopping, EntropicOpensetLoss
 import tqdm
-from .util import get_sets_for_ensemble, get_binary_output_for_class_per_model, get_similarity_score_from_binary_to_label, get_class_from_label, get_similarity_score_from_binary_to_label_new
+from .util import get_sets_for_ensemble, get_binary_output_for_class_per_model, get_similarity_score_from_binary_to_label, get_class_from_label, get_similarity_score_from_binary_to_label_new, hamming_distance_min_among_all, get_sets_for_ensemble_hamming
 
 def train_ensemble(model, data_loader, class_dict, optimizer, loss_fn, trackers, cfg):
     """ Main training loop.
@@ -182,7 +182,7 @@ def get_arrays(model, loader, garbage, pretty=False, threshold=True):
                 scores = (scores_sig >= 0.5).type(torch.int64) # by doing this we lose lots of information
                 for i in range(scores.shape[1]): 
                     final_class_score[i, :] = get_similarity_score_from_binary_to_label(model_binary=scores[:, i], class_binary=class_binaries)
-            elif threshold == "logits":
+            elif threshold == "probabilities":
                 scores_sig = torch.nn.functional.sigmoid(logits)
                 for i in range(scores_sig.shape[1]):
                     final_class_score[i, :] = get_similarity_score_from_binary_to_label(model_binary=scores_sig[:, i], class_binary=class_binaries)
@@ -249,20 +249,26 @@ def worker(cfg):
         which_set="validation",
         include_unknown=False,  
         has_garbage_class=False)
-
-        # If using garbage class, replaces label -1 to maximum label + 1
-    if cfg.loss.type == "garbage":
-            # Only change the unknown label of the training dataset
-            train_ds.replace_negative_label()
-            val_ds.replace_negative_label()
-    elif cfg.loss.type == "softmax": # not needed for bce because we have no negative atm
-            # remove the negative label from softmax training set, not from val set!
-            train_ds.remove_negative_label()
     
 
     # Create unique class splits for ensemble set-vs-set training
+    # Create unique class splits for ensemble set-vs-set training
     print(train_ds.unique_classes, cfg.algorithm.num_models)
-    class_splits = get_sets_for_ensemble(train_ds.unique_classes, cfg.algorithm.num_models)
+    if cfg.algorithm.sets == "random":
+        class_splits = get_sets_for_ensemble(train_ds.unique_classes, cfg.algorithm.num_models)
+        class_binary = get_binary_output_for_class_per_model(class_splits)
+        # Convert the dictionary to a list of tuples
+        class_binary_tuples = list(class_binary.items())
+        # Sort the tuples by the keys
+        class_binary_tuples.sort(key=lambda x: x[0])
+
+        # Create a numpy array from the sorted list of tuples
+        class_binary_array = np.array([value for _, value in class_binary_tuples]).T
+        print("Row wise min hamming distance - random algo: ", hamming_distance_min_among_all(class_binary_array, row=True))
+        print("Column wise min hamming distance - random algo: ", hamming_distance_min_among_all(class_binary_array, row=False))
+        
+    elif cfg.algorithm.sets == "hamming":
+        class_splits = get_sets_for_ensemble_hamming(number_of_models=cfg.algorithm.num_models, classes=train_ds.unique_classes)
 
     train_loader = DataLoader(
         train_ds,
@@ -275,7 +281,7 @@ def worker(cfg):
         val_ds,
         batch_size=cfg.batch_size,
         shuffle=False,
-        num_workers=0,
+        num_workers=cfg.workers,
         pin_memory=True,
         timeout=0)
 
@@ -302,7 +308,7 @@ def worker(cfg):
         n_classes = train_ds.label_count - 1
     elif cfg.loss.type == "bce":
         # one probability only because we can model the prob for negative class as 1-prob
-        n_classes = 1 #TODO: check if this is correct or not and we need 2
+        n_classes = 1
     else:
         # number of classes when training with extra garbage class for unknowns, or when unknowns are removed
         n_classes = train_ds.label_count
@@ -369,7 +375,6 @@ def worker(cfg):
     logger.info(f"train_len:{len(train_ds)}, labels:{train_ds.label_count}")
     logger.info(f"val_len:{len(val_ds)}, labels:{val_ds.label_count}")
     logger.info("========== Training ==========")
-    # logger.info(f"Initial epoch: {START_EPOCH}")
     logger.info(f"Last epoch: {cfg.epochs}")
     logger.info(f"Batch size: {cfg.batch_size}")
     logger.info(f"workers: {cfg.workers}")
@@ -378,6 +383,7 @@ def worker(cfg):
     logger.info(f"Learning rate: {cfg.opt.lr}")
     logger.info(f"Device: {cfg.gpu}")
     logger.info(f"number of models: {cfg.algorithm.num_models}")
+    logger.info(f"Using following approach to generate sets: {cfg.algorithm.sets}")
     logger.info("Training...")
     writer = SummaryWriter(log_dir=cfg.output_directory, filename_suffix="-"+cfg.log_name)
     for i, (model, opt, class_split, t_metric, v_metric, scheduler, BEST_SCORE, START_EPOCH) in enumerate(zip(models, opts, class_splits, t_metrics, v_metrics, schedulers, BEST_SCORES, START_EPOCHS)):

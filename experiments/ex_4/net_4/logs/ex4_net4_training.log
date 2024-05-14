@@ -1,0 +1,86 @@
+11_05_16:12 openset_imagenet.train INFO: ============ Data ============
+11_05_16:12 openset_imagenet.train INFO: train_len:112800, labels:11
+11_05_16:12 openset_imagenet.train INFO: val_len:18800, labels:11
+11_05_16:12 openset_imagenet.train INFO: ========== Training ==========
+11_05_16:12 openset_imagenet.train INFO: Initial epoch: 0
+11_05_16:12 openset_imagenet.train INFO: Last epoch: 50
+11_05_16:12 openset_imagenet.train INFO: Batch size: 32
+11_05_16:12 openset_imagenet.train INFO: workers: 0
+11_05_16:12 openset_imagenet.train INFO: Loss: entropic
+11_05_16:12 openset_imagenet.train INFO: optimizer: sgd
+11_05_16:12 openset_imagenet.train INFO: Learning rate: 0.001
+11_05_16:12 openset_imagenet.train INFO: Device: 1
+11_05_16:12 openset_imagenet.train INFO: Training...
+11_05_16:12 openset_imagenet.train INFO: loss:entropic protocol:2 ep:0 train:{'j': 1.793} val:{'j': 1.368, 'conf_kn': 0.761, 'conf_unk': 0.843} t:18.5s v:2.6s
+11_05_16:12 openset_imagenet.train INFO: Saving best model experiments/ex_4/net_2/entropic_threshold_best.pth at epoch: 0
+11_05_16:13 openset_imagenet.train INFO: loss:entropic protocol:2 ep:1 train:{'j': 1.292} val:{'j': 1.240, 'conf_kn': 0.867, 'conf_unk': 0.894} t:18.1s v:2.5s
+11_05_16:13 openset_imagenet.train INFO: Saving best model experiments/ex_4/net_2/entropic_threshold_best.pth at epoch: 1
+11_05_16:13 openset_imagenet.train INFO: loss:entropic protocol:2 ep:2 train:{'j': 1.217} val:{'j': 1.202, 'conf_kn': 0.899, 'conf_unk': 0.919} t:19.1s v:2.6s
+11_05_16:13 openset_imagenet.train INFO: Saving best model experiments/ex_4/net_2/entropic_threshold_best.pth at epoch: 2
+11_05_16:13 openset_imagenet.train INFO: loss:entropic protocol:2 ep:3 train:{'j': 1.186} val:{'j': 1.176, 'conf_kn': 0.922, 'conf_unk': 0.933} t:18.9s v:2.5s
+11_05_16:13 openset_imagenet.train INFO: Saving best model experiments/ex_4/net_2/entropic_threshold_best.pth at epoch: 3
+11_05_16:14 openset_imagenet.train INFO: loss:entropic protocol:2 ep:4 train:{'j': 1.169} val:{'j': 1.172, 'conf_kn': 0.921, 'conf_unk': 0.950} t:19.2s v:2.5s
+11_05_16:14 openset_imagenet.train INFO: Saving best model experiments/ex_4/net_2/entropic_threshold_best.pth at epoch: 4
+11_05_16:14 openset_imagenet.train INFO: loss:entropic protocol:2 ep:5 train:{'j': 1.160} val:{'j': 1.163, 'conf_kn': 0.939, 'conf_unk': 0.940} t:18.2s v:2.6s
+11_05_16:14 openset_imagenet.train INFO: Saving best model experiments/ex_4/net_2/entropic_threshold_best.pth at epoch: 5
+11_05_16:15 openset_imagenet.train INFO: loss:entropic protocol:2 ep:6 train:{'j': 1.151} val:{'j': 1.155, 'conf_kn': 0.939, 'conf_unk': 0.955} t:18.8s v:2.5s
+11_05_16:15 openset_imagenet.train INFO: Saving best model experiments/ex_4/net_2/entropic_threshold_best11_05_16:15 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:4 train:{'j': 0.079} val:{'j': 0.079, 'conf_kn': 0.734, 'conf_unk': 0.000} t:100.6s v:15.4s
+11_05_16:17 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:5 train:{'j': 0.079} val:{'j': 0.079, 'conf_kn': 0.734, 'conf_unk': 0.000} t:99.8s v:15.5s
+11_05_16:19 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:6 train:{'j': 0.079} val:{'j': 0.078, 'conf_kn': 0.734, 'conf_unk': 0.000} t:101.0s v:15.4s
+11_05_16:21 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:7 train:{'j': 0.078} val:{'j': 0.078, 'conf_kn': 0.733, 'conf_unk': 0.000} t:99.5s v:17.1s
+11_05_16:23 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:8 train:{'j': 0.077} val:{'j': 0.077, 'conf_kn': 0.733, 'conf_unk': 0.000} t:99.2s v:15.4s
+11_05_16:25 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:9 train:{'j': 0.076} val:{'j': 0.076, 'conf_kn': 0.731, 'conf_unk': 0.000} t:100.9s v:15.4s
+11_05_16:27 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:10 train:{'j': 0.075} val:{'j': 0.075, 'conf_kn': 0.729, 'conf_unk': 0.000} t:99.2s v:15.3s
+11_05_16:29 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:11 train:{'j': 0.074} val:{'j': 0.074, 'conf_kn': 0.727, 'conf_unk': 0.000} t:100.7s v:15.3s
+11_05_16:31 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:12 train:{'j': 0.073} val:{'j': 0.073, 'conf_kn': 0.728, 'conf_unk': 0.000} t:98.5s v:15.3s
+11_05_16:32 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:13 train:{'j': 0.072} val:{'j': 0.072, 'conf_kn': 0.727, 'conf_unk': 0.000} t:100.6s v:15.3s
+11_05_16:34 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:14 train:{'j': 0.071} val:{'j': 0.070, 'conf_kn': 0.729, 'conf_unk': 0.000} t:98.9s v:15.2s
+11_05_16:36 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:15 train:{'j': 0.069} val:{'j': 0.069, 'conf_kn': 0.731, 'conf_unk': 0.000} t:100.7s v:15.4s
+11_05_16:38 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:16 train:{'j': 0.068} val:{'j': 0.067, 'conf_kn': 0.735, 'conf_unk': 0.000} t:100.7s v:15.3s
+11_05_16:38 openset_imagenet.binary_ensemble_combined_emnist INFO: Saving best model experiments/ex_4/net_2/sigmoid-focal_binary_ensemble_combined_emnist_best.pth at epoch: 16
+11_05_16:40 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:17 train:{'j': 0.066} val:{'j': 0.065, 'conf_kn': 0.739, 'conf_unk': 0.000} t:98.7s v:15.3s
+11_05_16:40 openset_imagenet.binary_ensemble_combined_emnist INFO: Saving best model experiments/ex_4/net_2/sigmoid-focal_binary_ensemble_combined_emnist_best.pth at epoch: 17
+11_05_16:42 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:18 train:{'j': 0.065} val:{'j': 0.064, 'conf_kn': 0.744, 'conf_unk': 0.000} t:100.0s v:15.3s
+11_05_16:42 openset_imagenet.binary_ensemble_combined_emnist INFO: Saving best model experiments/ex_4/net_2/sigmoid-focal_binary_ensemble_combined_emnist_best.pth at epoch: 18
+11_05_16:44 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:19 train:{'j': 0.063} val:{'j': 0.062, 'conf_kn': 0.750, 'conf_unk': 0.000} t:97.9s v:16.9s
+11_05_16:44 openset_imagenet.binary_ensemble_combined_emnist INFO: Saving best model experiments/ex_4/net_2/sigmoid-focal_binary_ensemble_combined_emnist_best.pth at epoch: 19
+11_05_16:46 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:20 train:{'j': 0.062} val:{'j': 0.061, 'conf_kn': 0.753, 'conf_unk': 0.000} t:98.3s v:15.3s
+11_05_16:46 openset_imagenet.binary_ensemble_combined_emnist INFO: Saving best model experiments/ex_4/net_2/sigmoid-focal_binary_ensemble_combined_emnist_best.pth at epoch: 20
+11_05_16:48 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:21 train:{'j': 0.060} val:{'j': 0.060, 'conf_kn': 0.757, 'conf_unk': 0.000} t:99.9s v:15.3s
+11_05_16:48 openset_imagenet.binary_ensemble_combined_emnist INFO: Saving best model experiments/ex_4/net_2/sigmoid-focal_binary_ensemble_combined_emnist_best.pth at epoch: 21
+11_05_16:50 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:22 train:{'j': 0.059} val:{'j': 0.059, 'conf_kn': 0.755, 'conf_unk': 0.000} t:98.3s v:15.3s
+11_05_16:52 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:23 train:{'j': 0.058} val:{'j': 0.058, 'conf_kn': 0.758, 'conf_unk': 0.000} t:100.9s v:15.3s
+11_05_16:52 openset_imagenet.binary_ensemble_combined_emnist INFO: Saving best model experiments/ex_4/net_2/sigmoid-focal_binary_ensemble_combined_emnist_best.pth at epoch: 23
+11_05_16:54 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:24 train:{'j': 0.057} val:{'j': 0.057, 'conf_kn': 0.762, 'conf_unk': 0.000} t:98.4s v:15.3s
+11_05_16:54 openset_imagenet.binary_ensemble_combined_emnist INFO: Saving best model experiments/ex_4/net_2/sigmoid-focal_binary_ensemble_combined_emnist_best.pth at epoch: 24
+11_05_16:55 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:25 train:{'j': 0.056} val:{'j': 0.056, 'conf_kn': 0.763, 'conf_unk': 0.000} t:99.9s v:15.3s
+11_05_16:55 openset_imagenet.binary_ensemble_combined_emnist INFO: Saving best model experiments/ex_4/net_2/sigmoid-focal_binary_ensemble_combined_emnist_best.pth at epoch: 25
+11_05_16:57 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:26 train:{'j': 0.056} val:{'j': 0.055, 'conf_kn': 0.768, 'conf_unk': 0.000} t:98.6s v:16.9s
+11_05_16:57 openset_imagenet.binary_ensemble_combined_emnist INFO: Saving best model experiments/ex_4/net_2/sigmoid-focal_binary_ensemble_combined_emnist_best.pth at epoch: 26
+11_05_16:59 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:27 train:{'j': 0.055} val:{'j': 0.055, 'conf_kn': 0.770, 'conf_unk': 0.000} t:99.1s v:15.3s
+11_05_16:59 openset_imagenet.binary_ensemble_combined_emnist INFO: Saving best model experiments/ex_4/net_2/sigmoid-focal_binary_ensemble_combined_emnist_best.pth at epoch: 27
+11_05_17:01 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:28 train:{'j': 0.054} val:{'j': 0.054, 'conf_kn': 0.766, 'conf_unk': 0.000} t:100.4s v:15.3s
+11_05_17:03 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:29 train:{'j': 0.054} val:{'j': 0.054, 'conf_kn': 0.767, 'conf_unk': 0.000} t:98.9s v:15.4s
+11_05_17:05 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:30 train:{'j': 0.053} val:{'j': 0.053, 'conf_kn': 0.765, 'conf_unk': 0.000} t:100.7s v:15.3s
+11_05_17:07 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:31 train:{'j': 0.053} val:{'j': 0.053, 'conf_kn': 0.767, 'conf_unk': 0.000} t:99.0s v:15.3s
+11_05_17:09 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:32 train:{'j': 0.052} val:{'j': 0.052, 'conf_kn': 0.778, 'conf_unk': 0.000} t:100.6s v:15.3s
+11_05_17:09 openset_imagenet.binary_ensemble_combined_emnist INFO: Saving best model experiments/ex_4/net_2/sigmoid-focal_binary_ensemble_combined_emnist_best.pth at epoch: 32
+11_05_17:11 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:33 train:{'j': 0.052} val:{'j': 0.052, 'conf_kn': 0.769, 'conf_unk': 0.000} t:100.9s v:15.5s
+11_05_17:13 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:34 train:{'j': 0.052} val:{'j': 0.051, 'conf_kn': 0.777, 'conf_unk': 0.000} t:99.3s v:15.3s
+11_05_17:15 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:35 train:{'j': 0.051} val:{'j': 0.051, 'conf_kn': 0.776, 'conf_unk': 0.000} t:101.0s v:15.4s
+11_05_17:17 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:36 train:{'j': 0.051} val:{'j': 0.051, 'conf_kn': 0.786, 'conf_unk': 0.000} t:98.9s v:16.9s
+11_05_17:17 openset_imagenet.binary_ensemble_combined_emnist INFO: Saving best model experiments/ex_4/net_2/sigmoid-focal_binary_ensemble_combined_emnist_best.pth at epoch: 36
+11_05_17:19 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:37 train:{'j': 0.051} val:{'j': 0.051, 'conf_kn': 0.775, 'conf_unk': 0.000} t:98.7s v:15.3s
+11_05_17:20 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:38 train:{'j': 0.050} val:{'j': 0.050, 'conf_kn': 0.777, 'conf_unk': 0.000} t:100.1s v:15.3s
+11_05_17:22 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:39 train:{'j': 0.050} val:{'j': 0.050, 'conf_kn': 0.782, 'conf_unk': 0.000} t:98.0s v:15.3s
+11_05_17:24 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:40 train:{'j': 0.050} val:{'j': 0.050, 'conf_kn': 0.784, 'conf_unk': 0.000} t:100.6s v:15.4s
+11_05_17:26 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:41 train:{'j': 0.050} val:{'j': 0.050, 'conf_kn': 0.779, 'conf_unk': 0.000} t:99.0s v:15.3s
+11_05_17:28 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:42 train:{'j': 0.050} val:{'j': 0.050, 'conf_kn': 0.776, 'conf_unk': 0.000} t:100.9s v:15.3s
+11_05_17:30 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:43 train:{'j': 0.049} val:{'j': 0.049, 'conf_kn': 0.782, 'conf_unk': 0.000} t:100.5s v:15.3s
+11_05_17:32 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:44 train:{'j': 0.049} val:{'j': 0.049, 'conf_kn': 0.780, 'conf_unk': 0.000} t:98.9s v:15.3s
+11_05_17:34 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:45 train:{'j': 0.049} val:{'j': 0.049, 'conf_kn': 0.763, 'conf_unk': 0.000} t:100.9s v:15.3s
+11_05_17:36 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:46 train:{'j': 0.049} val:{'j': 0.049, 'conf_kn': 0.780, 'conf_unk': 0.000} t:98.8s v:15.3s
+11_05_17:38 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:47 train:{'j': 0.049} val:{'j': 0.049, 'conf_kn': 0.781, 'conf_unk': 0.000} t:100.6s v:15.4s
+11_05_17:40 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:48 train:{'j': 0.049} val:{'j': 0.049, 'conf_kn': 0.776, 'conf_unk': 0.000} t:99.1s v:15.3s
+11_05_17:42 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:sigmoid-focal protocol:2 ep:49 train:{'j': 0.048} val:{'j': 0.048, 'conf_kn': 0.781, 'conf_unk': 0.000} t:101.2s v:15.4s
+11_05_17:42 openset_imagenet.binary_ensemble_combined_emnist INFO: Training finished

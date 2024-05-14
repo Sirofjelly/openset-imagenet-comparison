@@ -230,13 +230,13 @@ def worker(cfg):
         train_ds = Dataset_EMNIST(
         dataset_root=cfg.data.imagenet_path,
         which_set="train",
-        include_unknown=True, # TODO change to False
+        include_unknown=cfg.unknown_for_training,
         has_garbage_class=False)
     
         val_ds = Dataset_EMNIST(
             dataset_root=cfg.data.imagenet_path,
             which_set="validation",
-            include_unknown=True, # TODO change to False  
+            include_unknown=cfg.unknown_for_training,
             has_garbage_class=False)
 
     train_loader = DataLoader(
@@ -270,7 +270,6 @@ def worker(cfg):
     v_metrics = defaultdict(AverageMeter)
 
     # set loss
-    # todo add binary cross entropy loss
     loss = None
     if cfg.loss.type == "entropic":
         # number of classes - 1 since we have no label for unknown

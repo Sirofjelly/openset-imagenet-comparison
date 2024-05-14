@@ -1,0 +1,93 @@
+10_05_11:17 openset_imagenet.train INFO: ============ Data ============
+10_05_11:17 openset_imagenet.train INFO: train_len:60000, labels:10
+10_05_11:17 openset_imagenet.train INFO: val_len:10000, labels:10
+10_05_11:17 openset_imagenet.train INFO: ========== Training ==========
+10_05_11:17 openset_imagenet.train INFO: Initial epoch: 0
+10_05_11:17 openset_imagenet.train INFO: Last epoch: 50
+10_05_11:17 openset_imagenet.train INFO: Batch size: 32
+10_05_11:17 openset_imagenet.train INFO: workers: 0
+10_05_11:17 openset_imagenet.train INFO: Loss: softmax
+10_05_11:17 openset_imagenet.train INFO: optimizer: sgd
+10_05_11:17 openset_imagenet.train INFO: Learning rate: 0.001
+10_05_11:17 openset_imagenet.train INFO: Device: 1
+10_05_11:17 openset_imagenet.train INFO: Training...
+10_05_11:17 openset_imagenet.train INFO: loss:softmax protocol:2 ep:0 train:{'j': 1.045} val:{'j': 0.309, 'conf_kn': 0.849, 'conf_unk': 0.000} t:8.9s v:1.4s
+10_05_11:17 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 0
+10_05_11:17 openset_imagenet.train INFO: loss:softmax protocol:2 ep:1 train:{'j': 0.179} val:{'j': 0.123, 'conf_kn': 0.937, 'conf_unk': 0.000} t:8.6s v:1.2s
+10_05_11:17 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 1
+10_05_11:17 openset_imagenet.train INFO: loss:softmax protocol:2 ep:2 train:{'j': 0.112} val:{'j': 0.106, 'conf_kn': 0.946, 'conf_unk': 0.000} t:8.6s v:1.3s
+10_05_11:17 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 2
+10_05_11:17 openset_imagenet.train INFO: loss:softmax protocol:2 ep:3 train:{'j': 0.087} val:{'j': 0.078, 'conf_kn': 0.958, 'conf_unk': 0.000} t:8.7s v:1.2s
+10_05_11:17 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 3
+10_05_11:17 openset_imagenet.train INFO: loss:softmax protocol:2 ep:4 train:{'j': 0.072} val:{'j': 0.069, 'conf_kn': 0.963, 'conf_unk': 0.000} t:8.7s v:1.3s
+10_05_11:17 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 4
+10_05_11:18 openset_imagenet.train INFO: loss:softmax protocol:2 ep:5 train:{'j': 0.062} val:{'j': 0.069, 'conf_kn': 0.965, 'conf_unk': 0.000} t:8.7s v:1.3s
+10_05_11:18 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 5
+10_05_11:18 openset_imagenet.train INFO: loss:softmax protocol:2 ep:6 train:{'j': 0.056} val:{'j': 0.050, 'conf_kn': 0.974, 'conf_unk': 0.000} t:8.2s v:1.2s
+10_05_11:18 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 6
+10_05_11:18 openset_imagenet.train INFO: loss:softmax protocol:2 ep:7 train:{'j': 0.050} val:{'j': 0.050, 'conf_kn': 0.975, 'conf_unk': 0.000} t:8.2s v:1.4s
+10_05_11:18 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 7
+10_05_11:18 openset_imagenet.train INFO: loss:softmax protocol:2 ep:8 train:{'j': 0.045} val:{'j': 0.041, 'conf_kn': 0.978, 'conf_unk': 0.000} t:8.5s v:1.2s
+10_05_11:18 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 8
+10_05_11:18 openset_imagenet.train INFO: loss:softmax protocol:2 ep:9 train:{'j': 0.041} val:{'j': 0.042, 'conf_kn': 0.979, 'conf_unk': 0.000} t:8.7s v:1.2s
+10_05_11:18 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 9
+10_05_11:18 openset_imagenet.train INFO: loss:softmax protocol:2 ep:10 train:{'j': 0.037} val:{'j': 0.038, 'conf_kn': 0.981, 'conf_unk': 0.000} t:8.3s v:1.2s
+10_05_11:18 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 10
+10_05_11:19 openset_imagenet.train INFO: loss:softmax protocol:2 ep:11 train:{'j': 0.035} val:{'j': 0.037, 'conf_kn': 0.981, 'conf_unk': 0.000} t:8.4s v:1.3s
+10_05_11:19 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 11
+10_05_11:19 openset_imagenet.train INFO: loss:softmax protocol:2 ep:12 train:{'j': 0.033} val:{'j': 0.038, 'conf_kn': 0.981, 'conf_unk': 0.000} t:9.0s v:1.2s
+10_05_11:19 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 12
+10_05_11:19 openset_imagenet.train INFO: loss:softmax protocol:2 ep:13 train:{'j': 0.030} val:{'j': 0.037, 'conf_kn': 0.982, 'conf_unk': 0.000} t:8.4s v:1.2s
+10_05_11:19 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 13
+10_05_11:19 openset_imagenet.train INFO: loss:softmax protocol:2 ep:14 train:{'j': 0.027} val:{'j': 0.038, 'conf_kn': 0.982, 'conf_unk': 0.000} t:8.6s v:1.3s
+10_05_11:19 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 14
+10_05_11:19 openset_imagenet.train INFO: loss:softmax protocol:2 ep:15 train:{'j': 0.026} val:{'j': 0.032, 'conf_kn': 0.985, 'conf_unk': 0.000} t:8.2s v:1.2s
+10_05_11:19 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 15
+10_05_11:19 openset_imagenet.train INFO: loss:softmax protocol:2 ep:16 train:{'j': 0.024} val:{'j': 0.032, 'conf_kn': 0.985, 'conf_unk': 0.000} t:8.3s v:1.2s
+10_05_11:19 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 16
+10_05_11:20 openset_imagenet.train INFO: loss:softmax protocol:2 ep:17 train:{'j': 0.022} val:{'j': 0.031, 'conf_kn': 0.985, 'conf_unk': 0.000} t:8.4s v:1.2s
+10_05_11:20 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 17
+10_05_11:20 openset_imagenet.train INFO: loss:softmax protocol:2 ep:18 train:{'j': 0.021} val:{'j': 0.042, 'conf_kn': 0.982, 'conf_unk': 0.000} t:8.0s v:1.2s
+10_05_11:20 openset_imagenet.train INFO: loss:softmax protocol:2 ep:19 train:{'j': 0.020} val:{'j': 0.033, 'conf_kn': 0.985, 'conf_unk': 0.000} t:8.3s v:1.2s
+10_05_11:20 openset_imagenet.train INFO: loss:softmax protocol:2 ep:20 train:{'j': 0.019} val:{'j': 0.034, 'conf_kn': 0.985, 'conf_unk': 0.000} t:8.6s v:1.3s
+10_05_11:20 openset_imagenet.train INFO: loss:softmax protocol:2 ep:21 train:{'j': 0.017} val:{'j': 0.035, 'conf_kn': 0.986, 'conf_unk': 0.000} t:8.6s v:1.4s
+10_05_11:20 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 21
+10_05_11:20 openset_imagenet.train INFO: loss:softmax protocol:2 ep:22 train:{'j': 0.016} val:{'j': 0.032, 'conf_kn': 0.986, 'conf_unk': 0.000} t:8.7s v:1.2s
+10_05_11:20 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 22
+10_05_11:21 openset_imagenet.train INFO: loss:softmax protocol:2 ep:23 train:{'j': 0.015} val:{'j': 0.031, 'conf_kn': 0.988, 'conf_unk': 0.000} t:8.8s v:1.2s
+10_05_11:21 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 23
+10_05_11:21 openset_imagenet.train INFO: loss:softmax protocol:2 ep:24 train:{'j': 0.014} val:{'j': 0.034, 'conf_kn': 0.987, 'conf_unk': 0.000} t:8.7s v:1.2s
+10_05_11:21 openset_imagenet.train INFO: loss:softmax protocol:2 ep:25 train:{'j': 0.013} val:{'j': 0.035, 'conf_kn': 0.987, 'conf_unk': 0.000} t:8.5s v:1.3s
+10_05_11:21 openset_imagenet.train INFO: loss:softmax protocol:2 ep:26 train:{'j': 0.012} val:{'j': 0.030, 'conf_kn': 0.987, 'conf_unk': 0.000} t:8.6s v:1.2s
+10_05_11:21 openset_imagenet.train INFO: loss:softmax protocol:2 ep:27 train:{'j': 0.010} val:{'j': 0.035, 'conf_kn': 0.987, 'conf_unk': 0.000} t:8.8s v:1.2s
+10_05_11:21 openset_imagenet.train INFO: loss:softmax protocol:2 ep:28 train:{'j': 0.010} val:{'j': 0.036, 'conf_kn': 0.987, 'conf_unk': 0.000} t:8.8s v:1.4s
+10_05_11:22 openset_imagenet.train INFO: loss:softmax protocol:2 ep:29 train:{'j': 0.010} val:{'j': 0.033, 'conf_kn': 0.988, 'conf_unk': 0.000} t:8.1s v:1.2s
+10_05_11:22 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 29
+10_05_11:22 openset_imagenet.train INFO: loss:softmax protocol:2 ep:30 train:{'j': 0.009} val:{'j': 0.036, 'conf_kn': 0.987, 'conf_unk': 0.000} t:8.8s v:1.2s
+10_05_11:22 openset_imagenet.train INFO: loss:softmax protocol:2 ep:31 train:{'j': 0.008} val:{'j': 0.033, 'conf_kn': 0.988, 'conf_unk': 0.000} t:8.6s v:1.2s
+10_05_11:22 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 31
+10_05_11:22 openset_imagenet.train INFO: loss:softmax protocol:2 ep:32 train:{'j': 0.008} val:{'j': 0.034, 'conf_kn': 0.989, 'conf_unk': 0.000} t:8.5s v:1.2s
+10_05_11:22 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 32
+10_05_11:22 openset_imagenet.train INFO: loss:softmax protocol:2 ep:33 train:{'j': 0.007} val:{'j': 0.034, 'conf_kn': 0.988, 'conf_unk': 0.000} t:8.5s v:1.2s
+10_05_11:22 openset_imagenet.train INFO: loss:softmax protocol:2 ep:34 train:{'j': 0.006} val:{'j': 0.036, 'conf_kn': 0.988, 'conf_unk': 0.000} t:8.4s v:1.2s
+10_05_11:23 openset_imagenet.train INFO: loss:softmax protocol:2 ep:35 train:{'j': 0.006} val:{'j': 0.039, 'conf_kn': 0.988, 'conf_unk': 0.000} t:8.3s v:1.3s
+10_05_11:23 openset_imagenet.train INFO: loss:softmax protocol:2 ep:36 train:{'j': 0.005} val:{'j': 0.038, 'conf_kn': 0.988, 'conf_unk': 0.000} t:8.3s v:1.3s
+10_05_11:23 openset_imagenet.train INFO: loss:softmax protocol:2 ep:37 train:{'j': 0.006} val:{'j': 0.037, 'conf_kn': 0.988, 'conf_unk': 0.000} t:8.6s v:1.2s
+10_05_11:23 openset_imagenet.train INFO: loss:softmax protocol:2 ep:38 train:{'j': 0.005} val:{'j': 0.034, 'conf_kn': 0.990, 'conf_unk': 0.000} t:8.3s v:1.3s
+10_05_11:23 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 38
+10_05_11:23 openset_imagenet.train INFO: loss:softmax protocol:2 ep:39 train:{'j': 0.004} val:{'j': 0.037, 'conf_kn': 0.988, 'conf_unk': 0.000} t:8.5s v:1.2s
+10_05_11:23 openset_imagenet.train INFO: loss:softmax protocol:2 ep:40 train:{'j': 0.004} val:{'j': 0.036, 'conf_kn': 0.990, 'conf_unk': 0.000} t:8.5s v:1.2s
+10_05_11:24 openset_imagenet.train INFO: loss:softmax protocol:2 ep:41 train:{'j': 0.005} val:{'j': 0.037, 'conf_kn': 0.989, 'conf_unk': 0.000} t:8.4s v:1.2s
+10_05_11:24 openset_imagenet.train INFO: loss:softmax protocol:2 ep:42 train:{'j': 0.004} val:{'j': 0.036, 'conf_kn': 0.989, 'conf_unk': 0.000} t:8.3s v:1.2s
+10_05_11:24 openset_imagenet.train INFO: loss:softmax protocol:2 ep:43 train:{'j': 0.003} val:{'j': 0.036, 'conf_kn': 0.990, 'conf_unk': 0.000} t:8.5s v:1.3s
+10_05_11:24 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 43
+10_05_11:24 openset_imagenet.train INFO: loss:softmax protocol:2 ep:44 train:{'j': 0.002} val:{'j': 0.036, 'conf_kn': 0.990, 'conf_unk': 0.000} t:8.4s v:1.3s
+10_05_11:24 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 44
+10_05_11:24 openset_imagenet.train INFO: loss:softmax protocol:2 ep:45 train:{'j': 0.002} val:{'j': 0.039, 'conf_kn': 0.989, 'conf_unk': 0.000} t:8.5s v:1.2s
+10_05_11:24 openset_imagenet.train INFO: loss:softmax protocol:2 ep:46 train:{'j': 0.002} val:{'j': 0.036, 'conf_kn': 0.990, 'conf_unk': 0.000} t:8.4s v:1.2s
+10_05_11:24 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 46
+10_05_11:24 openset_imagenet.train INFO: loss:softmax protocol:2 ep:47 train:{'j': 0.002} val:{'j': 0.036, 'conf_kn': 0.990, 'conf_unk': 0.000} t:8.1s v:1.3s
+10_05_11:24 openset_imagenet.train INFO: Saving best model experiments/ex_3/net_4/softmax_threshold_best.pth at epoch: 47
+10_05_11:25 openset_imagenet.train INFO: loss:softmax protocol:2 ep:48 train:{'j': 0.001} val:{'j': 0.046, 'conf_kn': 0.988, 'conf_unk': 0.000} t:8.5s v:1.3s
+10_05_11:25 openset_imagenet.train INFO: loss:softmax protocol:2 ep:49 train:{'j': 0.002} val:{'j': 0.038, 'conf_kn': 0.990, 'conf_unk': 0.000} t:8.3s v:1.4s
+10_05_11:25 openset_imagenet.train INFO: Training finished

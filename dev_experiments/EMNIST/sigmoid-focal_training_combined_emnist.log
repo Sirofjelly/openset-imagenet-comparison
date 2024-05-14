@@ -1,0 +1,4 @@
+12_05_10:01 __main__ INFO: Loaded test dataset for protocol 2 with len:18800, labels:11
+12_05_10:01 __main__ INFO: Loading base models for protocol 2, sigmoid-focal
+12_05_10:01 __main__ WARNING: Could not load model file dev_experiments/EMNIST/sigmoid-focal_binary_ensemble_combined_emnist_best.pth; skipping
+12_05_10:01 __main__ INFO: Finished processing protocol 2, sigmoid-focal

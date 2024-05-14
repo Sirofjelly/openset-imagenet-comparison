@@ -8,3 +8,4 @@ protocols
 openset_imagenet.egg-info
 *.pth
 *.npz
+events.out.tfevents*

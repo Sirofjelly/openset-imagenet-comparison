@@ -1,0 +1,5 @@
+10_05_11:44 __main__ INFO: Loaded test dataset for protocol 2 with len:18800, labels:11
+10_05_11:44 __main__ INFO: Loading base model for protocol 2, softmax
+10_05_11:44 __main__ INFO: Taking model from epoch 48 that achieved best score 0.99034208984375
+10_05_11:45 __main__ INFO: Extracting base scores for protocol 2, softmax
+10_05_11:47 __main__ INFO: Target labels, logits, features and scores saved in: experiments/ex_3/net_4/Protocol_2/softmax_threshold_test_arr_best.npz

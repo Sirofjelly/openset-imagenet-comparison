@@ -165,7 +165,7 @@ def load_model(cfg, loss, algorithm, protocol, suffix, output_directory, n_class
     return model
 
 
-def extract(model, data_loader, algorithm, loss, threshold):
+def extract(model, data_loader, algorithm, loss, threshold, cfg):
     if algorithm == 'proser':
          return openset_imagenet.proser.get_arrays(
             model=model,
@@ -187,7 +187,8 @@ def extract(model, data_loader, algorithm, loss, threshold):
             garbage=loss=="garbage",
             pretty=True,
             threshold=threshold,
-            remove_negative=False
+            remove_negative=cfg.remove_negative,
+            cfg = cfg
         )
 
 
@@ -228,9 +229,10 @@ def write_scores(gt, logits, features, scores, loss, algorithm, suffix, output_d
 
 def load_scores(loss, algorithm, suffix, output_directory):
     file_path = Path(output_directory) / f"{loss}_{algorithm}_test_arr_{suffix}.npz"
+    print("file_path", file_path)
     if os.path.exists(file_path):
         return np.load(file_path)
-    else:
+    else:    
         return None
 
 
@@ -259,7 +261,7 @@ def process_model(protocol, loss, algorithms, cfg, suffix, gpu, force, threshold
         if any(a == "binary_ensemble_emnist" for a in algorithms): #TODO Binary ensemble for ImageNet
                 base_data = None if force else load_scores(loss, cfg.algorithm.type, suffix, output_directory)
                 if base_data is None: # when we never executed this before
-                    logger.info(f"Loading base models for protocol {protocol}, {loss}")
+                    logger.info(f"Loading base models for binary_ensemble_emnist and protocol {protocol}, {loss}")
                     # load base model
                     base_models = torch.nn.ModuleList()
                     for i in range(cfg.algorithm.num_models):
@@ -285,7 +287,7 @@ def process_model(protocol, loss, algorithms, cfg, suffix, gpu, force, threshold
                 if base_model is not None:
                     # extract features
                     logger.info(f"Extracting base scores for protocol {protocol}, {loss}")
-                    gt, logits, features, base_scores = extract(base_model, test_loader, "binary_ensemble_combined_emnist", loss, threshold)
+                    gt, logits, features, base_scores = extract(base_model, test_loader, "binary_ensemble_combined_emnist", loss, threshold, cfg)
                     write_scores(gt, logits, features, base_scores, loss, "binary_ensemble_combined_emnist", suffix, output_directory)
                     # remove model from GPU memory
                     del base_model

@@ -378,7 +378,7 @@ def get_similarity_score_from_binary_to_label(model_binary, class_binary):
         class_similarities[i] = num_outputs - similarity
     return torch.from_numpy(class_similarities)
 
-def get_similarity_score_from_binary_to_label_new(model_outputs, class_binary):
+def get_similarity_score_from_binary_to_label_new(model_binary, class_binary):
     """
     Used when using logits output from the model without sigmoid.
     Get the predicted class from the binary output of the model. The lower the similarity the worse. Exact match is == num_models
@@ -386,15 +386,15 @@ def get_similarity_score_from_binary_to_label_new(model_outputs, class_binary):
         model_outputs (list): Binary output of the model.
         class_binary (dict): Binary representation of the classes.
     """
-    num_outputs = len(model_outputs)
-    model_outputs = model_outputs.cpu()
-    model_outputs = model_outputs.view(-1,)
+    num_outputs = len(model_binary)
+    model_binary = model_binary.cpu()
+    model_binary = model_binary.view(-1,)
 
     # get the class from the binary output
     class_similarities = numpy.empty(len(class_binary))
     for i, (c, b) in enumerate(class_binary.items()):
         b = numpy.array(b) * 2 - 1 # convert to -1 and 1
-        similarity =  numpy.sum((b * numpy.array(model_outputs)))
+        similarity =  numpy.sum((b * numpy.array(model_binary)))
         class_similarities[i] = similarity
     return torch.from_numpy(class_similarities)
 
@@ -543,7 +543,7 @@ def get_sets_for_ensemble(unique_classes, num_models):
     print("Ensemble training class splits: ", class_splits)
     return class_splits
 
-def get_class_from_label(label, class_dict, separate_class_for_unknown=False, unknown_in_both=False):
+def get_class_from_label(label, class_dict, unknown_in_both=False):
     """ Get the class from the label.
         Based on the input class it searches for for the class and returns the label.
 
@@ -556,8 +556,6 @@ def get_class_from_label(label, class_dict, separate_class_for_unknown=False, un
     """
     # Check which class the label belongs to and replace the label with that class
     for key, value in class_dict.items():
-        if label == -1 and separate_class_for_unknown:
-            return torch.as_tensor(-1, dtype=torch.float32)
         if label == -1 and unknown_in_both:
             # we want to have probability 0.5 for both
             return torch.as_tensor(0.5, dtype=torch.float32)
