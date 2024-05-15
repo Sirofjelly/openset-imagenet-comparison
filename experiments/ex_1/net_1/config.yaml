@@ -19,6 +19,7 @@ epochs: 50    # Number of epochs to train.
 workers: 0      # Dataloader number of workers
 patience: 0    # Number of epochs to wait before stopping the training. 0 means no early stopping
 unknown_for_training: False  # If True, the unknown class is used for training
+unknown_in_both: False
 
 # loss parameters
 loss:
@@ -37,5 +38,5 @@ opt:
 algorithm:
   type: binary_ensemble_combined_emnist
   num_models: 126
-  sets: random # either random or hamming, if class distance should be optimized
+  sets: hamming # either random or hamming, if class distance should be optimized
 

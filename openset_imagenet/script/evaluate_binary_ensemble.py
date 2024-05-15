@@ -165,7 +165,7 @@ def load_model(cfg, loss, algorithm, protocol, suffix, output_directory, n_class
     return model
 
 
-def extract(model, data_loader, algorithm, loss, threshold, cfg):
+def extract(model, data_loader, algorithm, loss, threshold, cfg, num_models=None, random_models=False):
     if algorithm == 'proser':
          return openset_imagenet.proser.get_arrays(
             model=model,
@@ -187,8 +187,9 @@ def extract(model, data_loader, algorithm, loss, threshold, cfg):
             garbage=loss=="garbage",
             pretty=True,
             threshold=threshold,
-            remove_negative=cfg.remove_negative,
-            cfg = cfg
+            cfg = cfg,
+            num_models = num_models,
+            random_models=random_models
         )
 
 
@@ -222,8 +223,8 @@ def post_process(gt, logits, features, scores, cfg, protocol, loss, algorithm, o
         logger.info("computing probabilities for evm")
         return compute_probs(gt, logits, features, scores, model_dict, "evm", gpu, hyperparams)
 
-def write_scores(gt, logits, features, scores, loss, algorithm, suffix, output_directory):
-    file_path = Path(output_directory) / f"{loss}_{algorithm}_test_arr_{suffix}.npz"
+def write_scores(gt, logits, features, scores, loss, algorithm, suffix, output_directory, num_models=None):
+    file_path = Path(output_directory) / f"{loss}_{algorithm}_test_arr_{suffix}_hamming_{num_models}.npz"
     np.savez(file_path, gt=gt, logits=logits, features=features, scores=scores)
     logger.info(f"Target labels, logits, features and scores saved in: {file_path}")
 
@@ -287,9 +288,10 @@ def process_model(protocol, loss, algorithms, cfg, suffix, gpu, force, threshold
                 if base_model is not None:
                     # extract features
                     logger.info(f"Extracting base scores for protocol {protocol}, {loss}")
-                    gt, logits, features, base_scores = extract(base_model, test_loader, "binary_ensemble_combined_emnist", loss, threshold, cfg)
-                    write_scores(gt, logits, features, base_scores, loss, "binary_ensemble_combined_emnist", suffix, output_directory)
-                    # remove model from GPU memory
+                    for i in range(4, cfg.algorithm.num_models+1):
+                        gt, logits, features, base_scores = extract(base_model, test_loader, "binary_ensemble_combined_emnist", loss, threshold, cfg, num_models=i, random_models=False)
+                        write_scores(gt, logits, features, base_scores, loss, "binary_ensemble_combined_emnist", suffix, output_directory, num_models=i)
+                        # remove model from GPU memory
                     del base_model
             else:
                 logger.info("Using previously computed features")

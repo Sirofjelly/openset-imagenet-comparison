@@ -138,7 +138,7 @@ def validate(model, data_loader, class_dicts, loss_fn, n_classes, trackers, cfg)
             trackers["conf_unk"].update(neg_conf, neg_count)
 
 
-def get_arrays(model, loader, garbage, pretty=False, threshold=True, remove_negative=False, cfg=None):
+def get_arrays(model, loader, garbage, pretty=False, threshold=True, remove_negative=False, cfg=None, num_models=None, random_models=False):
     """ Extract deep features, logits and targets for all dataset. Returns numpy arrays
 
     Args:
@@ -149,18 +149,99 @@ def get_arrays(model, loader, garbage, pretty=False, threshold=True, remove_nega
     model.eval()
     with torch.no_grad():
         data_len = len(loader.dataset)         # dataset length
-        logits_dim = model.logits.out_features  # logits output classes
+        logits_dim = num_models     # logits output classes
         if garbage:
             logits_dim -= 1
+
+        # load the file and enlarge the matrices
+        path_to_intermediate = 'experiments/ex_1/net_1/intermediate_state.npz'
+
+        if path.exists(path_to_intermediate):
+            intermediate_state = np.load(path_to_intermediate)
+            final_class_binary_matrix = intermediate_state["final_class_binary_matrix"]
+            class_binary_matrix = intermediate_state["class_binary_matrix"]
+            used_indices = intermediate_state["used_indices"]
+            print("Loaded intermediate state with indices: ", used_indices)
+        else:
+            class_binaries = get_binary_output_for_class_per_model(model.class_split)
+            # we reduce the class binaries to the number of models
+            # hamming dist approach
+            class_binary_matrix = np.array([value for _, value in class_binaries.items()]).T
+            length = len(class_binaries.keys())
+            min_num_models = np.ceil(np.log2(length)).astype(int)
+
+            used_indices = []
+            final_class_binary_matrix = None
+            # we chose the minimum number of models randomly but make sure that the hamming distance is maximized
+            while True:
+                # get for random inices in the range of class_binary_matrix
+                random_indices = random.sample(range(class_binary_matrix.shape[0]), min_num_models)
+                test_matrix = class_binary_matrix[random_indices, :]
+                ham_dist = hamming_distance_min_among_all(test_matrix, row=False)
+                if ham_dist > 0:
+                    final_class_binary_matrix = test_matrix
+                    used_indices = random_indices
+                    print("Starting ham dist: ", ham_dist, " and used indices: ", used_indices)
+                    break
+            np.savez(path_to_intermediate, final_class_binary_matrix=final_class_binary_matrix, class_binary_matrix=class_binary_matrix, used_indices=used_indices)
+
+        print("Starting shape of final class binary matrix: ", final_class_binary_matrix.shape)
+
         
-        class_binaries = get_binary_output_for_class_per_model(model.class_split)
+        if random_models:
+            while final_class_binary_matrix.shape[0] != num_models:
+                # get a random index from the class binary matrix
+                rand_index = random.randint(0, class_binary_matrix.shape[0] - 1)
+                # check if the index is already used
+                if rand_index in used_indices:
+                    continue
+                test_matrix = np.vstack((final_class_binary_matrix, class_binary_matrix[rand_index, :]))
+                ham_dist = hamming_distance_min_among_all(test_matrix, row=False)
+                if ham_dist > 0: # we only add the new row if it does not result in two similar columns
+                    # add the row with the minimum hamming distance to the final class binary matrix
+                    final_class_binary_matrix = np.vstack((final_class_binary_matrix, class_binary_matrix[rand_index, :]))
+                    # add the index to the used indices
+                    used_indices = list(used_indices)
+                    used_indices.append(rand_index)
+                print("Max min hamming dist is: ", ham_dist)
+        else: # we optimize ham dist
+            # we are maximizing the hamming distance
+             while final_class_binary_matrix.shape[0] != num_models:
+                # we check the hamming distance of all possible combinations
+                index_and_hamming = (0, 0)
+                for i, row in enumerate(class_binary_matrix):
+                    # first we check if the index is already used
+                    if i in used_indices:
+                        continue
+                    test_matrix = np.vstack((final_class_binary_matrix, row))
+                    ham_dist = hamming_distance_min_among_all(test_matrix, row=False)
+                    if ham_dist > index_and_hamming[1]:
+                        index_and_hamming = (i, ham_dist)
+
+                assert index_and_hamming != (0, 0)
+                # add the row with the minimum hamming distance to the final class binary matrix
+                final_class_binary_matrix = np.vstack((final_class_binary_matrix, class_binary_matrix[index_and_hamming[0], :]))
+                # add the index to the used indices
+                used_indices = list(used_indices)
+                used_indices.append(index_and_hamming[0])
+                print("Max min hamming dist is: ", index_and_hamming[1])
+        
+        print("Used indices: ", used_indices)
+        np.savez(path_to_intermediate, final_class_binary_matrix=final_class_binary_matrix, class_binary_matrix=class_binary_matrix, used_indices=used_indices)
+        print("After Optimizing shape of final class binary matrix: ", final_class_binary_matrix.shape)
+
+        # we convert the final class binary matrix to a dictionary
+        class_binaries = {}
+        for i, row in enumerate(final_class_binary_matrix.T):
+            class_binaries[i] = row
+
         features_dim = model.logits.in_features  # features dimensionality
         all_targets = torch.empty(data_len, device="cpu")  # store all targets
         all_logits = torch.empty((data_len, logits_dim), device="cpu")   # store all logits
         all_feat = torch.empty((data_len, features_dim), device="cpu")   # store all features
         all_scores = torch.empty((data_len, len(class_binaries) -1 if remove_negative else len(class_binaries)), device="cpu")
 
-        index = 0
+        curr_index = 0
         if pretty:
             loader = tqdm.tqdm(loader)
         for images, labels in loader:
@@ -168,6 +249,10 @@ def get_arrays(model, loader, garbage, pretty=False, threshold=True, remove_nega
             images = device(images)
             labels = device(labels)
             logits, feature = model(images)
+            
+            # only take the logits from the model we are interested in
+            logits = logits[:,used_indices]
+
             # compute softmax scores
             scores_sig = torch.nn.functional.sigmoid(logits)
             final_class_score = torch.empty((curr_b_size, len(class_binaries)), device="cpu")
@@ -190,12 +275,12 @@ def get_arrays(model, loader, garbage, pretty=False, threshold=True, remove_nega
                 # we remove the negative class from the final class score we do this only when the model does output an extra score for the negative class e.g. when training with it
                 final_class_score = final_class_score[:,1:]
             # accumulate results in all_tensor
-            all_targets[index:index + curr_b_size] = labels.detach().cpu()
-            all_logits[index:index + curr_b_size] = logits.detach().cpu()
-            all_feat[index:index + curr_b_size] = feature.detach().cpu()
-            all_scores[index:index + curr_b_size] = final_class_score.detach().cpu()
-            index += curr_b_size
-        print("Shapes: ", all_scores.shape, all_targets.shape, all_logits.shape, all_feat.shape)
+            all_targets[curr_index:curr_index + curr_b_size] = labels.detach().cpu()
+            all_logits[curr_index:curr_index + curr_b_size] = logits.detach().cpu()
+            all_feat[curr_index:curr_index + curr_b_size] = feature.detach().cpu()
+            all_scores[curr_index:curr_index + curr_b_size] = final_class_score.detach().cpu()
+            curr_index += curr_b_size
+        print(f"Shapes: ", all_scores.shape, all_targets.shape, all_logits.shape, all_feat.shape)
         return(
             all_targets.numpy(),
             all_logits.numpy(),
