@@ -15,6 +15,7 @@ import numpy
 import torch
 from itertools import product
 from scipy.spatial.distance import pdist, squareform
+import sys
 
 import yaml
 
@@ -537,7 +538,7 @@ def get_sets_for_ensemble(unique_classes, num_models):
     class_binary_array = np.array([value for _, value in class_binary_tuples]).T
     column_ham_dist = hamming_distance_min_among_all(class_binary_array, row=False)
     if column_ham_dist == 0:
-        print("The columns are the same, rerun the function")
+        print("Two or more columns are the same, rerun the function")
         return get_sets_for_ensemble(unique_classes, num_models)
     
     print("Ensemble training class splits: ", class_splits)

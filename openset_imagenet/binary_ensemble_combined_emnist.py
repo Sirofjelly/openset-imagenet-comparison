@@ -261,21 +261,26 @@ def worker(cfg):
                 train_ds.replace_negative_label()
                 val_ds.replace_negative_label()
             elif cfg.loss.type == "softmax":
-                # remove the negative label from softmax training set, not from val set!
+                # remove the negative label from softmax training set, not from val set! Or when we do not want to use unknowns
                 train_ds.remove_negative_label()
+            elif not cfg.unknown_for_training:
+                train_ds.remove_negative_label()
+                val_ds.remove_negative_label()
+            print("Label count for train: ", train_ds.label_count, "Label count for val: ", val_ds.label_count)
+            print("Unique classes for train: ", train_ds.unique_classes, "Unique classes for val: ", val_ds.unique_classes)
         else:
             raise FileNotFoundError("train/validation file does not exist")
     else:
         train_ds = Dataset_EMNIST(
         dataset_root=cfg.data.dataset_path,
         which_set="train",
-        include_unknown=cfg.unknown_for_training, # TODO when not using unknowns, set to False
+        include_unknown=cfg.unknown_for_training,
         has_garbage_class=False)
     
         val_ds = Dataset_EMNIST(
             dataset_root=cfg.data.dataset_path,
             which_set="validation",
-            include_unknown=cfg.unknown_for_training, # TODO when not using unknowns, set to False
+            include_unknown=cfg.unknown_for_training,
             has_garbage_class=False)
         
     # Create unique class splits for ensemble set-vs-set training
@@ -381,8 +386,8 @@ def worker(cfg):
             logger.info("Loaded initial model from filesystem")
         """
     else:
-        model = ResNet50(fc_layer_dim=n_classes,
-                     out_features=n_classes,
+        model = ResNet50(fc_layer_dim=cfg.algorithm.num_models,
+                     out_features=cfg.algorithm.num_models, # number of binary outputs
                      logit_bias=False)
     device(model)
 
