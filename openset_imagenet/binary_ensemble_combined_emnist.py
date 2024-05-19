@@ -24,11 +24,11 @@ import tqdm
 from os import path
 from .util import get_sets_for_ensemble, get_sets_for_ensemble_hamming, hamming_distance_min_among_all, get_class_from_label, get_similarity_score_from_binary_to_label, get_similarity_score_from_binary_to_label_new, get_binary_output_for_class_per_model
 
-def optimize_labels(labels, class_dicts, unknown_in_both=False):
+def optimize_labels(labels, class_dicts, unknown_in_both=False, unknown_for_training=False):
     intermediate_labels = device(torch.zeros((len(labels), len(class_dicts))))
 
     for i, class_dict in enumerate(class_dicts):
-        intermediate_labels[:, i] = device(torch.tensor([get_class_from_label(label.item(), class_dict, unknown_in_both=unknown_in_both) for label in labels]))
+        intermediate_labels[:, i] = device(torch.tensor([get_class_from_label(label.item(), class_dict, unknown_in_both=unknown_in_both, unknown_for_training=unknown_for_training) for label in labels]))
 
     return intermediate_labels
 
@@ -110,7 +110,7 @@ def validate(model, data_loader, class_dicts, loss_fn, n_classes, trackers, cfg)
             scores = (scores >= threshold).type(torch.int64) # TODO do we need to do that?
             
              # get the class from the label either 0 or 1
-            intermediate_labels = optimize_labels(labels, class_dicts, unknown_in_both=cfg.unknown_in_both)
+            intermediate_labels = optimize_labels(labels, class_dicts, unknown_in_both=cfg.unknown_in_both, unknown_for_training=cfg.unknown_for_training)
 
             # targets = labels.view(-1,)
             targets = intermediate_labels.type(torch.float32)
@@ -265,7 +265,6 @@ def worker(cfg):
                 train_ds.remove_negative_label()
             elif not cfg.unknown_for_training:
                 train_ds.remove_negative_label()
-                val_ds.remove_negative_label()
             print("Label count for train: ", train_ds.label_count, "Label count for val: ", val_ds.label_count)
             print("Unique classes for train: ", train_ds.unique_classes, "Unique classes for val: ", val_ds.unique_classes)
         else:

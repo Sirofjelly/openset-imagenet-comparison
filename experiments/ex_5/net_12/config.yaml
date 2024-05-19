@@ -1,8 +1,8 @@
 # General Parameters
-checkpoint: experiments/ex_5/net_8/softmax_curr.pth           # set the checkpoint from where to continue, leave empty to start from scratch
-log_name: ex5_net8.log  # name of the file with training info
+checkpoint:             # set the checkpoint from where to continue, leave empty to start from scratch
+log_name: ex5_net12.log  # name of the file with training info
 gpu:                    # index of a GPU, if available
-output_directory: experiments/ex_5/net_8 # the directory where to write the model file
+output_directory: experiments/ex_5/net_12 # the directory where to write the model file
 parallel: false
 
 model_path: "{}/{}_{}_{}.pth" #for those which use pretrained models
@@ -19,7 +19,7 @@ data:
 # Common parameters
 seed: 42        # Common seed across all source of randomness
 batch_size: 32  # If distributed training the batch size is multiplied by the number of gpus
-epochs: 170   # Number of epochs to train. - 120 are pretrained epochs
+epochs: 250   # Number of epochs to train.
 workers: 4      # Dataloader number of workers
 patience: 0    # Number of epochs to wait before stopping the training. 0 means no early stopping
 unknown_for_training: False  # If True, the unknown class is used for training
@@ -34,12 +34,12 @@ loss:
 # Optimizer Parameters
 opt:
   type: sgd  # Two options: {adam, sgd}
-  lr: 1.e-3   # Initial learning rate
+  lr: 1.e-2   # Initial learning rate
   decay: 0    # Number of epochs to wait for each learning rate reduction. 0 means no decay
   gamma: 1    # Factor to reduce the learning rate
 
 # Algorithm parameters
 algorithm:
   type: binary_ensemble_combined_imagenet
-  num_models: 30
+  num_models: 100
   sets: random # either random or hamming, if class distance should be optimized

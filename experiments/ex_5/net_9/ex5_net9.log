@@ -46,3 +46,5 @@
 18_05_13:19 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:18 train:{'j': 0.546} val:{'j': 0.586, 'conf_kn': 0.680, 'conf_unk': 0.000} t:257.6s v:47.8s
 18_05_13:30 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:19 train:{'j': 0.537} val:{'j': 0.601, 'conf_kn': 0.672, 'conf_unk': 0.000} t:472.1s v:160.0s
 18_05_13:55 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:20 train:{'j': 0.538} val:{'j': 0.619, 'conf_kn': 0.659, 'conf_unk': 0.000} t:1022.6s v:482.9s
+18_05_14:20 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:21 train:{'j': 0.519} val:{'j': 0.531, 'conf_kn': 0.727, 'conf_unk': 0.000} t:1466.0s v:48.0s
+18_05_14:20 openset_imagenet.binary_ensemble_combined_emnist INFO: Saving best model experiments/ex_5/net_9/bce_binary_ensemble_combined_imagenet_best.pth at epoch: 21
