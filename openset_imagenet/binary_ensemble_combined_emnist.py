@@ -15,7 +15,7 @@ from torchvision import transforms
 from vast.tools import set_device_gpu, set_device_cpu, device
 import vast
 from loguru import logger
-from .metrics import confidence_combined_binary, auc_score_binary, auc_score_multiclass
+from .metrics import confidence_combined_binary, auc_score_binary, auc_score_multiclass, confidence
 from .dataset import ImagenetDataset
 from .dataset_emnist import Dataset_EMNIST
 from .model import ResNet50, LeNet5, load_checkpoint, save_checkpoint, set_seeds
@@ -82,7 +82,7 @@ def validate(model, data_loader, class_dicts, loss_fn, n_classes, trackers, cfg)
         unknown_class = n_classes - 1
         last_valid_class = -1
     elif cfg.loss.type == "bce" or cfg.loss.type == "sigmoid-focal":
-        min_unk_score = 1. / 2
+        min_unk_score = 0
         unknown_class = -1
         last_valid_class = None
     else:
@@ -93,9 +93,11 @@ def validate(model, data_loader, class_dicts, loss_fn, n_classes, trackers, cfg)
 
     model.eval()
     with torch.no_grad():
+        # get class binary for each model
+        class_binaries = get_binary_output_for_class_per_model(class_dicts)
         data_len = len(data_loader.dataset)  # size of dataset
-        all_targets = device(torch.empty((data_len, len(class_dicts)), dtype=torch.int64, requires_grad=False))
-        all_scores = device(torch.empty((data_len, len(class_dicts)), requires_grad=False))
+        all_targets = device(torch.empty((data_len,), dtype=torch.int64, requires_grad=False))
+        all_scores = device(torch.empty((data_len, len(class_binaries)), requires_grad=False))
 
         for i, (images, labels) in enumerate(data_loader):
             batch_len = labels.shape[0]  # current batch size, last batch has different value
@@ -105,9 +107,14 @@ def validate(model, data_loader, class_dicts, loss_fn, n_classes, trackers, cfg)
             scores = torch.nn.functional.sigmoid(logits)
             # we need scores to be either 0 or 1
             threshold = 0.5
+            
 
+            # we initialize class scores
+            class_scores = torch.empty((batch_len, len(class_binaries)))
             # Apply thresholding to get binary values 0 or 1
-            scores = (scores >= threshold).type(torch.int64) # TODO do we need to do that?
+            for indi in range(scores.shape[0]):
+                class_scores[indi, :] = get_similarity_score_from_binary_to_label(model_binary=scores[indi, :], class_binary=class_binaries)
+            # scores = (scores >= threshold).type(torch.int64) # TODO do we need to do that?
             
              # get the class from the label either 0 or 1
             intermediate_labels = optimize_labels(labels, class_dicts, unknown_in_both=cfg.unknown_in_both, unknown_for_training=cfg.unknown_for_training)
@@ -120,11 +127,8 @@ def validate(model, data_loader, class_dicts, loss_fn, n_classes, trackers, cfg)
 
             # accumulate partial results in empty tensors
             start_ix = i * cfg.batch_size # i does not have to be = 1
-            all_targets[start_ix: start_ix + batch_len] = targets
-            all_scores[start_ix: start_ix + batch_len] = scores
-        
-        # show difference between all_scores and all_targets
-        print("The Tensors match in number of cases: ", torch.eq(all_scores.view(-1,), all_targets.view(-1,)).sum())
+            all_targets[start_ix: start_ix + batch_len] = labels
+            all_scores[start_ix: start_ix + batch_len] = class_scores
 
         kn_conf, kn_count, neg_conf, neg_count = confidence_combined_binary(
             scores=all_scores,
@@ -282,8 +286,7 @@ def worker(cfg):
             include_unknown=cfg.unknown_for_training,
             has_garbage_class=False)
         
-    # Create unique class splits for ensemble set-vs-set training
-    print(train_ds.unique_classes, cfg.algorithm.num_models)
+
     unique_classes = train_ds.unique_classes
     if cfg.unknown_for_training and cfg.unknown_in_both:
         # remove -1 from the class splits

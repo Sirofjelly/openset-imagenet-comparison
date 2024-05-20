@@ -19,7 +19,7 @@ data:
 # Common parameters
 seed: 42        # Common seed across all source of randomness
 batch_size: 32  # If distributed training the batch size is multiplied by the number of gpus
-epochs: 250   # Number of epochs to train.
+epochs: 200   # Number of epochs to train.
 workers: 4      # Dataloader number of workers
 patience: 0    # Number of epochs to wait before stopping the training. 0 means no early stopping
 unknown_for_training: False  # If True, the unknown class is used for training

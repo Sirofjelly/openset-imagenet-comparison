@@ -100,28 +100,28 @@ def confidence_combined_binary(scores, target_labels, offset=0., unknown_class =
     """
     with torch.no_grad():
         unknown = target_labels == unknown_class
-        known = torch.logical_and(target_labels >= 0, ~unknown) 
-        kn_count = torch.sum(known).item()    # Total known samples in data
-        neg_count = torch.sum(unknown).item()  # Total negative samples in data
+        known = torch.logical_and(target_labels >= 0, ~unknown) # tilde seems unnecessary
+        kn_count = sum(known).item()    # Total known samples in data
+        neg_count = sum(unknown).item()  # Total negative samples in data
         kn_conf = 0.0
         neg_conf = 0.0
-
         if kn_count:
-            # Average confidence known samples
+            # Average confidence known sample
             # resulting tensor contains entries from scores where the value in scores matches the corresponding value in target_labels for the selected indices.
-            known_scores = scores[known]
-            target_labels_known = target_labels[known]
-            kn_conf = torch.eq(known_scores, target_labels_known).sum().item() / kn_count # this works only for binary classification
+            # we get the index of the max value in the scores tensor
+            max_score_index = torch.argmax(scores[known,:last_valid_class], dim=1)
+            # check if the max score index is equal to the target label
+            kn_conf = torch.eq(max_score_index, target_labels[known]).sum().item() / kn_count
         if neg_count:
             # we have negative labels in the validation set
-            neg_conf = torch.sum(1.0 + offset - torch.max(scores[unknown, :last_valid_class], dim=1)[0]).item() / neg_count
-            """
-            neg_conf = torch.sum(
-                1.0
+            number_of_binary_outputs = 100
+            
+            neg_scores = torch.sum(
+                number_of_binary_outputs
                 + offset
                 - torch.max(scores[unknown,:last_valid_class], dim=1)[0]
-            ).item() / neg_count
-            """
+            ).item() / number_of_binary_outputs
+            neg_conf =  neg_scores / neg_count
 
     return kn_conf, kn_count, neg_conf, neg_count
 
