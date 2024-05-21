@@ -135,7 +135,8 @@ def validate(model, data_loader, class_dicts, loss_fn, n_classes, trackers, cfg)
             target_labels=all_targets,
             offset=min_unk_score,
             unknown_class = unknown_class,
-            last_valid_class = last_valid_class)
+            last_valid_class = last_valid_class,
+            number_of_binary_outputs=cfg.algorithm.num_models)
         if kn_count:
             trackers["conf_kn"].update(kn_conf, kn_count)
         if neg_count:

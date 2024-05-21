@@ -82,7 +82,7 @@ def confidence_binary(scores, target_labels, offset=0., unknown_class = -1, last
 
     return kn_conf, kn_count, neg_conf, neg_count
 
-def confidence_combined_binary(scores, target_labels, offset=0., unknown_class = -1, last_valid_class = None):
+def confidence_combined_binary(scores, target_labels, offset=0., unknown_class = -1, last_valid_class = None, number_of_binary_outputs=1):
     """ Returns model's confidence for bce, Taken from https://github.com/Vastlab/vast/tree/main/vast.
 
     Args:
@@ -113,14 +113,12 @@ def confidence_combined_binary(scores, target_labels, offset=0., unknown_class =
             # check if the max score index is equal to the target label
             kn_conf = torch.eq(max_score_index, target_labels[known]).sum().item() / kn_count
         if neg_count:
-            # we have negative labels in the validation set
-            number_of_binary_outputs = 100
-            
+            # we have negative labels in the validation set            
             neg_scores = torch.sum(
-                number_of_binary_outputs
+                1.0
                 + offset
-                - torch.max(scores[unknown,:last_valid_class], dim=1)[0]
-            ).item() / number_of_binary_outputs
+                - torch.max(scores[unknown,:last_valid_class], dim=1)[0] / number_of_binary_outputs
+            ).item()
             neg_conf =  neg_scores / neg_count
 
     return kn_conf, kn_count, neg_conf, neg_count
