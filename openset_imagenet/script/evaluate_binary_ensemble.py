@@ -88,7 +88,7 @@ def dataset(cfg, protocol):
     if cfg.algorithm.type == "binary_ensemble_emnist" or cfg.algorithm.type == "binary_ensemble_combined_emnist":
         test_dataset = openset_imagenet.Dataset_EMNIST(
             dataset_root=cfg.data.dataset_path,
-            which_set="test",
+            which_set="validation",
             include_unknown=True # we include the unknown class since its Open-Set
         )
     else:
@@ -224,7 +224,7 @@ def post_process(gt, logits, features, scores, cfg, protocol, loss, algorithm, o
         return compute_probs(gt, logits, features, scores, model_dict, "evm", gpu, hyperparams)
 
 def write_scores(gt, logits, features, scores, loss, algorithm, suffix, output_directory, num_models=None):
-    file_path = Path(output_directory) / f"{loss}_{algorithm}_test_arr_{suffix}_hamming_{num_models}.npz"
+    file_path = Path(output_directory) / f"{loss}_{algorithm}_test_arr_{suffix}_random_{num_models}.npz"
     np.savez(file_path, gt=gt, logits=logits, features=features, scores=scores)
     logger.info(f"Target labels, logits, features and scores saved in: {file_path}")
 

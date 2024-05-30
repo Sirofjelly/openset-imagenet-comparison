@@ -42,6 +42,7 @@ class Dataset_EMNIST(torch.utils.data.dataset.Dataset):
         )
         self.which_set = which_set
         targets = list() if not include_unknown else [1,2,3,4,5,6,8,10,11,13,14] if which_set != "test" else [16,17,18,19,20,21,22,23,24,25,26]
+        print("targets: ", targets)
         self.letter_indexes = [i for i, t in enumerate(self.letters.targets) if t in targets]
         self.has_garbage_class = has_garbage_class
 

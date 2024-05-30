@@ -1,6 +1,6 @@
 # General Parameters
 checkpoint:             # set the checkpoint from where to continue, leave empty to start from scratch
-log_name: ex1_net1.log  # name of the file with training info
+log_name: ex1_net1_evaluation.log  # name of the file with training info
 gpu:                    # index of a GPU, if available
 output_directory: experiments/ex_1/net_1  # the directory where to write the model file
 parallel: false
@@ -38,5 +38,5 @@ opt:
 algorithm:
   type: binary_ensemble_combined_emnist
   num_models: 126
-  sets: hamming # either random or hamming, if class distance should be optimized
+  sets: random # either random or hamming, if class distance should be optimized
 
