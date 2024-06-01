@@ -50,7 +50,44 @@ class ResNet50(nn.Module):
         features = self.resnet_base(image)
         logits = self.logits(features)
         return logits, features
-    
+
+import torch.nn as nn
+
+class ResNet50Plus(nn.Module):
+    """Represents a ResNet50 model"""
+    def __init__(self, fc_layer_dim=1000, num_outputs=1000, logit_bias=True):
+        """
+        Builds a ResNet model with deep features and separate logits layers for multiple binary outputs.
+
+        Args:
+            fc_layer_dim(int): Deep features dimension.
+            num_outputs(int): Number of binary outputs.
+            logit_bias(bool): True to use bias term in the logits layers.
+        """
+        super(ResNet50, self).__init__()
+
+        self.resnet_base = models.resnet50(pretrained=False)
+        fc_in_features = self.resnet_base.fc.in_features
+        self.resnet_base.fc = nn.Linear(in_features=fc_in_features, out_features=fc_layer_dim)
+        self.relu = nn.ReLU()  # Activation function for deep features
+
+        self.output_layers = nn.ModuleList([nn.Linear(fc_layer_dim, 1, bias=logit_bias) for _ in range(num_outputs)])
+
+    def forward(self, image):
+        """
+        Forward pass
+
+        Args:
+            image(tensor): Tensor with input samples
+
+        Returns:
+            Logits (list of tensors) and deep features of the samples.
+        """
+        features = self.resnet_base(image)
+        # features = self.relu(features)  # Apply activation to deep features
+        logits = [output_layer(features) for output_layer in self.output_layers]
+        return logits, features
+
 class LeNet5(nn.Module):
     """Represents a LeNet5 model
     taken from https://github.com/lychengrex/LeNet-5-Implementation-Using-Pytorch/blob/master/LeNet-5%20Implementation%20Using%20Pytorch.ipynb"""
