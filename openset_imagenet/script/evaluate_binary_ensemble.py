@@ -94,7 +94,7 @@ def dataset(cfg, protocol):
     else:
         # We only need test data here, since we assume that parameters have been selected
         test_dataset = openset_imagenet.ImagenetDataset(
-            csv_file=cfg.data.test_file.format(protocol),
+            csv_file=cfg.data.val_file.format(protocol),
             imagenet_path=cfg.data.imagenet_path,
             transform=transform)
 
@@ -297,8 +297,10 @@ def process_model(protocol, loss, algorithms, cfg, suffix, gpu, force, threshold
                 if base_model is not None:
                     # extract features
                     logger.info(f"Extracting base scores for protocol {protocol}, {loss}")
+                    random_models = cfg.algorithm.sets == "random"
+                    print("Using random models", random_models)
                     for i in range(4, cfg.algorithm.num_models+1):
-                        gt, logits, features, base_scores = extract(base_model, test_loader, "binary_ensemble_combined_emnist", loss, threshold, cfg, num_models=i, random_models=False)
+                        gt, logits, features, base_scores = extract(base_model, test_loader, "binary_ensemble_combined_emnist", loss, threshold, cfg, num_models=i, random_models=random_models)
                         write_scores(gt, logits, features, base_scores, loss, "binary_ensemble_combined_emnist", suffix, output_directory, num_models=i)
                         # remove model from GPU memory
                     del base_model
@@ -313,9 +315,12 @@ def process_model(protocol, loss, algorithms, cfg, suffix, gpu, force, threshold
                 if base_model is not None:
                     # extract features
                     logger.info(f"Extracting base scores for protocol {protocol}, {loss}")
-                    gt, logits, features, base_scores = extract(base_model, test_loader, "binary_ensemble_combined_imagenet", loss, threshold, cfg)
-                    write_scores(gt, logits, features, base_scores, loss, "binary_ensemble_combined_imagenet", suffix, output_directory)
-                    # remove model from GPU memory
+                    random_models = cfg.algorithm.sets == "random"
+                    print("Using random models", random_models)
+                    for i in range(6, cfg.algorithm.num_models+1):
+                        gt, logits, features, base_scores = extract(base_model, test_loader, "binary_ensemble_combined_imagenet", loss, threshold, cfg, num_models=i, random_models=random_models)
+                        write_scores(gt, logits, features, base_scores, loss, "binary_ensemble_combined_imagenet", suffix, output_directory, num_models=i)
+                        # remove model from GPU memory
                     del base_model
             else:
                 logger.info("Using previously computed features")

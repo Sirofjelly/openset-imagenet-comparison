@@ -159,7 +159,7 @@ def get_arrays(model, loader, garbage, pretty=False, threshold=True, remove_nega
             logits_dim -= 1
 
         # load the file and enlarge the matrices
-        path_to_intermediate = 'experiments/ex_1/net_1/intermediate_state.npz'
+        path_to_intermediate = f"{cfg.output_directory}/intermediate_state.npz"
 
         if path.exists(path_to_intermediate):
             intermediate_state = np.load(path_to_intermediate)
@@ -173,13 +173,13 @@ def get_arrays(model, loader, garbage, pretty=False, threshold=True, remove_nega
             # hamming dist approach
             class_binary_matrix = np.array([value for _, value in class_binaries.items()]).T
             length = len(class_binaries.keys())
-            min_num_models = np.ceil(np.log2(length)).astype(int)
+            min_num_models = np.ceil(np.log2(length)).astype(int) + 1 # because else ham dist can be 0
 
             used_indices = []
             final_class_binary_matrix = None
             # we chose the minimum number of models randomly but make sure that the hamming distance is maximized
             while True:
-                # get for random inices in the range of class_binary_matrix
+                # get for random indices in the range of class_binary_matrix
                 random_indices = random.sample(range(class_binary_matrix.shape[0]), min_num_models)
                 test_matrix = class_binary_matrix[random_indices, :]
                 ham_dist = hamming_distance_min_among_all(test_matrix, row=False)

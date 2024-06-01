@@ -142,7 +142,6 @@ def calculate_oscr(gt, scores, unk_label=-1):
 
 
 def ccr_at_fpr(gt, scores, fpr_values, unk_label=-1):
-
     # compute ccr and fpr values from scores
     ccr, fpr = calculate_oscr(gt, scores, unk_label)
 
