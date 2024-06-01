@@ -15,7 +15,7 @@ from torchvision import transforms
 from vast.tools import set_device_gpu, set_device_cpu, device
 import vast
 from loguru import logger
-from .metrics import confidence_combined_binary, auc_score_binary, auc_score_multiclass
+from .metrics import confidence_combined_binary, auc_score_binary, auc_score_multiclass, confidence
 from .dataset import ImagenetDataset
 from .dataset_emnist import Dataset_EMNIST
 from .model import ResNet50, LeNet5, load_checkpoint, save_checkpoint, set_seeds
@@ -24,11 +24,11 @@ import tqdm
 from os import path
 from .util import get_sets_for_ensemble, get_sets_for_ensemble_hamming, hamming_distance_min_among_all, get_class_from_label, get_similarity_score_from_binary_to_label, get_similarity_score_from_binary_to_label_new, get_binary_output_for_class_per_model
 
-def optimize_labels(labels, class_dicts, unknown_in_both=False):
+def optimize_labels(labels, class_dicts, unknown_in_both=False, unknown_for_training=False):
     intermediate_labels = device(torch.zeros((len(labels), len(class_dicts))))
 
     for i, class_dict in enumerate(class_dicts):
-        intermediate_labels[:, i] = device(torch.tensor([get_class_from_label(label.item(), class_dict, unknown_in_both=unknown_in_both) for label in labels]))
+        intermediate_labels[:, i] = device(torch.tensor([get_class_from_label(label.item(), class_dict, unknown_in_both=unknown_in_both, unknown_for_training=unknown_for_training) for label in labels]))
 
     return intermediate_labels
 
@@ -82,7 +82,7 @@ def validate(model, data_loader, class_dicts, loss_fn, n_classes, trackers, cfg)
         unknown_class = n_classes - 1
         last_valid_class = -1
     elif cfg.loss.type == "bce" or cfg.loss.type == "sigmoid-focal":
-        min_unk_score = 1. / 2
+        min_unk_score = 0
         unknown_class = -1
         last_valid_class = None
     else:
@@ -93,9 +93,11 @@ def validate(model, data_loader, class_dicts, loss_fn, n_classes, trackers, cfg)
 
     model.eval()
     with torch.no_grad():
+        # get class binary for each model
+        class_binaries = get_binary_output_for_class_per_model(class_dicts)
         data_len = len(data_loader.dataset)  # size of dataset
-        all_targets = device(torch.empty((data_len, len(class_dicts)), dtype=torch.int64, requires_grad=False))
-        all_scores = device(torch.empty((data_len, len(class_dicts)), requires_grad=False))
+        all_targets = device(torch.empty((data_len,), dtype=torch.int64, requires_grad=False))
+        all_scores = device(torch.empty((data_len, len(class_binaries)), requires_grad=False))
 
         for i, (images, labels) in enumerate(data_loader):
             batch_len = labels.shape[0]  # current batch size, last batch has different value
@@ -105,12 +107,17 @@ def validate(model, data_loader, class_dicts, loss_fn, n_classes, trackers, cfg)
             scores = torch.nn.functional.sigmoid(logits)
             # we need scores to be either 0 or 1
             threshold = 0.5
+            
 
+            # we initialize class scores
+            class_scores = torch.empty((batch_len, len(class_binaries)))
             # Apply thresholding to get binary values 0 or 1
-            scores = (scores >= threshold).type(torch.int64) # TODO do we need to do that?
+            for indi in range(scores.shape[0]):
+                class_scores[indi, :] = get_similarity_score_from_binary_to_label(model_binary=scores[indi, :], class_binary=class_binaries)
+            # scores = (scores >= threshold).type(torch.int64) # TODO do we need to do that?
             
              # get the class from the label either 0 or 1
-            intermediate_labels = optimize_labels(labels, class_dicts, unknown_in_both=cfg.unknown_in_both)
+            intermediate_labels = optimize_labels(labels, class_dicts, unknown_in_both=cfg.unknown_in_both, unknown_for_training=cfg.unknown_for_training)
 
             # targets = labels.view(-1,)
             targets = intermediate_labels.type(torch.float32)
@@ -120,18 +127,16 @@ def validate(model, data_loader, class_dicts, loss_fn, n_classes, trackers, cfg)
 
             # accumulate partial results in empty tensors
             start_ix = i * cfg.batch_size # i does not have to be = 1
-            all_targets[start_ix: start_ix + batch_len] = targets
-            all_scores[start_ix: start_ix + batch_len] = scores
-        
-        # show difference between all_scores and all_targets
-        print("The Tensors match in number of cases: ", torch.eq(all_scores.view(-1,), all_targets.view(-1,)).sum())
+            all_targets[start_ix: start_ix + batch_len] = labels
+            all_scores[start_ix: start_ix + batch_len] = class_scores
 
         kn_conf, kn_count, neg_conf, neg_count = confidence_combined_binary(
             scores=all_scores,
             target_labels=all_targets,
             offset=min_unk_score,
             unknown_class = unknown_class,
-            last_valid_class = last_valid_class)
+            last_valid_class = last_valid_class,
+            number_of_binary_outputs=cfg.algorithm.num_models)
         if kn_count:
             trackers["conf_kn"].update(kn_conf, kn_count)
         if neg_count:
@@ -346,25 +351,28 @@ def worker(cfg):
                 train_ds.replace_negative_label()
                 val_ds.replace_negative_label()
             elif cfg.loss.type == "softmax":
-                # remove the negative label from softmax training set, not from val set!
+                # remove the negative label from softmax training set, not from val set! Or when we do not want to use unknowns
                 train_ds.remove_negative_label()
+            elif not cfg.unknown_for_training:
+                train_ds.remove_negative_label()
+            print("Label count for train: ", train_ds.label_count, "Label count for val: ", val_ds.label_count)
+            print("Unique classes for train: ", train_ds.unique_classes, "Unique classes for val: ", val_ds.unique_classes)
         else:
             raise FileNotFoundError("train/validation file does not exist")
     else:
         train_ds = Dataset_EMNIST(
         dataset_root=cfg.data.dataset_path,
         which_set="train",
-        include_unknown=cfg.unknown_for_training, # TODO when not using unknowns, set to False
+        include_unknown=cfg.unknown_for_training,
         has_garbage_class=False)
     
         val_ds = Dataset_EMNIST(
             dataset_root=cfg.data.dataset_path,
             which_set="validation",
-            include_unknown=cfg.unknown_for_training, # TODO when not using unknowns, set to False
+            include_unknown=cfg.unknown_for_training,
             has_garbage_class=False)
         
-    # Create unique class splits for ensemble set-vs-set training
-    print(train_ds.unique_classes, cfg.algorithm.num_models)
+
     unique_classes = train_ds.unique_classes
     if cfg.unknown_for_training and cfg.unknown_in_both:
         # remove -1 from the class splits
@@ -466,8 +474,8 @@ def worker(cfg):
             logger.info("Loaded initial model from filesystem")
         """
     else:
-        model = ResNet50(fc_layer_dim=n_classes,
-                     out_features=n_classes,
+        model = ResNet50(fc_layer_dim=cfg.algorithm.num_models,
+                     out_features=cfg.algorithm.num_models, # number of binary outputs
                      logit_bias=False)
     device(model)
 
