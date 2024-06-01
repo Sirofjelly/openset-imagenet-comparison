@@ -41,5 +41,5 @@ opt:
 # Algorithm parameters
 algorithm:
   type: binary_ensemble_combined_imagenet
-  num_models: 500
+  num_models: 200
   sets: random # either random or hamming, if class distance should be optimized
