@@ -1,8 +1,8 @@
 # General Parameters
 checkpoint:             # set the checkpoint from where to continue, leave empty to start from scratch
-log_name: ex6_net2.log  # name of the file with training info
+log_name: ex6_net3.log  # name of the file with training info
 gpu:                    # index of a GPU, if available
-output_directory: experiments/ex_6/net_2 # the directory where to write the model file
+output_directory: experiments/ex_6/net_3 # the directory where to write the model file
 parallel: false
 
 model_path: "{}/{}_{}_{}.pth" #for those which use pretrained models

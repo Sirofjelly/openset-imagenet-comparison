@@ -18,7 +18,7 @@ from loguru import logger
 from .metrics import confidence_combined_binary, auc_score_binary, auc_score_multiclass, confidence
 from .dataset import ImagenetDataset
 from .dataset_emnist import Dataset_EMNIST
-from .model import ResNet50, LeNet5, load_checkpoint, save_checkpoint, set_seeds
+from .model import ResNet50, ResNet50Plus, LeNet5, load_checkpoint, save_checkpoint, set_seeds
 from .losses import AverageMeter, EarlyStopping, EntropicOpensetLoss
 import tqdm
 from os import path
@@ -153,13 +153,19 @@ def get_arrays(model, loader, garbage, pretty=False, threshold=True, remove_nega
     """
     model.eval()
     with torch.no_grad():
-        data_len = len(loader.dataset)         # dataset length
-        logits_dim = model.logits.out_features  # logits output classes
+        data_len = len(loader.dataset)    # dataset length
+        if cfg.algorithm.model == "resnet50Plus":
+            logits_dim = len(model.output_layers)
+        else:
+            logits_dim = model.logits.out_features  # logits output classes
         if garbage:
             logits_dim -= 1
         
         class_binaries = get_binary_output_for_class_per_model(model.class_split)
-        features_dim = model.logits.in_features  # features dimensionality
+        if cfg.algorithm.model == 'resnet50Plus':
+            features_dim = len(model.output_layers)
+        else:
+            features_dim = model.logits.in_features  # features dimensionality
         all_targets = torch.empty(data_len, device="cpu")  # store all targets
         all_logits = torch.empty((data_len, logits_dim), device="cpu")   # store all logits
         all_feat = torch.empty((data_len, features_dim), device="cpu")   # store all features
@@ -388,6 +394,10 @@ def worker(cfg):
             
             logger.info("Loaded initial model from filesystem")
         """
+    elif cfg.algorithm.model == 'resnet50Plus':
+        model = ResNet50Plus(fc_layer_dim=cfg.algorithm.num_models,
+                     out_features=cfg.algorithm.num_models, # number of binary outputs
+                     logit_bias=False)
     else:
         model = ResNet50(fc_layer_dim=cfg.algorithm.num_models,
                      out_features=cfg.algorithm.num_models, # number of binary outputs
@@ -441,6 +451,7 @@ def worker(cfg):
     logger.info(f"Device: {cfg.gpu}")
     logger.info(f"Number of binary outputs: {cfg.algorithm.num_models}")
     logger.info(f"Using following approach to generate sets: {cfg.algorithm.sets}")
+    logger.info(f"Using Model: {cfg.algorithm.model}")
     logger.info("Training...")
     writer = SummaryWriter(log_dir=cfg.output_directory, filename_suffix="-"+cfg.log_name)
 

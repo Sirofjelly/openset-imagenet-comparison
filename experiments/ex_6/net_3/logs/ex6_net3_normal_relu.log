@@ -1,0 +1,95 @@
+03_06_11:17 openset_imagenet.binary_ensemble_combined_emnist INFO: ============ Data ============
+03_06_11:17 openset_imagenet.binary_ensemble_combined_emnist INFO: train_len:28895, labels:30
+03_06_11:17 openset_imagenet.binary_ensemble_combined_emnist INFO: val_len:15173, labels:31
+03_06_11:17 openset_imagenet.binary_ensemble_combined_emnist INFO: Using Negatives for Training: False
+03_06_11:17 openset_imagenet.binary_ensemble_combined_emnist INFO: ========== Training ==========
+03_06_11:17 openset_imagenet.binary_ensemble_combined_emnist INFO: Initial epoch: 0
+03_06_11:17 openset_imagenet.binary_ensemble_combined_emnist INFO: Last epoch: 120
+03_06_11:17 openset_imagenet.binary_ensemble_combined_emnist INFO: Batch size: 32
+03_06_11:17 openset_imagenet.binary_ensemble_combined_emnist INFO: workers: 4
+03_06_11:17 openset_imagenet.binary_ensemble_combined_emnist INFO: Loss: bce
+03_06_11:17 openset_imagenet.binary_ensemble_combined_emnist INFO: optimizer: sgd
+03_06_11:17 openset_imagenet.binary_ensemble_combined_emnist INFO: Learning rate: 0.01
+03_06_11:17 openset_imagenet.binary_ensemble_combined_emnist INFO: Device: 7
+03_06_11:17 openset_imagenet.binary_ensemble_combined_emnist INFO: Number of binary outputs: 40
+03_06_11:17 openset_imagenet.binary_ensemble_combined_emnist INFO: Using following approach to generate sets: random
+03_06_11:17 openset_imagenet.binary_ensemble_combined_emnist INFO: Using Model: resnet50Plus
+03_06_11:17 openset_imagenet.binary_ensemble_combined_emnist INFO: Training...
+03_06_11:21 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:0 train:{'j': 0.693} val:{'j': 0.693, 'conf_kn': 0.036, 'conf_unk': 0.500} t:150.1s v:47.0s
+03_06_11:21 openset_imagenet.binary_ensemble_combined_emnist INFO: Saving best model experiments/ex_6/net_3/bce_binary_ensemble_combined_imagenet_best.pth at epoch: 0
+03_06_11:24 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:1 train:{'j': 0.693} val:{'j': 0.693, 'conf_kn': 0.036, 'conf_unk': 0.500} t:146.3s v:43.8s
+03_06_11:27 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:2 train:{'j': 0.693} val:{'j': 0.694, 'conf_kn': 0.038, 'conf_unk': 0.498} t:141.8s v:43.0s
+03_06_11:27 openset_imagenet.binary_ensemble_combined_emnist INFO: Saving best model experiments/ex_6/net_3/bce_binary_ensemble_combined_imagenet_best.pth at epoch: 2
+03_06_11:30 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:3 train:{'j': 0.693} val:{'j': 0.695, 'conf_kn': 0.039, 'conf_unk': 0.498} t:143.3s v:44.1s
+03_06_11:30 openset_imagenet.binary_ensemble_combined_emnist INFO: Saving best model experiments/ex_6/net_3/bce_binary_ensemble_combined_imagenet_best.pth at epoch: 3
+03_06_11:33 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:4 train:{'j': 0.693} val:{'j': 0.695, 'conf_kn': 0.040, 'conf_unk': 0.498} t:144.9s v:44.6s
+03_06_11:33 openset_imagenet.binary_ensemble_combined_emnist INFO: Saving best model experiments/ex_6/net_3/bce_binary_ensemble_combined_imagenet_best.pth at epoch: 4
+03_06_11:36 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:5 train:{'j': 0.693} val:{'j': 0.698, 'conf_kn': 0.035, 'conf_unk': 0.496} t:142.9s v:43.4s
+03_06_11:40 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:6 train:{'j': 0.693} val:{'j': 0.704, 'conf_kn': 0.035, 'conf_unk': 0.493} t:146.0s v:46.1s
+03_06_11:43 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:7 train:{'j': 0.692} val:{'j': 0.701, 'conf_kn': 0.037, 'conf_unk': 0.495} t:149.3s v:44.5s
+03_06_11:46 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:8 train:{'j': 0.692} val:{'j': 0.705, 'conf_kn': 0.040, 'conf_unk': 0.494} t:145.9s v:45.9s
+03_06_11:49 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:9 train:{'j': 0.692} val:{'j': 0.711, 'conf_kn': 0.041, 'conf_unk': 0.490} t:143.9s v:40.4s
+03_06_11:52 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:10 train:{'j': 0.692} val:{'j': 0.703, 'conf_kn': 0.045, 'conf_unk': 0.495} t:144.3s v:43.0s
+03_06_11:52 openset_imagenet.binary_ensemble_combined_emnist INFO: Saving best model experiments/ex_6/net_3/bce_binary_ensemble_combined_imagenet_best.pth at epoch: 10
+03_06_11:55 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:11 train:{'j': 0.692} val:{'j': 0.706, 'conf_kn': 0.049, 'conf_unk': 0.492} t:143.1s v:42.0s
+03_06_11:55 openset_imagenet.binary_ensemble_combined_emnist INFO: Saving best model experiments/ex_6/net_3/bce_binary_ensemble_combined_imagenet_best.pth at epoch: 11
+03_06_11:58 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:12 train:{'j': 0.691} val:{'j': 0.709, 'conf_kn': 0.054, 'conf_unk': 0.487} t:142.8s v:43.7s
+03_06_11:59 openset_imagenet.binary_ensemble_combined_emnist INFO: Saving best model experiments/ex_6/net_3/bce_binary_ensemble_combined_imagenet_best.pth at epoch: 12
+03_06_12:02 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:13 train:{'j': 0.691} val:{'j': 0.706, 'conf_kn': 0.060, 'conf_unk': 0.488} t:143.2s v:41.4s
+03_06_12:02 openset_imagenet.binary_ensemble_combined_emnist INFO: Saving best model experiments/ex_6/net_3/bce_binary_ensemble_combined_imagenet_best.pth at epoch: 13
+03_06_12:05 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:14 train:{'j': 0.690} val:{'j': 0.705, 'conf_kn': 0.060, 'conf_unk': 0.487} t:141.8s v:43.5s
+03_06_12:08 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:15 train:{'j': 0.690} val:{'j': 0.705, 'conf_kn': 0.060, 'conf_unk': 0.487} t:142.5s v:40.3s
+03_06_12:11 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:16 train:{'j': 0.690} val:{'j': 0.709, 'conf_kn': 0.062, 'conf_unk': 0.483} t:143.0s v:42.6s
+03_06_12:14 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:17 train:{'j': 0.690} val:{'j': 0.703, 'conf_kn': 0.061, 'conf_unk': 0.488} t:146.0s v:50.6s
+03_06_12:14 openset_imagenet.binary_ensemble_combined_emnist INFO: Saving best model experiments/ex_6/net_3/bce_binary_ensemble_combined_imagenet_best.pth at epoch: 17
+03_06_12:17 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:18 train:{'j': 0.690} val:{'j': 0.702, 'conf_kn': 0.063, 'conf_unk': 0.489} t:145.3s v:44.6s
+03_06_12:17 openset_imagenet.binary_ensemble_combined_emnist INFO: Saving best model experiments/ex_6/net_3/bce_binary_ensemble_combined_imagenet_best.pth at epoch: 18
+03_06_12:21 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:19 train:{'j': 0.690} val:{'j': 0.703, 'conf_kn': 0.062, 'conf_unk': 0.489} t:148.0s v:47.1s
+03_06_12:24 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:20 train:{'j': 0.690} val:{'j': 0.704, 'conf_kn': 0.063, 'conf_unk': 0.487} t:147.4s v:46.1s
+03_06_12:27 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:21 train:{'j': 0.690} val:{'j': 0.709, 'conf_kn': 0.064, 'conf_unk': 0.483} t:148.7s v:46.5s
+03_06_12:30 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:22 train:{'j': 0.690} val:{'j': 0.707, 'conf_kn': 0.063, 'conf_unk': 0.485} t:149.5s v:49.5s
+03_06_12:33 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:23 train:{'j': 0.689} val:{'j': 0.711, 'conf_kn': 0.065, 'conf_unk': 0.484} t:145.0s v:37.9s
+03_06_12:36 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:24 train:{'j': 0.689} val:{'j': 0.712, 'conf_kn': 0.064, 'conf_unk': 0.483} t:133.6s v:37.4s
+03_06_12:39 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:25 train:{'j': 0.689} val:{'j': 0.711, 'conf_kn': 0.064, 'conf_unk': 0.484} t:133.1s v:36.9s
+03_06_12:42 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:26 train:{'j': 0.689} val:{'j': 0.708, 'conf_kn': 0.064, 'conf_unk': 0.486} t:133.1s v:37.3s
+03_06_12:45 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:27 train:{'j': 0.689} val:{'j': 0.710, 'conf_kn': 0.064, 'conf_unk': 0.485} t:134.3s v:36.5s
+03_06_12:48 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:28 train:{'j': 0.689} val:{'j': 0.714, 'conf_kn': 0.065, 'conf_unk': 0.482} t:133.9s v:36.7s
+03_06_12:51 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:29 train:{'j': 0.689} val:{'j': 0.715, 'conf_kn': 0.061, 'conf_unk': 0.482} t:133.8s v:36.7s
+03_06_12:53 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:30 train:{'j': 0.689} val:{'j': 0.716, 'conf_kn': 0.066, 'conf_unk': 0.482} t:133.9s v:37.0s
+03_06_12:56 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:31 train:{'j': 0.689} val:{'j': 0.710, 'conf_kn': 0.066, 'conf_unk': 0.485} t:132.4s v:37.1s
+03_06_12:59 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:32 train:{'j': 0.689} val:{'j': 0.713, 'conf_kn': 0.065, 'conf_unk': 0.485} t:137.2s v:44.0s
+03_06_13:03 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:33 train:{'j': 0.689} val:{'j': 0.713, 'conf_kn': 0.065, 'conf_unk': 0.485} t:146.8s v:57.5s
+03_06_13:06 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:34 train:{'j': 0.689} val:{'j': 0.712, 'conf_kn': 0.065, 'conf_unk': 0.485} t:140.6s v:37.4s
+03_06_13:09 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:35 train:{'j': 0.689} val:{'j': 0.714, 'conf_kn': 0.064, 'conf_unk': 0.485} t:135.8s v:37.5s
+03_06_13:11 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:36 train:{'j': 0.688} val:{'j': 0.719, 'conf_kn': 0.065, 'conf_unk': 0.483} t:133.3s v:37.3s
+03_06_13:14 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:37 train:{'j': 0.688} val:{'j': 0.721, 'conf_kn': 0.066, 'conf_unk': 0.482} t:132.8s v:36.4s
+03_06_13:17 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:38 train:{'j': 0.688} val:{'j': 0.720, 'conf_kn': 0.064, 'conf_unk': 0.482} t:133.0s v:36.6s
+03_06_13:20 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:39 train:{'j': 0.688} val:{'j': 0.716, 'conf_kn': 0.065, 'conf_unk': 0.485} t:134.3s v:36.9s
+03_06_13:23 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:40 train:{'j': 0.688} val:{'j': 0.725, 'conf_kn': 0.064, 'conf_unk': 0.480} t:134.1s v:37.0s
+03_06_13:26 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:41 train:{'j': 0.688} val:{'j': 0.728, 'conf_kn': 0.063, 'conf_unk': 0.480} t:133.9s v:36.7s
+03_06_13:29 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:42 train:{'j': 0.688} val:{'j': 0.727, 'conf_kn': 0.064, 'conf_unk': 0.479} t:134.0s v:36.8s
+03_06_13:31 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:43 train:{'j': 0.688} val:{'j': 0.716, 'conf_kn': 0.063, 'conf_unk': 0.486} t:133.8s v:36.9s
+03_06_13:34 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:44 train:{'j': 0.687} val:{'j': 0.743, 'conf_kn': 0.066, 'conf_unk': 0.471} t:133.8s v:37.0s
+03_06_13:37 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:45 train:{'j': 0.687} val:{'j': 0.735, 'conf_kn': 0.065, 'conf_unk': 0.474} t:134.2s v:37.4s
+03_06_13:40 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:46 train:{'j': 0.687} val:{'j': 0.735, 'conf_kn': 0.065, 'conf_unk': 0.471} t:132.8s v:36.3s
+03_06_13:43 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:47 train:{'j': 0.687} val:{'j': 0.724, 'conf_kn': 0.063, 'conf_unk': 0.478} t:134.7s v:36.9s
+03_06_13:46 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:48 train:{'j': 0.687} val:{'j': 0.730, 'conf_kn': 0.065, 'conf_unk': 0.475} t:134.4s v:38.4s
+03_06_13:49 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:49 train:{'j': 0.687} val:{'j': 0.718, 'conf_kn': 0.079, 'conf_unk': 0.481} t:135.1s v:38.4s
+03_06_13:49 openset_imagenet.binary_ensemble_combined_emnist INFO: Saving best model experiments/ex_6/net_3/bce_binary_ensemble_combined_imagenet_best.pth at epoch: 49
+03_06_13:51 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:50 train:{'j': 0.686} val:{'j': 0.724, 'conf_kn': 0.080, 'conf_unk': 0.474} t:135.0s v:37.2s
+03_06_13:54 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:51 train:{'j': 0.684} val:{'j': 0.727, 'conf_kn': 0.080, 'conf_unk': 0.468} t:135.8s v:38.1s
+03_06_13:57 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:52 train:{'j': 0.683} val:{'j': 0.734, 'conf_kn': 0.079, 'conf_unk': 0.464} t:136.0s v:37.7s
+03_06_14:00 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:53 train:{'j': 0.682} val:{'j': 0.756, 'conf_kn': 0.075, 'conf_unk': 0.451} t:135.2s v:37.1s
+03_06_14:03 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:54 train:{'j': 0.682} val:{'j': 0.717, 'conf_kn': 0.074, 'conf_unk': 0.474} t:135.7s v:37.9s
+03_06_14:06 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:55 train:{'j': 0.681} val:{'j': 0.742, 'conf_kn': 0.081, 'conf_unk': 0.450} t:134.7s v:38.2s
+03_06_14:09 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:56 train:{'j': 0.678} val:{'j': 0.737, 'conf_kn': 0.080, 'conf_unk': 0.445} t:134.6s v:37.2s
+03_06_14:12 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:57 train:{'j': 0.676} val:{'j': 0.727, 'conf_kn': 0.082, 'conf_unk': 0.445} t:134.5s v:37.1s
+03_06_14:15 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:58 train:{'j': 0.676} val:{'j': 0.742, 'conf_kn': 0.078, 'conf_unk': 0.441} t:133.5s v:37.3s
+03_06_14:17 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:59 train:{'j': 0.675} val:{'j': 0.742, 'conf_kn': 0.082, 'conf_unk': 0.437} t:133.6s v:37.8s
+03_06_14:20 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:60 train:{'j': 0.674} val:{'j': 0.725, 'conf_kn': 0.082, 'conf_unk': 0.455} t:133.4s v:36.4s
+03_06_14:23 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:61 train:{'j': 0.673} val:{'j': 0.729, 'conf_kn': 0.089, 'conf_unk': 0.446} t:133.3s v:38.2s
+03_06_14:26 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:62 train:{'j': 0.672} val:{'j': 0.737, 'conf_kn': 0.090, 'conf_unk': 0.437} t:133.6s v:37.1s
+03_06_14:29 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:63 train:{'j': 0.670} val:{'j': 0.743, 'conf_kn': 0.098, 'conf_unk': 0.435} t:133.2s v:38.4s
+03_06_14:32 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:64 train:{'j': 0.668} val:{'j': 0.737, 'conf_kn': 0.099, 'conf_unk': 0.436} t:133.9s v:37.0s
+03_06_14:35 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:65 train:{'j': 0.666} val:{'j': 0.717, 'conf_kn': 0.109, 'conf_unk': 0.432} t:133.8s v:39.4s
+03_06_14:37 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:2 ep:66 train:{'j': 0.665} val:{'j': 0.755, 'conf_kn': 0.111, 'conf_unk': 0.431} t:134.8s v:37.8s

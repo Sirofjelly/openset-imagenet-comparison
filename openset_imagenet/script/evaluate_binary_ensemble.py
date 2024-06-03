@@ -140,10 +140,17 @@ def load_model(cfg, loss, algorithm, protocol, suffix, output_directory, n_class
         model_path = cfg.model_path.format(output_directory, loss, "binary_ensemble_combined_emnist", suffix)
 
     elif cfg.algorithm.type == "binary_ensemble_combined_imagenet":
-        model = openset_imagenet.ResNet50(
-            fc_layer_dim=n_classes,
-            out_features=n_classes,
-            logit_bias=False)
+        if cfg.algorithm.model == "resnet50":
+            model = openset_imagenet.ResNet50(
+                fc_layer_dim=n_classes,
+                out_features=n_classes,
+                logit_bias=False)
+
+        elif cfg.algorithm.model == "resnet50Plus":
+             model = openset_imagenet.ResNet50Plus(
+                fc_layer_dim=n_classes,
+                out_features=n_classes,
+                logit_bias=False)
 
         model_path = cfg.model_path.format(output_directory, loss, "binary_ensemble_combined_imagenet", suffix)
 
