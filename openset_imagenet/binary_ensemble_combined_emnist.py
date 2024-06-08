@@ -198,7 +198,8 @@ def get_arrays(model, loader, garbage, pretty=False, threshold=True, remove_nega
                 logits = logits[:,:-1]
                 scores = scores[:,:-1]
             if cfg.unknown_for_training and not cfg.unknown_in_both:
-                # we remove the negative class from the final class score we do this only when the model does output an extra score for the negative class e.g. when training with it
+                # we remove the negative class from the final class score we do this only when the model does output an 
+                # extra score for the negative class e.g. when training with it not when the unknown is in both classes
                 final_class_score = final_class_score[:,1:]
             # accumulate results in all_tensor
             all_targets[index:index + curr_b_size] = labels.detach().cpu()

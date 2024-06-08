@@ -1,0 +1,141 @@
+05_06_11:33 openset_imagenet.train INFO: ============ Data ============
+05_06_11:33 openset_imagenet.train INFO: train_len:28895, labels:30
+05_06_11:33 openset_imagenet.train INFO: val_len:15173, labels:31
+05_06_11:33 openset_imagenet.train INFO: ========== Training ==========
+05_06_11:33 openset_imagenet.train INFO: Initial epoch: 0
+05_06_11:33 openset_imagenet.train INFO: Last epoch: 120
+05_06_11:33 openset_imagenet.train INFO: Batch size: 32
+05_06_11:33 openset_imagenet.train INFO: workers: 4
+05_06_11:33 openset_imagenet.train INFO: Loss: softmax
+05_06_11:33 openset_imagenet.train INFO: optimizer: adam
+05_06_11:33 openset_imagenet.train INFO: Learning rate: 0.001
+05_06_11:33 openset_imagenet.train INFO: Device: 7
+05_06_11:33 openset_imagenet.train INFO: Training...
+05_06_11:35 openset_imagenet.train INFO: loss:softmax protocol:2 ep:0 train:{'j': 3.256} val:{'j': 3.228, 'conf_kn': 0.051, 'conf_unk': 0.931} t:110.5s v:19.6s
+05_06_11:35 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_7/softmax_threshold_best.pth at epoch: 0
+05_06_11:37 openset_imagenet.train INFO: loss:softmax protocol:2 ep:1 train:{'j': 3.073} val:{'j': 3.054, 'conf_kn': 0.075, 'conf_unk': 0.858} t:110.7s v:19.5s
+05_06_11:39 openset_imagenet.train INFO: loss:softmax protocol:2 ep:2 train:{'j': 2.905} val:{'j': 3.025, 'conf_kn': 0.078, 'conf_unk': 0.847} t:110.8s v:19.6s
+05_06_11:41 openset_imagenet.train INFO: loss:softmax protocol:2 ep:3 train:{'j': 2.760} val:{'j': 2.950, 'conf_kn': 0.114, 'conf_unk': 0.780} t:110.8s v:19.4s
+05_06_11:44 openset_imagenet.train INFO: loss:softmax protocol:2 ep:4 train:{'j': 2.638} val:{'j': 3.304, 'conf_kn': 0.106, 'conf_unk': 0.755} t:110.9s v:20.6s
+05_06_11:46 openset_imagenet.train INFO: loss:softmax protocol:2 ep:5 train:{'j': 2.495} val:{'j': 2.582, 'conf_kn': 0.127, 'conf_unk': 0.797} t:110.8s v:19.8s
+05_06_11:48 openset_imagenet.train INFO: loss:softmax protocol:2 ep:6 train:{'j': 2.347} val:{'j': 2.421, 'conf_kn': 0.167, 'conf_unk': 0.700} t:111.0s v:20.3s
+05_06_11:50 openset_imagenet.train INFO: loss:softmax protocol:2 ep:7 train:{'j': 2.229} val:{'j': 3.490, 'conf_kn': 0.146, 'conf_unk': 0.618} t:111.1s v:20.2s
+05_06_11:52 openset_imagenet.train INFO: loss:softmax protocol:2 ep:8 train:{'j': 2.096} val:{'j': 2.244, 'conf_kn': 0.219, 'conf_unk': 0.669} t:110.9s v:19.9s
+05_06_11:55 openset_imagenet.train INFO: loss:softmax protocol:2 ep:9 train:{'j': 1.991} val:{'j': 2.042, 'conf_kn': 0.257, 'conf_unk': 0.674} t:110.9s v:20.3s
+05_06_11:57 openset_imagenet.train INFO: loss:softmax protocol:2 ep:10 train:{'j': 1.899} val:{'j': 2.236, 'conf_kn': 0.236, 'conf_unk': 0.659} t:111.0s v:20.0s
+05_06_11:59 openset_imagenet.train INFO: loss:softmax protocol:2 ep:11 train:{'j': 1.819} val:{'j': 1.958, 'conf_kn': 0.306, 'conf_unk': 0.625} t:110.9s v:19.5s
+05_06_12:01 openset_imagenet.train INFO: loss:softmax protocol:2 ep:12 train:{'j': 1.785} val:{'j': 2.062, 'conf_kn': 0.267, 'conf_unk': 0.655} t:110.8s v:20.0s
+05_06_12:04 openset_imagenet.train INFO: loss:softmax protocol:2 ep:13 train:{'j': 1.673} val:{'j': 2.031, 'conf_kn': 0.260, 'conf_unk': 0.677} t:111.0s v:19.5s
+05_06_12:06 openset_imagenet.train INFO: loss:softmax protocol:2 ep:14 train:{'j': 1.594} val:{'j': 1.795, 'conf_kn': 0.341, 'conf_unk': 0.594} t:110.7s v:19.6s
+05_06_12:08 openset_imagenet.train INFO: loss:softmax protocol:2 ep:15 train:{'j': 1.531} val:{'j': 1.651, 'conf_kn': 0.358, 'conf_unk': 0.608} t:110.9s v:19.9s
+05_06_12:10 openset_imagenet.train INFO: loss:softmax protocol:2 ep:16 train:{'j': 1.471} val:{'j': 1.642, 'conf_kn': 0.392, 'conf_unk': 0.596} t:110.7s v:19.5s
+05_06_12:10 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_7/softmax_threshold_best.pth at epoch: 16
+05_06_12:13 openset_imagenet.train INFO: loss:softmax protocol:2 ep:17 train:{'j': 1.436} val:{'j': 1.512, 'conf_kn': 0.416, 'conf_unk': 0.582} t:110.7s v:19.9s
+05_06_12:13 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_7/softmax_threshold_best.pth at epoch: 17
+05_06_12:15 openset_imagenet.train INFO: loss:softmax protocol:2 ep:18 train:{'j': 1.380} val:{'j': 1.748, 'conf_kn': 0.378, 'conf_unk': 0.538} t:110.7s v:19.9s
+05_06_12:17 openset_imagenet.train INFO: loss:softmax protocol:2 ep:19 train:{'j': 1.354} val:{'j': 1.489, 'conf_kn': 0.433, 'conf_unk': 0.572} t:110.7s v:20.2s
+05_06_12:17 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_7/softmax_threshold_best.pth at epoch: 19
+05_06_12:19 openset_imagenet.train INFO: loss:softmax protocol:2 ep:20 train:{'j': 1.295} val:{'j': 1.608, 'conf_kn': 0.432, 'conf_unk': 0.500} t:110.9s v:20.1s
+05_06_12:22 openset_imagenet.train INFO: loss:softmax protocol:2 ep:21 train:{'j': 1.254} val:{'j': 1.592, 'conf_kn': 0.430, 'conf_unk': 0.543} t:110.9s v:19.9s
+05_06_12:24 openset_imagenet.train INFO: loss:softmax protocol:2 ep:22 train:{'j': 1.244} val:{'j': 2.913, 'conf_kn': 0.271, 'conf_unk': 0.523} t:111.0s v:19.8s
+05_06_12:26 openset_imagenet.train INFO: loss:softmax protocol:2 ep:23 train:{'j': 1.183} val:{'j': 1.466, 'conf_kn': 0.433, 'conf_unk': 0.573} t:110.9s v:19.8s
+05_06_12:26 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_7/softmax_threshold_best.pth at epoch: 23
+05_06_12:28 openset_imagenet.train INFO: loss:softmax protocol:2 ep:24 train:{'j': 1.154} val:{'j': 9.827, 'conf_kn': 0.285, 'conf_unk': 0.470} t:110.8s v:19.4s
+05_06_12:30 openset_imagenet.train INFO: loss:softmax protocol:2 ep:25 train:{'j': 1.124} val:{'j': 1.337, 'conf_kn': 0.502, 'conf_unk': 0.523} t:111.0s v:19.6s
+05_06_12:30 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_7/softmax_threshold_best.pth at epoch: 25
+05_06_12:33 openset_imagenet.train INFO: loss:softmax protocol:2 ep:26 train:{'j': 1.114} val:{'j': 1.429, 'conf_kn': 0.500, 'conf_unk': 0.499} t:110.9s v:20.0s
+05_06_12:35 openset_imagenet.train INFO: loss:softmax protocol:2 ep:27 train:{'j': 1.067} val:{'j': 1.300, 'conf_kn': 0.527, 'conf_unk': 0.491} t:110.9s v:19.7s
+05_06_12:37 openset_imagenet.train INFO: loss:softmax protocol:2 ep:28 train:{'j': 1.027} val:{'j': 1.440, 'conf_kn': 0.482, 'conf_unk': 0.521} t:110.9s v:20.1s
+05_06_12:39 openset_imagenet.train INFO: loss:softmax protocol:2 ep:29 train:{'j': 1.022} val:{'j': 1.890, 'conf_kn': 0.476, 'conf_unk': 0.475} t:110.9s v:19.5s
+05_06_12:42 openset_imagenet.train INFO: loss:softmax protocol:2 ep:30 train:{'j': 0.998} val:{'j': 1.417, 'conf_kn': 0.506, 'conf_unk': 0.477} t:110.8s v:19.8s
+05_06_12:44 openset_imagenet.train INFO: loss:softmax protocol:2 ep:31 train:{'j': 0.952} val:{'j': 1.443, 'conf_kn': 0.534, 'conf_unk': 0.460} t:110.9s v:20.1s
+05_06_12:46 openset_imagenet.train INFO: loss:softmax protocol:2 ep:32 train:{'j': 0.915} val:{'j': 2.639, 'conf_kn': 0.273, 'conf_unk': 0.536} t:111.0s v:19.8s
+05_06_12:48 openset_imagenet.train INFO: loss:softmax protocol:2 ep:33 train:{'j': 0.914} val:{'j': 1.494, 'conf_kn': 0.500, 'conf_unk': 0.464} t:110.9s v:20.4s
+05_06_12:51 openset_imagenet.train INFO: loss:softmax protocol:2 ep:34 train:{'j': 0.903} val:{'j': 1.457, 'conf_kn': 0.526, 'conf_unk': 0.450} t:110.9s v:20.1s
+05_06_12:53 openset_imagenet.train INFO: loss:softmax protocol:2 ep:35 train:{'j': 0.899} val:{'j': 1.394, 'conf_kn': 0.530, 'conf_unk': 0.484} t:110.9s v:19.9s
+05_06_12:55 openset_imagenet.train INFO: loss:softmax protocol:2 ep:36 train:{'j': 0.875} val:{'j': 1.229, 'conf_kn': 0.569, 'conf_unk': 0.482} t:110.9s v:19.6s
+05_06_12:55 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_7/softmax_threshold_best.pth at epoch: 36
+05_06_12:57 openset_imagenet.train INFO: loss:softmax protocol:2 ep:37 train:{'j': 0.812} val:{'j': 1.531, 'conf_kn': 0.545, 'conf_unk': 0.450} t:110.8s v:20.3s
+05_06_13:00 openset_imagenet.train INFO: loss:softmax protocol:2 ep:38 train:{'j': 0.815} val:{'j': 1.220, 'conf_kn': 0.581, 'conf_unk': 0.444} t:110.7s v:19.5s
+05_06_13:02 openset_imagenet.train INFO: loss:softmax protocol:2 ep:39 train:{'j': 0.793} val:{'j': 1.325, 'conf_kn': 0.583, 'conf_unk': 0.429} t:110.9s v:20.4s
+05_06_13:04 openset_imagenet.train INFO: loss:softmax protocol:2 ep:40 train:{'j': 0.731} val:{'j': 1.392, 'conf_kn': 0.581, 'conf_unk': 0.437} t:110.9s v:19.7s
+05_06_13:06 openset_imagenet.train INFO: loss:softmax protocol:2 ep:41 train:{'j': 0.705} val:{'j': 1.301, 'conf_kn': 0.586, 'conf_unk': 0.423} t:110.7s v:20.2s
+05_06_13:09 openset_imagenet.train INFO: loss:softmax protocol:2 ep:42 train:{'j': 0.696} val:{'j': 1.500, 'conf_kn': 0.546, 'conf_unk': 0.421} t:110.9s v:20.3s
+05_06_13:11 openset_imagenet.train INFO: loss:softmax protocol:2 ep:43 train:{'j': 0.666} val:{'j': 1.939, 'conf_kn': 0.582, 'conf_unk': 0.390} t:110.8s v:20.0s
+05_06_13:13 openset_imagenet.train INFO: loss:softmax protocol:2 ep:44 train:{'j': 0.695} val:{'j': 1.293, 'conf_kn': 0.608, 'conf_unk': 0.400} t:110.7s v:19.5s
+05_06_13:15 openset_imagenet.train INFO: loss:softmax protocol:2 ep:45 train:{'j': 0.615} val:{'j': 1.658, 'conf_kn': 0.570, 'conf_unk': 0.395} t:110.8s v:19.8s
+05_06_13:18 openset_imagenet.train INFO: loss:softmax protocol:2 ep:46 train:{'j': 0.606} val:{'j': 1.350, 'conf_kn': 0.583, 'conf_unk': 0.406} t:110.9s v:19.8s
+05_06_13:20 openset_imagenet.train INFO: loss:softmax protocol:2 ep:47 train:{'j': 0.586} val:{'j': 1.514, 'conf_kn': 0.587, 'conf_unk': 0.385} t:110.9s v:19.8s
+05_06_13:22 openset_imagenet.train INFO: loss:softmax protocol:2 ep:48 train:{'j': 0.554} val:{'j': 1.993, 'conf_kn': 0.532, 'conf_unk': 0.383} t:110.9s v:20.2s
+05_06_13:24 openset_imagenet.train INFO: loss:softmax protocol:2 ep:49 train:{'j': 0.567} val:{'j': 1.568, 'conf_kn': 0.567, 'conf_unk': 0.393} t:110.9s v:19.7s
+05_06_13:27 openset_imagenet.train INFO: loss:softmax protocol:2 ep:50 train:{'j': 0.545} val:{'j': 1.655, 'conf_kn': 0.528, 'conf_unk': 0.407} t:110.8s v:20.3s
+05_06_13:29 openset_imagenet.train INFO: loss:softmax protocol:2 ep:51 train:{'j': 0.573} val:{'j': 1.542, 'conf_kn': 0.596, 'conf_unk': 0.393} t:110.7s v:19.6s
+05_06_13:31 openset_imagenet.train INFO: loss:softmax protocol:2 ep:52 train:{'j': 0.495} val:{'j': 1.351, 'conf_kn': 0.630, 'conf_unk': 0.358} t:110.8s v:19.4s
+05_06_13:33 openset_imagenet.train INFO: loss:softmax protocol:2 ep:53 train:{'j': 0.452} val:{'j': 1.416, 'conf_kn': 0.617, 'conf_unk': 0.360} t:110.8s v:19.8s
+05_06_13:35 openset_imagenet.train INFO: loss:softmax protocol:2 ep:54 train:{'j': 0.429} val:{'j': 1.692, 'conf_kn': 0.551, 'conf_unk': 0.383} t:110.7s v:20.0s
+05_06_13:38 openset_imagenet.train INFO: loss:softmax protocol:2 ep:55 train:{'j': 0.502} val:{'j': 1.582, 'conf_kn': 0.604, 'conf_unk': 0.326} t:110.8s v:19.6s
+05_06_13:40 openset_imagenet.train INFO: loss:softmax protocol:2 ep:56 train:{'j': 0.415} val:{'j': 1.754, 'conf_kn': 0.561, 'conf_unk': 0.361} t:110.7s v:19.5s
+05_06_13:42 openset_imagenet.train INFO: loss:softmax protocol:2 ep:57 train:{'j': 0.433} val:{'j': 1.555, 'conf_kn': 0.613, 'conf_unk': 0.345} t:110.8s v:19.6s
+05_06_13:44 openset_imagenet.train INFO: loss:softmax protocol:2 ep:58 train:{'j': 0.448} val:{'j': 2.338, 'conf_kn': 0.523, 'conf_unk': 0.354} t:110.7s v:19.5s
+05_06_13:46 openset_imagenet.train INFO: loss:softmax protocol:2 ep:59 train:{'j': 0.434} val:{'j': 2.542, 'conf_kn': 0.495, 'conf_unk': 0.329} t:110.6s v:19.8s
+05_06_13:49 openset_imagenet.train INFO: loss:softmax protocol:2 ep:60 train:{'j': 0.497} val:{'j': 1.389, 'conf_kn': 0.603, 'conf_unk': 0.374} t:110.9s v:19.8s
+05_06_13:51 openset_imagenet.train INFO: loss:softmax protocol:2 ep:61 train:{'j': 0.404} val:{'j': 1.490, 'conf_kn': 0.626, 'conf_unk': 0.329} t:110.7s v:19.6s
+05_06_13:53 openset_imagenet.train INFO: loss:softmax protocol:2 ep:62 train:{'j': 0.342} val:{'j': 1.587, 'conf_kn': 0.635, 'conf_unk': 0.314} t:110.8s v:20.0s
+05_06_13:55 openset_imagenet.train INFO: loss:softmax protocol:2 ep:63 train:{'j': 0.321} val:{'j': 1.475, 'conf_kn': 0.635, 'conf_unk': 0.327} t:110.8s v:19.9s
+05_06_13:57 openset_imagenet.train INFO: loss:softmax protocol:2 ep:64 train:{'j': 0.329} val:{'j': 2.699, 'conf_kn': 0.475, 'conf_unk': 0.311} t:110.7s v:19.9s
+05_06_14:00 openset_imagenet.train INFO: loss:softmax protocol:2 ep:65 train:{'j': 0.355} val:{'j': 1.603, 'conf_kn': 0.619, 'conf_unk': 0.320} t:110.8s v:20.2s
+05_06_14:02 openset_imagenet.train INFO: loss:softmax protocol:2 ep:66 train:{'j': 0.322} val:{'j': 1.599, 'conf_kn': 0.607, 'conf_unk': 0.322} t:110.7s v:19.9s
+05_06_14:04 openset_imagenet.train INFO: loss:softmax protocol:2 ep:67 train:{'j': 0.315} val:{'j': 1.847, 'conf_kn': 0.590, 'conf_unk': 0.321} t:110.7s v:19.6s
+05_06_14:06 openset_imagenet.train INFO: loss:softmax protocol:2 ep:68 train:{'j': 0.285} val:{'j': 1.747, 'conf_kn': 0.608, 'conf_unk': 0.308} t:110.7s v:19.7s
+05_06_14:09 openset_imagenet.train INFO: loss:softmax protocol:2 ep:69 train:{'j': 0.291} val:{'j': 1.795, 'conf_kn': 0.577, 'conf_unk': 0.341} t:110.8s v:20.0s
+05_06_14:11 openset_imagenet.train INFO: loss:softmax protocol:2 ep:70 train:{'j': 0.282} val:{'j': 1.560, 'conf_kn': 0.642, 'conf_unk': 0.309} t:110.7s v:19.6s
+05_06_14:13 openset_imagenet.train INFO: loss:softmax protocol:2 ep:71 train:{'j': 0.264} val:{'j': 1.612, 'conf_kn': 0.614, 'conf_unk': 0.335} t:110.7s v:19.5s
+05_06_14:15 openset_imagenet.train INFO: loss:softmax protocol:2 ep:72 train:{'j': 0.254} val:{'j': 1.765, 'conf_kn': 0.597, 'conf_unk': 0.311} t:110.8s v:19.6s
+05_06_14:17 openset_imagenet.train INFO: loss:softmax protocol:2 ep:73 train:{'j': 0.313} val:{'j': 1.683, 'conf_kn': 0.616, 'conf_unk': 0.327} t:110.7s v:20.2s
+05_06_14:20 openset_imagenet.train INFO: loss:softmax protocol:2 ep:74 train:{'j': 0.255} val:{'j': 1.740, 'conf_kn': 0.644, 'conf_unk': 0.294} t:110.6s v:19.7s
+05_06_14:22 openset_imagenet.train INFO: loss:softmax protocol:2 ep:75 train:{'j': 0.247} val:{'j': 1.667, 'conf_kn': 0.642, 'conf_unk': 0.289} t:110.7s v:19.7s
+05_06_14:24 openset_imagenet.train INFO: loss:softmax protocol:2 ep:76 train:{'j': 0.225} val:{'j': 1.787, 'conf_kn': 0.608, 'conf_unk': 0.305} t:110.8s v:22.6s
+05_06_14:26 openset_imagenet.train INFO: loss:softmax protocol:2 ep:77 train:{'j': 0.231} val:{'j': 1.859, 'conf_kn': 0.630, 'conf_unk': 0.285} t:111.0s v:25.2s
+05_06_14:29 openset_imagenet.train INFO: loss:softmax protocol:2 ep:78 train:{'j': 0.236} val:{'j': 1.621, 'conf_kn': 0.628, 'conf_unk': 0.315} t:111.0s v:20.0s
+05_06_14:31 openset_imagenet.train INFO: loss:softmax protocol:2 ep:79 train:{'j': 0.243} val:{'j': 1.710, 'conf_kn': 0.618, 'conf_unk': 0.305} t:111.1s v:19.8s
+05_06_14:33 openset_imagenet.train INFO: loss:softmax protocol:2 ep:80 train:{'j': 0.278} val:{'j': 2.111, 'conf_kn': 0.625, 'conf_unk': 0.304} t:110.9s v:20.0s
+05_06_14:35 openset_imagenet.train INFO: loss:softmax protocol:2 ep:81 train:{'j': 0.236} val:{'j': 2.406, 'conf_kn': 0.620, 'conf_unk': 0.287} t:110.9s v:19.5s
+05_06_14:37 openset_imagenet.train INFO: loss:softmax protocol:2 ep:82 train:{'j': 0.206} val:{'j': 1.784, 'conf_kn': 0.636, 'conf_unk': 0.288} t:110.9s v:19.4s
+05_06_14:40 openset_imagenet.train INFO: loss:softmax protocol:2 ep:83 train:{'j': 0.233} val:{'j': 2.007, 'conf_kn': 0.594, 'conf_unk': 0.287} t:110.9s v:19.8s
+05_06_14:42 openset_imagenet.train INFO: loss:softmax protocol:2 ep:84 train:{'j': 0.194} val:{'j': 1.843, 'conf_kn': 0.629, 'conf_unk': 0.287} t:110.9s v:20.1s
+05_06_14:44 openset_imagenet.train INFO: loss:softmax protocol:2 ep:85 train:{'j': 0.198} val:{'j': 2.644, 'conf_kn': 0.505, 'conf_unk': 0.333} t:110.8s v:19.6s
+05_06_14:46 openset_imagenet.train INFO: loss:softmax protocol:2 ep:86 train:{'j': 0.292} val:{'j': 2.976, 'conf_kn': 0.619, 'conf_unk': 0.306} t:110.7s v:19.8s
+05_06_14:49 openset_imagenet.train INFO: loss:softmax protocol:2 ep:87 train:{'j': 0.235} val:{'j': 1.853, 'conf_kn': 0.642, 'conf_unk': 0.275} t:110.8s v:20.0s
+05_06_14:51 openset_imagenet.train INFO: loss:softmax protocol:2 ep:88 train:{'j': 0.178} val:{'j': 1.769, 'conf_kn': 0.639, 'conf_unk': 0.292} t:110.7s v:19.9s
+05_06_14:53 openset_imagenet.train INFO: loss:softmax protocol:2 ep:89 train:{'j': 0.187} val:{'j': 2.521, 'conf_kn': 0.616, 'conf_unk': 0.282} t:110.8s v:19.9s
+05_06_14:55 openset_imagenet.train INFO: loss:softmax protocol:2 ep:90 train:{'j': 0.190} val:{'j': 1.813, 'conf_kn': 0.635, 'conf_unk': 0.275} t:110.8s v:20.2s
+05_06_14:58 openset_imagenet.train INFO: loss:softmax protocol:2 ep:91 train:{'j': 0.205} val:{'j': 1.794, 'conf_kn': 0.620, 'conf_unk': 0.298} t:110.9s v:19.9s
+05_06_15:00 openset_imagenet.train INFO: loss:softmax protocol:2 ep:92 train:{'j': 0.239} val:{'j': 1.765, 'conf_kn': 0.637, 'conf_unk': 0.271} t:110.7s v:19.9s
+05_06_15:02 openset_imagenet.train INFO: loss:softmax protocol:2 ep:93 train:{'j': 0.166} val:{'j': 1.944, 'conf_kn': 0.644, 'conf_unk': 0.270} t:110.8s v:19.6s
+05_06_15:04 openset_imagenet.train INFO: loss:softmax protocol:2 ep:94 train:{'j': 0.153} val:{'j': 2.013, 'conf_kn': 0.616, 'conf_unk': 0.281} t:110.7s v:19.9s
+05_06_15:07 openset_imagenet.train INFO: loss:softmax protocol:2 ep:95 train:{'j': 0.156} val:{'j': 1.870, 'conf_kn': 0.628, 'conf_unk': 0.286} t:110.7s v:20.2s
+05_06_15:09 openset_imagenet.train INFO: loss:softmax protocol:2 ep:96 train:{'j': 0.178} val:{'j': 2.116, 'conf_kn': 0.630, 'conf_unk': 0.267} t:111.1s v:19.9s
+05_06_15:11 openset_imagenet.train INFO: loss:softmax protocol:2 ep:97 train:{'j': 0.189} val:{'j': 2.126, 'conf_kn': 0.634, 'conf_unk': 0.289} t:110.8s v:19.9s
+05_06_15:13 openset_imagenet.train INFO: loss:softmax protocol:2 ep:98 train:{'j': 0.176} val:{'j': 2.009, 'conf_kn': 0.633, 'conf_unk': 0.274} t:110.9s v:19.8s
+05_06_15:16 openset_imagenet.train INFO: loss:softmax protocol:2 ep:99 train:{'j': 0.168} val:{'j': 1.839, 'conf_kn': 0.604, 'conf_unk': 0.299} t:110.8s v:20.2s
+05_06_15:18 openset_imagenet.train INFO: loss:softmax protocol:2 ep:100 train:{'j': 0.158} val:{'j': 1.898, 'conf_kn': 0.631, 'conf_unk': 0.263} t:110.8s v:19.9s
+05_06_15:20 openset_imagenet.train INFO: loss:softmax protocol:2 ep:101 train:{'j': 0.147} val:{'j': 2.100, 'conf_kn': 0.627, 'conf_unk': 0.280} t:110.8s v:20.6s
+05_06_15:22 openset_imagenet.train INFO: loss:softmax protocol:2 ep:102 train:{'j': 0.148} val:{'j': 2.157, 'conf_kn': 0.632, 'conf_unk': 0.267} t:110.9s v:20.0s
+05_06_15:24 openset_imagenet.train INFO: loss:softmax protocol:2 ep:103 train:{'j': 0.161} val:{'j': 1.791, 'conf_kn': 0.631, 'conf_unk': 0.279} t:110.8s v:19.6s
+05_06_15:27 openset_imagenet.train INFO: loss:softmax protocol:2 ep:104 train:{'j': 0.159} val:{'j': 1.881, 'conf_kn': 0.639, 'conf_unk': 0.277} t:110.9s v:19.9s
+05_06_15:29 openset_imagenet.train INFO: loss:softmax protocol:2 ep:105 train:{'j': 0.155} val:{'j': 3.345, 'conf_kn': 0.599, 'conf_unk': 0.262} t:110.8s v:19.6s
+05_06_15:31 openset_imagenet.train INFO: loss:softmax protocol:2 ep:106 train:{'j': 0.158} val:{'j': 2.036, 'conf_kn': 0.644, 'conf_unk': 0.254} t:110.8s v:19.9s
+05_06_15:33 openset_imagenet.train INFO: loss:softmax protocol:2 ep:107 train:{'j': 0.165} val:{'j': 2.613, 'conf_kn': 0.606, 'conf_unk': 0.269} t:111.0s v:20.3s
+05_06_15:35 openset_imagenet.train INFO: loss:softmax protocol:2 ep:108 train:{'j': 0.158} val:{'j': 1.934, 'conf_kn': 0.649, 'conf_unk': 0.248} t:110.8s v:20.0s
+05_06_15:38 openset_imagenet.train INFO: loss:softmax protocol:2 ep:109 train:{'j': 0.136} val:{'j': 1.865, 'conf_kn': 0.642, 'conf_unk': 0.250} t:110.9s v:20.2s
+05_06_15:40 openset_imagenet.train INFO: loss:softmax protocol:2 ep:110 train:{'j': 0.122} val:{'j': 2.032, 'conf_kn': 0.644, 'conf_unk': 0.243} t:110.7s v:20.2s
+05_06_15:42 openset_imagenet.train INFO: loss:softmax protocol:2 ep:111 train:{'j': 0.134} val:{'j': 1.984, 'conf_kn': 0.605, 'conf_unk': 0.276} t:110.7s v:20.3s
+05_06_15:44 openset_imagenet.train INFO: loss:softmax protocol:2 ep:112 train:{'j': 0.142} val:{'j': 1.788, 'conf_kn': 0.637, 'conf_unk': 0.275} t:110.7s v:20.0s
+05_06_15:47 openset_imagenet.train INFO: loss:softmax protocol:2 ep:113 train:{'j': 0.124} val:{'j': 1.809, 'conf_kn': 0.647, 'conf_unk': 0.267} t:110.7s v:20.1s
+05_06_15:49 openset_imagenet.train INFO: loss:softmax protocol:2 ep:114 train:{'j': 0.122} val:{'j': 2.069, 'conf_kn': 0.621, 'conf_unk': 0.252} t:110.7s v:20.1s
+05_06_15:51 openset_imagenet.train INFO: loss:softmax protocol:2 ep:115 train:{'j': 0.129} val:{'j': 1.983, 'conf_kn': 0.614, 'conf_unk': 0.281} t:110.8s v:20.7s
+05_06_15:53 openset_imagenet.train INFO: loss:softmax protocol:2 ep:116 train:{'j': 0.128} val:{'j': 2.141, 'conf_kn': 0.606, 'conf_unk': 0.257} t:110.9s v:21.0s
+05_06_15:55 openset_imagenet.train INFO: loss:softmax protocol:2 ep:117 train:{'j': 0.123} val:{'j': 1.775, 'conf_kn': 0.651, 'conf_unk': 0.266} t:110.9s v:21.7s
+05_06_15:58 openset_imagenet.train INFO: loss:softmax protocol:2 ep:118 train:{'j': 0.129} val:{'j': 1.977, 'conf_kn': 0.623, 'conf_unk': 0.265} t:111.2s v:21.2s
+05_06_16:00 openset_imagenet.train INFO: loss:softmax protocol:2 ep:119 train:{'j': 0.117} val:{'j': 1.773, 'conf_kn': 0.639, 'conf_unk': 0.278} t:110.9s v:23.3s
+05_06_16:00 openset_imagenet.train INFO: Training finished

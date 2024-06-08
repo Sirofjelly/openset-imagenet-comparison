@@ -1,0 +1,5 @@
+08_06_09:51 __main__ INFO: Loaded test dataset for protocol 3 with len:20600, labels:153
+08_06_09:51 __main__ INFO: Loading base model for protocol 3, softmax
+08_06_09:51 __main__ INFO: Taking model from epoch 120 that achieved best score 0.928359353384806
+08_06_09:51 __main__ INFO: Extracting base scores for protocol 3, softmax
+08_06_09:55 __main__ INFO: Target labels, logits, features and scores saved in: experiments/ex_7/net_11/Protocol_3/softmax_threshold_test_arr_curr.npz

@@ -1,0 +1,6 @@
+07_06_10:31 __main__ INFO: Loaded test dataset for protocol 2 with len:15173, labels:31
+07_06_10:31 __main__ INFO: Loading base models for protocol 2, bce
+07_06_10:31 __main__ INFO: Taking model from epoch 120 that achieved best score 0.8110378054402309
+07_06_10:31 __main__ INFO: Extracting base scores for protocol 2, bce
+07_06_10:32 __main__ INFO: Target labels, logits, features and scores saved in: experiments/ex_6/net_9/bce_binary_ensemble_combined_imagenet_test_arr_curr.npz
+07_06_10:32 __main__ INFO: Finished processing protocol 2, bce

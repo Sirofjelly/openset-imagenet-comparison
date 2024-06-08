@@ -69,9 +69,11 @@ class ResNet50Plus(nn.Module):
         self.resnet_base = models.resnet50(pretrained=False)
         fc_in_features = self.resnet_base.fc.in_features
         self.resnet_base.fc = nn.Linear(in_features=fc_in_features, out_features=fc_layer_dim)
-        self.relu = nn.LeakyReLU(negative_slope=0.01)  # Activation function for deep features
+        self.relu = nn.ReLU()  # Activation function for deep features
 
-        self.output_layers = nn.ModuleList([nn.Linear(fc_layer_dim, 1, bias=logit_bias) for _ in range(out_features)])
+        # Create multiple output layer for each binary output
+        K = 10
+        self.output_layers = nn.ModuleList([nn.Sequential(nn.Linear(fc_layer_dim, K, bias=True), nn.ReLU(),  nn.Linear(K, 1, bias=logit_bias)) for _ in range(out_features)])
 
     def forward(self, image):
         """
@@ -84,8 +86,7 @@ class ResNet50Plus(nn.Module):
             Logits (list of tensors) and deep features of the samples.
         """
         features = self.resnet_base(image)
-        # Apply activation to deep features
-        logits_list = [output_layer(self.relu(features)) for output_layer in self.output_layers]
+        logits_list = [output_layer(features) for output_layer in self.output_layers]
         logits = torch.cat(logits_list, dim=1)
         return logits, features
 

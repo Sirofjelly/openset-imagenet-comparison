@@ -1,0 +1,158 @@
+05_06_11:36 openset_imagenet.train INFO: ============ Data ============
+05_06_11:36 openset_imagenet.train INFO: train_len:60689, labels:31
+05_06_11:36 openset_imagenet.train INFO: val_len:15173, labels:31
+05_06_11:36 openset_imagenet.train INFO: ========== Training ==========
+05_06_11:36 openset_imagenet.train INFO: Initial epoch: 0
+05_06_11:36 openset_imagenet.train INFO: Last epoch: 120
+05_06_11:36 openset_imagenet.train INFO: Batch size: 32
+05_06_11:36 openset_imagenet.train INFO: workers: 4
+05_06_11:36 openset_imagenet.train INFO: Loss: entropic
+05_06_11:36 openset_imagenet.train INFO: optimizer: adam
+05_06_11:36 openset_imagenet.train INFO: Learning rate: 0.001
+05_06_11:36 openset_imagenet.train INFO: Device: 0
+05_06_11:36 openset_imagenet.train INFO: Training...
+05_06_11:43 openset_imagenet.train INFO: loss:entropic protocol:2 ep:0 train:{'j': 3.377} val:{'j': 3.355, 'conf_kn': 0.044, 'conf_unk': 0.960} t:375.7s v:38.3s
+05_06_11:43 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_8/entropic_threshold_best.pth at epoch: 0
+05_06_11:49 openset_imagenet.train INFO: loss:entropic protocol:2 ep:1 train:{'j': 3.335} val:{'j': 3.307, 'conf_kn': 0.052, 'conf_unk': 0.953} t:360.2s v:32.1s
+05_06_11:49 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_8/entropic_threshold_best.pth at epoch: 1
+05_06_11:59 openset_imagenet.train INFO: loss:entropic protocol:2 ep:2 train:{'j': 3.299} val:{'j': 3.296, 'conf_kn': 0.056, 'conf_unk': 0.942} t:513.2s v:69.9s
+05_06_12:11 openset_imagenet.train INFO: loss:entropic protocol:2 ep:3 train:{'j': 3.259} val:{'j': 3.387, 'conf_kn': 0.046, 'conf_unk': 0.941} t:699.1s v:46.6s
+05_06_12:24 openset_imagenet.train INFO: loss:entropic protocol:2 ep:4 train:{'j': 3.214} val:{'j': 3.228, 'conf_kn': 0.083, 'conf_unk': 0.913} t:703.9s v:60.9s
+05_06_12:36 openset_imagenet.train INFO: loss:entropic protocol:2 ep:5 train:{'j': 3.160} val:{'j': 3.305, 'conf_kn': 0.081, 'conf_unk': 0.900} t:671.9s v:45.0s
+05_06_12:50 openset_imagenet.train INFO: loss:entropic protocol:2 ep:6 train:{'j': 3.101} val:{'j': 3.398, 'conf_kn': 0.076, 'conf_unk': 0.887} t:775.6s v:71.4s
+05_06_13:05 openset_imagenet.train INFO: loss:entropic protocol:2 ep:7 train:{'j': 3.043} val:{'j': 3.331, 'conf_kn': 0.069, 'conf_unk': 0.917} t:777.8s v:71.5s
+05_06_13:18 openset_imagenet.train INFO: loss:entropic protocol:2 ep:8 train:{'j': 2.987} val:{'j': 3.344, 'conf_kn': 0.110, 'conf_unk': 0.848} t:749.0s v:71.5s
+05_06_13:33 openset_imagenet.train INFO: loss:entropic protocol:2 ep:9 train:{'j': 2.943} val:{'j': 3.083, 'conf_kn': 0.167, 'conf_unk': 0.881} t:787.0s v:71.3s
+05_06_13:33 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_8/entropic_threshold_best.pth at epoch: 9
+05_06_13:47 openset_imagenet.train INFO: loss:entropic protocol:2 ep:10 train:{'j': 2.895} val:{'j': 2.875, 'conf_kn': 0.214, 'conf_unk': 0.894} t:760.4s v:67.0s
+05_06_13:47 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_8/entropic_threshold_best.pth at epoch: 10
+05_06_14:00 openset_imagenet.train INFO: loss:entropic protocol:2 ep:11 train:{'j': 2.854} val:{'j': 3.125, 'conf_kn': 0.116, 'conf_unk': 0.927} t:754.6s v:71.7s
+05_06_14:15 openset_imagenet.train INFO: loss:entropic protocol:2 ep:12 train:{'j': 2.814} val:{'j': 2.936, 'conf_kn': 0.268, 'conf_unk': 0.828} t:787.8s v:71.3s
+05_06_14:29 openset_imagenet.train INFO: loss:entropic protocol:2 ep:13 train:{'j': 2.778} val:{'j': 3.214, 'conf_kn': 0.163, 'conf_unk': 0.843} t:785.1s v:71.6s
+05_06_14:43 openset_imagenet.train INFO: loss:entropic protocol:2 ep:14 train:{'j': 2.741} val:{'j': 2.895, 'conf_kn': 0.227, 'conf_unk': 0.887} t:760.4s v:52.5s
+05_06_14:43 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_8/entropic_threshold_best.pth at epoch: 14
+05_06_14:57 openset_imagenet.train INFO: loss:entropic protocol:2 ep:15 train:{'j': 2.714} val:{'j': 2.866, 'conf_kn': 0.271, 'conf_unk': 0.862} t:785.0s v:71.6s
+05_06_14:57 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_8/entropic_threshold_best.pth at epoch: 15
+05_06_15:11 openset_imagenet.train INFO: loss:entropic protocol:2 ep:16 train:{'j': 2.680} val:{'j': 2.781, 'conf_kn': 0.303, 'conf_unk': 0.870} t:780.1s v:71.2s
+05_06_15:11 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_8/entropic_threshold_best.pth at epoch: 16
+05_06_15:25 openset_imagenet.train INFO: loss:entropic protocol:2 ep:17 train:{'j': 2.653} val:{'j': 2.861, 'conf_kn': 0.266, 'conf_unk': 0.873} t:764.9s v:71.5s
+05_06_15:39 openset_imagenet.train INFO: loss:entropic protocol:2 ep:18 train:{'j': 2.624} val:{'j': 2.882, 'conf_kn': 0.280, 'conf_unk': 0.850} t:783.9s v:46.0s
+05_06_15:54 openset_imagenet.train INFO: loss:entropic protocol:2 ep:19 train:{'j': 2.595} val:{'j': 2.977, 'conf_kn': 0.207, 'conf_unk': 0.886} t:775.4s v:62.5s
+05_06_16:06 openset_imagenet.train INFO: loss:entropic protocol:2 ep:20 train:{'j': 2.577} val:{'j': 2.742, 'conf_kn': 0.356, 'conf_unk': 0.856} t:680.4s v:44.9s
+05_06_16:06 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_8/entropic_threshold_best.pth at epoch: 20
+05_06_16:19 openset_imagenet.train INFO: loss:entropic protocol:2 ep:21 train:{'j': 2.553} val:{'j': 2.968, 'conf_kn': 0.250, 'conf_unk': 0.867} t:704.5s v:70.9s
+05_06_16:32 openset_imagenet.train INFO: loss:entropic protocol:2 ep:22 train:{'j': 2.529} val:{'j': 2.735, 'conf_kn': 0.334, 'conf_unk': 0.871} t:755.1s v:57.2s
+05_06_16:45 openset_imagenet.train INFO: loss:entropic protocol:2 ep:23 train:{'j': 2.506} val:{'j': 2.636, 'conf_kn': 0.386, 'conf_unk': 0.891} t:711.4s v:69.2s
+05_06_16:45 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_8/entropic_threshold_best.pth at epoch: 23
+05_06_16:59 openset_imagenet.train INFO: loss:entropic protocol:2 ep:24 train:{'j': 2.492} val:{'j': 2.673, 'conf_kn': 0.351, 'conf_unk': 0.900} t:752.5s v:56.0s
+05_06_17:13 openset_imagenet.train INFO: loss:entropic protocol:2 ep:25 train:{'j': 2.469} val:{'j': 2.754, 'conf_kn': 0.424, 'conf_unk': 0.823} t:768.9s v:67.7s
+05_06_17:26 openset_imagenet.train INFO: loss:entropic protocol:2 ep:26 train:{'j': 2.488} val:{'j': 2.572, 'conf_kn': 0.421, 'conf_unk': 0.891} t:729.7s v:71.5s
+05_06_17:26 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_8/entropic_threshold_best.pth at epoch: 26
+05_06_17:40 openset_imagenet.train INFO: loss:entropic protocol:2 ep:27 train:{'j': 2.434} val:{'j': 2.625, 'conf_kn': 0.405, 'conf_unk': 0.897} t:763.0s v:67.6s
+05_06_17:54 openset_imagenet.train INFO: loss:entropic protocol:2 ep:28 train:{'j': 2.423} val:{'j': 2.733, 'conf_kn': 0.364, 'conf_unk': 0.866} t:765.0s v:68.9s
+05_06_18:08 openset_imagenet.train INFO: loss:entropic protocol:2 ep:29 train:{'j': 2.401} val:{'j': 2.639, 'conf_kn': 0.404, 'conf_unk': 0.888} t:726.0s v:67.4s
+05_06_18:21 openset_imagenet.train INFO: loss:entropic protocol:2 ep:30 train:{'j': 2.387} val:{'j': 2.606, 'conf_kn': 0.451, 'conf_unk': 0.875} t:748.5s v:68.4s
+05_06_18:21 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_8/entropic_threshold_best.pth at epoch: 30
+05_06_18:35 openset_imagenet.train INFO: loss:entropic protocol:2 ep:31 train:{'j': 2.371} val:{'j': 2.697, 'conf_kn': 0.359, 'conf_unk': 0.904} t:756.9s v:64.2s
+05_06_18:48 openset_imagenet.train INFO: loss:entropic protocol:2 ep:32 train:{'j': 2.352} val:{'j': 2.654, 'conf_kn': 0.421, 'conf_unk': 0.877} t:729.3s v:51.9s
+05_06_19:02 openset_imagenet.train INFO: loss:entropic protocol:2 ep:33 train:{'j': 2.339} val:{'j': 2.537, 'conf_kn': 0.500, 'conf_unk': 0.868} t:775.5s v:70.8s
+05_06_19:02 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_8/entropic_threshold_best.pth at epoch: 33
+05_06_19:16 openset_imagenet.train INFO: loss:entropic protocol:2 ep:34 train:{'j': 2.324} val:{'j': 2.618, 'conf_kn': 0.393, 'conf_unk': 0.913} t:775.5s v:71.6s
+05_06_19:30 openset_imagenet.train INFO: loss:entropic protocol:2 ep:35 train:{'j': 2.307} val:{'j': 2.530, 'conf_kn': 0.475, 'conf_unk': 0.894} t:753.8s v:70.3s
+05_06_19:30 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_8/entropic_threshold_best.pth at epoch: 35
+05_06_19:44 openset_imagenet.train INFO: loss:entropic protocol:2 ep:36 train:{'j': 2.292} val:{'j': 2.588, 'conf_kn': 0.527, 'conf_unk': 0.850} t:772.5s v:71.3s
+05_06_19:44 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_8/entropic_threshold_best.pth at epoch: 36
+05_06_19:58 openset_imagenet.train INFO: loss:entropic protocol:2 ep:37 train:{'j': 2.298} val:{'j': 2.615, 'conf_kn': 0.457, 'conf_unk': 0.876} t:772.2s v:45.2s
+05_06_20:12 openset_imagenet.train INFO: loss:entropic protocol:2 ep:38 train:{'j': 2.264} val:{'j': 2.477, 'conf_kn': 0.537, 'conf_unk': 0.889} t:744.3s v:70.3s
+05_06_20:12 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_8/entropic_threshold_best.pth at epoch: 38
+05_06_20:26 openset_imagenet.train INFO: loss:entropic protocol:2 ep:39 train:{'j': 2.251} val:{'j': 2.496, 'conf_kn': 0.520, 'conf_unk': 0.895} t:775.1s v:68.2s
+05_06_20:39 openset_imagenet.train INFO: loss:entropic protocol:2 ep:40 train:{'j': 2.241} val:{'j': 2.957, 'conf_kn': 0.233, 'conf_unk': 0.904} t:720.7s v:71.2s
+05_06_20:53 openset_imagenet.train INFO: loss:entropic protocol:2 ep:41 train:{'j': 2.238} val:{'j': 2.517, 'conf_kn': 0.531, 'conf_unk': 0.889} t:744.4s v:70.3s
+05_06_21:06 openset_imagenet.train INFO: loss:entropic protocol:2 ep:42 train:{'j': 2.215} val:{'j': 2.568, 'conf_kn': 0.545, 'conf_unk': 0.859} t:759.1s v:68.5s
+05_06_21:20 openset_imagenet.train INFO: loss:entropic protocol:2 ep:43 train:{'j': 2.198} val:{'j': 2.647, 'conf_kn': 0.506, 'conf_unk': 0.854} t:757.7s v:70.5s
+05_06_21:34 openset_imagenet.train INFO: loss:entropic protocol:2 ep:44 train:{'j': 2.188} val:{'j': 2.549, 'conf_kn': 0.514, 'conf_unk': 0.891} t:759.8s v:68.2s
+05_06_21:48 openset_imagenet.train INFO: loss:entropic protocol:2 ep:45 train:{'j': 2.178} val:{'j': 2.494, 'conf_kn': 0.557, 'conf_unk': 0.890} t:753.0s v:64.0s
+05_06_21:48 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_8/entropic_threshold_best.pth at epoch: 45
+05_06_22:02 openset_imagenet.train INFO: loss:entropic protocol:2 ep:46 train:{'j': 2.166} val:{'j': 2.559, 'conf_kn': 0.517, 'conf_unk': 0.879} t:776.8s v:71.4s
+05_06_22:12 openset_imagenet.train INFO: loss:entropic protocol:2 ep:47 train:{'j': 2.158} val:{'j': 2.588, 'conf_kn': 0.548, 'conf_unk': 0.865} t:553.1s v:45.5s
+05_06_22:21 openset_imagenet.train INFO: loss:entropic protocol:2 ep:48 train:{'j': 2.140} val:{'j': 2.550, 'conf_kn': 0.551, 'conf_unk': 0.880} t:525.3s v:45.2s
+05_06_22:31 openset_imagenet.train INFO: loss:entropic protocol:2 ep:49 train:{'j': 2.141} val:{'j': 2.567, 'conf_kn': 0.529, 'conf_unk': 0.882} t:524.5s v:45.0s
+05_06_22:40 openset_imagenet.train INFO: loss:entropic protocol:2 ep:50 train:{'j': 2.133} val:{'j': 2.559, 'conf_kn': 0.567, 'conf_unk': 0.875} t:504.7s v:45.0s
+05_06_22:50 openset_imagenet.train INFO: loss:entropic protocol:2 ep:51 train:{'j': 2.120} val:{'j': 2.577, 'conf_kn': 0.563, 'conf_unk': 0.873} t:524.5s v:45.2s
+05_06_22:59 openset_imagenet.train INFO: loss:entropic protocol:2 ep:52 train:{'j': 2.105} val:{'j': 2.545, 'conf_kn': 0.564, 'conf_unk': 0.886} t:524.3s v:45.0s
+05_06_22:59 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_8/entropic_threshold_best.pth at epoch: 52
+05_06_23:08 openset_imagenet.train INFO: loss:entropic protocol:2 ep:53 train:{'j': 2.098} val:{'j': 2.560, 'conf_kn': 0.562, 'conf_unk': 0.878} t:504.5s v:45.0s
+05_06_23:18 openset_imagenet.train INFO: loss:entropic protocol:2 ep:54 train:{'j': 2.140} val:{'j': 2.518, 'conf_kn': 0.566, 'conf_unk': 0.889} t:525.7s v:45.0s
+05_06_23:18 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_8/entropic_threshold_best.pth at epoch: 54
+05_06_23:27 openset_imagenet.train INFO: loss:entropic protocol:2 ep:55 train:{'j': 2.070} val:{'j': 2.509, 'conf_kn': 0.563, 'conf_unk': 0.898} t:524.1s v:45.1s
+05_06_23:27 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_8/entropic_threshold_best.pth at epoch: 55
+05_06_23:36 openset_imagenet.train INFO: loss:entropic protocol:2 ep:56 train:{'j': 2.060} val:{'j': 2.561, 'conf_kn': 0.576, 'conf_unk': 0.877} t:505.9s v:41.0s
+05_06_23:46 openset_imagenet.train INFO: loss:entropic protocol:2 ep:57 train:{'j': 2.058} val:{'j': 2.701, 'conf_kn': 0.456, 'conf_unk': 0.901} t:524.6s v:45.0s
+05_06_23:55 openset_imagenet.train INFO: loss:entropic protocol:2 ep:58 train:{'j': 2.053} val:{'j': 2.610, 'conf_kn': 0.539, 'conf_unk': 0.889} t:523.6s v:45.0s
+06_06_00:05 openset_imagenet.train INFO: loss:entropic protocol:2 ep:59 train:{'j': 2.051} val:{'j': 2.611, 'conf_kn': 0.535, 'conf_unk': 0.887} t:510.9s v:38.5s
+06_06_00:14 openset_imagenet.train INFO: loss:entropic protocol:2 ep:60 train:{'j': 2.038} val:{'j': 2.609, 'conf_kn': 0.586, 'conf_unk': 0.859} t:524.5s v:45.1s
+06_06_00:24 openset_imagenet.train INFO: loss:entropic protocol:2 ep:61 train:{'j': 2.039} val:{'j': 2.662, 'conf_kn': 0.500, 'conf_unk': 0.890} t:527.1s v:45.1s
+06_06_00:33 openset_imagenet.train INFO: loss:entropic protocol:2 ep:62 train:{'j': 2.034} val:{'j': 2.608, 'conf_kn': 0.566, 'conf_unk': 0.880} t:515.8s v:40.0s
+06_06_00:42 openset_imagenet.train INFO: loss:entropic protocol:2 ep:63 train:{'j': 2.027} val:{'j': 2.591, 'conf_kn': 0.581, 'conf_unk': 0.876} t:521.6s v:44.9s
+06_06_00:52 openset_imagenet.train INFO: loss:entropic protocol:2 ep:64 train:{'j': 2.016} val:{'j': 2.634, 'conf_kn': 0.564, 'conf_unk': 0.880} t:524.2s v:45.3s
+06_06_01:01 openset_imagenet.train INFO: loss:entropic protocol:2 ep:65 train:{'j': 2.010} val:{'j': 2.600, 'conf_kn': 0.577, 'conf_unk': 0.885} t:516.5s v:39.6s
+06_06_01:01 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_8/entropic_threshold_best.pth at epoch: 65
+06_06_01:11 openset_imagenet.train INFO: loss:entropic protocol:2 ep:66 train:{'j': 2.006} val:{'j': 2.703, 'conf_kn': 0.573, 'conf_unk': 0.855} t:518.5s v:45.3s
+06_06_01:20 openset_imagenet.train INFO: loss:entropic protocol:2 ep:67 train:{'j': 2.004} val:{'j': 2.646, 'conf_kn': 0.567, 'conf_unk': 0.872} t:524.2s v:45.4s
+06_06_01:29 openset_imagenet.train INFO: loss:entropic protocol:2 ep:68 train:{'j': 1.999} val:{'j': 2.606, 'conf_kn': 0.560, 'conf_unk': 0.892} t:518.9s v:40.2s
+06_06_01:39 openset_imagenet.train INFO: loss:entropic protocol:2 ep:69 train:{'j': 1.994} val:{'j': 2.594, 'conf_kn': 0.563, 'conf_unk': 0.888} t:516.6s v:45.2s
+06_06_01:48 openset_imagenet.train INFO: loss:entropic protocol:2 ep:70 train:{'j': 1.989} val:{'j': 2.612, 'conf_kn': 0.576, 'conf_unk': 0.880} t:524.3s v:45.1s
+06_06_01:58 openset_imagenet.train INFO: loss:entropic protocol:2 ep:71 train:{'j': 1.982} val:{'j': 2.682, 'conf_kn': 0.601, 'conf_unk': 0.850} t:523.0s v:40.4s
+06_06_02:07 openset_imagenet.train INFO: loss:entropic protocol:2 ep:72 train:{'j': 2.019} val:{'j': 2.606, 'conf_kn': 0.592, 'conf_unk': 0.874} t:511.7s v:44.9s
+06_06_02:07 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_8/entropic_threshold_best.pth at epoch: 72
+06_06_02:17 openset_imagenet.train INFO: loss:entropic protocol:2 ep:73 train:{'j': 1.977} val:{'j': 2.616, 'conf_kn': 0.582, 'conf_unk': 0.891} t:524.2s v:45.0s
+06_06_02:17 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_8/entropic_threshold_best.pth at epoch: 73
+06_06_02:26 openset_imagenet.train INFO: loss:entropic protocol:2 ep:74 train:{'j': 1.973} val:{'j': 2.566, 'conf_kn': 0.571, 'conf_unk': 0.898} t:524.3s v:39.2s
+06_06_02:35 openset_imagenet.train INFO: loss:entropic protocol:2 ep:75 train:{'j': 1.964} val:{'j': 2.636, 'conf_kn': 0.577, 'conf_unk': 0.892} t:509.6s v:45.1s
+06_06_02:45 openset_imagenet.train INFO: loss:entropic protocol:2 ep:76 train:{'j': 1.965} val:{'j': 2.674, 'conf_kn': 0.567, 'conf_unk': 0.886} t:525.6s v:45.2s
+06_06_02:54 openset_imagenet.train INFO: loss:entropic protocol:2 ep:77 train:{'j': 1.968} val:{'j': 2.658, 'conf_kn': 0.547, 'conf_unk': 0.900} t:524.9s v:42.7s
+06_06_03:03 openset_imagenet.train INFO: loss:entropic protocol:2 ep:78 train:{'j': 1.954} val:{'j': 2.763, 'conf_kn': 0.561, 'conf_unk': 0.852} t:507.2s v:45.1s
+06_06_03:13 openset_imagenet.train INFO: loss:entropic protocol:2 ep:79 train:{'j': 1.956} val:{'j': 2.697, 'conf_kn': 0.602, 'conf_unk': 0.865} t:525.0s v:45.1s
+06_06_03:22 openset_imagenet.train INFO: loss:entropic protocol:2 ep:80 train:{'j': 1.947} val:{'j': 2.708, 'conf_kn': 0.561, 'conf_unk': 0.870} t:524.3s v:45.1s
+06_06_03:32 openset_imagenet.train INFO: loss:entropic protocol:2 ep:81 train:{'j': 1.949} val:{'j': 2.690, 'conf_kn': 0.586, 'conf_unk': 0.878} t:503.5s v:45.1s
+06_06_03:41 openset_imagenet.train INFO: loss:entropic protocol:2 ep:82 train:{'j': 1.941} val:{'j': 2.680, 'conf_kn': 0.561, 'conf_unk': 0.887} t:525.4s v:45.3s
+06_06_03:51 openset_imagenet.train INFO: loss:entropic protocol:2 ep:83 train:{'j': 1.940} val:{'j': 2.647, 'conf_kn': 0.559, 'conf_unk': 0.889} t:524.3s v:45.0s
+06_06_04:00 openset_imagenet.train INFO: loss:entropic protocol:2 ep:84 train:{'j': 1.942} val:{'j': 2.784, 'conf_kn': 0.494, 'conf_unk': 0.880} t:503.2s v:45.0s
+06_06_04:09 openset_imagenet.train INFO: loss:entropic protocol:2 ep:85 train:{'j': 1.937} val:{'j': 2.732, 'conf_kn': 0.549, 'conf_unk': 0.882} t:524.3s v:45.2s
+06_06_04:19 openset_imagenet.train INFO: loss:entropic protocol:2 ep:86 train:{'j': 1.933} val:{'j': 2.641, 'conf_kn': 0.577, 'conf_unk': 0.892} t:525.5s v:45.2s
+06_06_04:28 openset_imagenet.train INFO: loss:entropic protocol:2 ep:87 train:{'j': 1.933} val:{'j': 2.801, 'conf_kn': 0.546, 'conf_unk': 0.868} t:504.1s v:45.0s
+06_06_04:38 openset_imagenet.train INFO: loss:entropic protocol:2 ep:88 train:{'j': 1.932} val:{'j': 2.859, 'conf_kn': 0.520, 'conf_unk': 0.886} t:524.4s v:45.0s
+06_06_04:47 openset_imagenet.train INFO: loss:entropic protocol:2 ep:89 train:{'j': 1.921} val:{'j': 2.763, 'conf_kn': 0.527, 'conf_unk': 0.883} t:524.2s v:44.9s
+06_06_04:56 openset_imagenet.train INFO: loss:entropic protocol:2 ep:90 train:{'j': 1.928} val:{'j': 2.772, 'conf_kn': 0.598, 'conf_unk': 0.854} t:504.6s v:45.2s
+06_06_05:06 openset_imagenet.train INFO: loss:entropic protocol:2 ep:91 train:{'j': 1.942} val:{'j': 2.658, 'conf_kn': 0.586, 'conf_unk': 0.895} t:524.3s v:45.1s
+06_06_05:06 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_8/entropic_threshold_best.pth at epoch: 91
+06_06_05:15 openset_imagenet.train INFO: loss:entropic protocol:2 ep:92 train:{'j': 1.913} val:{'j': 2.732, 'conf_kn': 0.577, 'conf_unk': 0.882} t:524.2s v:45.1s
+06_06_05:24 openset_imagenet.train INFO: loss:entropic protocol:2 ep:93 train:{'j': 1.917} val:{'j': 2.722, 'conf_kn': 0.583, 'conf_unk': 0.875} t:504.1s v:45.1s
+06_06_05:34 openset_imagenet.train INFO: loss:entropic protocol:2 ep:94 train:{'j': 1.916} val:{'j': 2.695, 'conf_kn': 0.588, 'conf_unk': 0.874} t:524.0s v:45.1s
+06_06_05:43 openset_imagenet.train INFO: loss:entropic protocol:2 ep:95 train:{'j': 1.916} val:{'j': 2.711, 'conf_kn': 0.563, 'conf_unk': 0.885} t:524.2s v:45.0s
+06_06_05:53 openset_imagenet.train INFO: loss:entropic protocol:2 ep:96 train:{'j': 1.913} val:{'j': 2.705, 'conf_kn': 0.579, 'conf_unk': 0.880} t:505.0s v:45.1s
+06_06_06:02 openset_imagenet.train INFO: loss:entropic protocol:2 ep:97 train:{'j': 1.910} val:{'j': 2.660, 'conf_kn': 0.557, 'conf_unk': 0.899} t:525.3s v:45.0s
+06_06_06:12 openset_imagenet.train INFO: loss:entropic protocol:2 ep:98 train:{'j': 1.908} val:{'j': 2.810, 'conf_kn': 0.593, 'conf_unk': 0.844} t:523.9s v:45.0s
+06_06_06:21 openset_imagenet.train INFO: loss:entropic protocol:2 ep:99 train:{'j': 1.907} val:{'j': 2.717, 'conf_kn': 0.501, 'conf_unk': 0.914} t:502.8s v:45.0s
+06_06_06:30 openset_imagenet.train INFO: loss:entropic protocol:2 ep:100 train:{'j': 1.905} val:{'j': 2.854, 'conf_kn': 0.570, 'conf_unk': 0.867} t:523.8s v:45.1s
+06_06_06:40 openset_imagenet.train INFO: loss:entropic protocol:2 ep:101 train:{'j': 1.907} val:{'j': 2.850, 'conf_kn': 0.584, 'conf_unk': 0.869} t:525.8s v:45.2s
+06_06_06:49 openset_imagenet.train INFO: loss:entropic protocol:2 ep:102 train:{'j': 1.935} val:{'j': 2.667, 'conf_kn': 0.583, 'conf_unk': 0.893} t:504.6s v:45.0s
+06_06_06:59 openset_imagenet.train INFO: loss:entropic protocol:2 ep:103 train:{'j': 1.887} val:{'j': 2.707, 'conf_kn': 0.585, 'conf_unk': 0.895} t:525.8s v:44.7s
+06_06_07:08 openset_imagenet.train INFO: loss:entropic protocol:2 ep:104 train:{'j': 1.894} val:{'j': 2.755, 'conf_kn': 0.575, 'conf_unk': 0.877} t:524.1s v:45.1s
+06_06_07:17 openset_imagenet.train INFO: loss:entropic protocol:2 ep:105 train:{'j': 1.897} val:{'j': 2.678, 'conf_kn': 0.578, 'conf_unk': 0.891} t:503.9s v:45.3s
+06_06_07:27 openset_imagenet.train INFO: loss:entropic protocol:2 ep:106 train:{'j': 1.897} val:{'j': 2.810, 'conf_kn': 0.461, 'conf_unk': 0.893} t:525.4s v:45.0s
+06_06_07:36 openset_imagenet.train INFO: loss:entropic protocol:2 ep:107 train:{'j': 1.895} val:{'j': 2.804, 'conf_kn': 0.537, 'conf_unk': 0.888} t:525.2s v:45.1s
+06_06_07:45 openset_imagenet.train INFO: loss:entropic protocol:2 ep:108 train:{'j': 1.894} val:{'j': 2.910, 'conf_kn': 0.583, 'conf_unk': 0.871} t:502.6s v:45.2s
+06_06_07:55 openset_imagenet.train INFO: loss:entropic protocol:2 ep:109 train:{'j': 1.894} val:{'j': 2.699, 'conf_kn': 0.580, 'conf_unk': 0.884} t:523.8s v:45.0s
+06_06_08:04 openset_imagenet.train INFO: loss:entropic protocol:2 ep:110 train:{'j': 1.892} val:{'j': 2.864, 'conf_kn': 0.494, 'conf_unk': 0.875} t:523.8s v:45.1s
+06_06_08:14 openset_imagenet.train INFO: loss:entropic protocol:2 ep:111 train:{'j': 1.893} val:{'j': 2.781, 'conf_kn': 0.566, 'conf_unk': 0.877} t:504.0s v:45.0s
+06_06_08:23 openset_imagenet.train INFO: loss:entropic protocol:2 ep:112 train:{'j': 1.907} val:{'j': 2.713, 'conf_kn': 0.591, 'conf_unk': 0.885} t:525.5s v:45.0s
+06_06_08:33 openset_imagenet.train INFO: loss:entropic protocol:2 ep:113 train:{'j': 1.879} val:{'j': 2.738, 'conf_kn': 0.594, 'conf_unk': 0.883} t:524.1s v:44.9s
+06_06_08:42 openset_imagenet.train INFO: loss:entropic protocol:2 ep:114 train:{'j': 1.885} val:{'j': 2.760, 'conf_kn': 0.563, 'conf_unk': 0.891} t:504.9s v:45.0s
+06_06_08:51 openset_imagenet.train INFO: loss:entropic protocol:2 ep:115 train:{'j': 1.883} val:{'j': 2.768, 'conf_kn': 0.545, 'conf_unk': 0.890} t:525.6s v:45.1s
+06_06_09:01 openset_imagenet.train INFO: loss:entropic protocol:2 ep:116 train:{'j': 1.885} val:{'j': 2.724, 'conf_kn': 0.561, 'conf_unk': 0.898} t:525.5s v:45.2s
+06_06_09:10 openset_imagenet.train INFO: loss:entropic protocol:2 ep:117 train:{'j': 1.884} val:{'j': 2.732, 'conf_kn': 0.536, 'conf_unk': 0.898} t:504.2s v:45.0s
+06_06_09:19 openset_imagenet.train INFO: loss:entropic protocol:2 ep:118 train:{'j': 1.884} val:{'j': 2.793, 'conf_kn': 0.591, 'conf_unk': 0.883} t:524.9s v:45.1s
+06_06_09:29 openset_imagenet.train INFO: loss:entropic protocol:2 ep:119 train:{'j': 1.881} val:{'j': 2.722, 'conf_kn': 0.591, 'conf_unk': 0.890} t:523.7s v:45.2s
+06_06_09:29 openset_imagenet.train INFO: Saving best model experiments/ex_7/net_8/entropic_threshold_best.pth at epoch: 119
+06_06_09:29 openset_imagenet.train INFO: Training finished
