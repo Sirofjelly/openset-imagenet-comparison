@@ -163,20 +163,20 @@ import matplotlib.cm
 colors = matplotlib.cm.tab10(range(10))
 
 COLORS = {
-    "threshold": colors[0],
+    "threshold": colors[1],
+    "binary_ensemble_combined_imagenet": colors[2],
     "openmax": colors[8],
     "proser": colors[2],
     "evm": colors[3],
     "maxlogits": colors[5],
-    "binary_ensemble_combined_imagenet": colors[2],
-    "binary_ensemble_combined_imagenet_neg": colors[3],
 }
 
 STYLES = {
     "entropic": "dashed",
     "softmax": "solid",
+    "bce": "solid",
+    "bce_neg": "dashed",
     "garbage": "dotted",
-    "bce": "dotted",
     "p1": "dashed",
     "p2": "dotted",
     "p3": "solid"
@@ -184,17 +184,17 @@ STYLES = {
 
 NAMES = {
     "threshold": "MSS",
-    "binary_ensemble_combined_imagenet_neg": "Binary Ensemble (-)",
+    "entropic": "EOS",
+    "bce": "BCE",
+    "bce_neg": "BCE-Neg",
     "binary_ensemble_combined_imagenet": "Binary Ensemble",
     "openmax": "OpenMax",
     "proser": "PROSER*",
     "evm": "EVM",
     "maxlogits": "MLS",
     "binary_ensemble_emnist": "BE",
-    "entropic": "EOS",
     "softmax": "Softmax",
     "garbage": "Garbage",
-    "bce": "BCE",
     "p1": "P_1",
     "p2": "P_2",
     "p3": "P_3",

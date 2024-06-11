@@ -42,7 +42,7 @@ def command_line_options(command_line_arguments=None):
     parser.add_argument(
         "--losses", "-l",
         nargs = "+",
-        choices = ('softmax', 'garbage', 'entropic', 'bce'),
+        choices = ('softmax', 'garbage', 'entropic', 'bce', 'bce_neg'),
         default = ('softmax', 'garbage', 'entropic'),
         help = "Select the loss functions that should be included into the plot"
     )
@@ -88,7 +88,7 @@ def command_line_options(command_line_arguments=None):
 
     args = parser.parse_args(command_line_arguments)
 
-    args.plots = args.plots or f"results/Results_{'best' if args.use_best else 'last'}.pdf"
+    args.plots = args.plots or f"experiments/ex_7/results/Results_{'best' if args.use_best else 'last'}.pdf"
 #    args.table = args.table or f"results/Results_{suffix}.tex"
     return args
 
@@ -154,7 +154,7 @@ def plot_OSCR(args, scores, ground_truths):
     openset_imagenet.util.oscr_legend(
         args.losses, args.algorithms, fig,
         bbox_to_anchor=(0.5,-0.03), handletextpad=0.6, columnspacing=1.5,
-        title="How to Read: Line Style -> training; Color -> post-processing"
+        title="How to Read: Line Style -> SoftMax / Ensemble Approach"
     )
 
 
@@ -347,10 +347,12 @@ def main(command_line_arguments = None):
         plot_OSCR(args, scores, ground_truths)
         pdf.savefig(bbox_inches='tight', pad_inches = 0)
 
+        """
         plot_OSCR_separated(args, scores, ground_truths, -1)
         pdf.savefig(bbox_inches='tight', pad_inches = 0)
         plot_OSCR_separated(args, scores, ground_truths, -2)
         pdf.savefig(bbox_inches='tight', pad_inches = 0)
+        """
 
         """
         if not args.linear and not args.use_best and not args.sort_by_loss:
