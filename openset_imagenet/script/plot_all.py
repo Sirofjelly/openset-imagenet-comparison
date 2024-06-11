@@ -42,13 +42,13 @@ def command_line_options(command_line_arguments=None):
     parser.add_argument(
         "--losses", "-l",
         nargs = "+",
-        choices = ('softmax', 'garbage', 'entropic'),
+        choices = ('softmax', 'garbage', 'entropic', 'bce'),
         default = ('softmax', 'garbage', 'entropic'),
         help = "Select the loss functions that should be included into the plot"
     )
     parser.add_argument(
         "--algorithms", "-a",
-        choices = ["threshold", "maxlogits", "openmax", "evm", "proser"],
+        choices = ["threshold", "maxlogits", "openmax", "evm", "proser", "binary_ensemble_combined_imagenet", "binary_ensemble_combined_imagenet_neg"],
         nargs = "+",
         default = ["threshold", "maxlogits", "openmax", "evm", "proser"],
         help = "Which algorithm to include into the plot. Specific parameters should be in the yaml file"

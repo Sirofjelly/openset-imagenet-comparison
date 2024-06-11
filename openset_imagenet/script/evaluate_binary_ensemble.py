@@ -253,7 +253,7 @@ def load_scores(loss, algorithm, suffix, output_directory):
 
 
 def process_model(protocol, loss, algorithms, cfg, suffix, gpu, force, threshold):
-    output_directory = Path(cfg.output_directory) # /f"Protocol_{protocol}"
+    output_directory = Path(cfg.output_directory)
 
     # set device
     if gpu is not None:

@@ -155,3 +155,12 @@
 08_06_11:37 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:1 ep:109 train:{'j': 0.140} val:{'j': 0.784, 'conf_kn': 0.615, 'conf_unk': 0.284} t:568.6s v:182.1s
 08_06_11:49 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:1 ep:110 train:{'j': 0.138} val:{'j': 0.806, 'conf_kn': 0.615, 'conf_unk': 0.285} t:570.7s v:181.5s
 08_06_12:02 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:1 ep:111 train:{'j': 0.137} val:{'j': 0.773, 'conf_kn': 0.618, 'conf_unk': 0.297} t:571.9s v:183.5s
+08_06_12:15 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:1 ep:112 train:{'j': 0.137} val:{'j': 0.823, 'conf_kn': 0.626, 'conf_unk': 0.286} t:571.2s v:181.4s
+08_06_12:27 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:1 ep:113 train:{'j': 0.136} val:{'j': 0.786, 'conf_kn': 0.629, 'conf_unk': 0.276} t:569.7s v:182.7s
+08_06_12:40 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:1 ep:114 train:{'j': 0.129} val:{'j': 0.793, 'conf_kn': 0.624, 'conf_unk': 0.286} t:570.4s v:181.5s
+08_06_12:52 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:1 ep:115 train:{'j': 0.132} val:{'j': 0.797, 'conf_kn': 0.623, 'conf_unk': 0.294} t:569.5s v:183.8s
+08_06_13:05 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:1 ep:116 train:{'j': 0.132} val:{'j': 0.786, 'conf_kn': 0.627, 'conf_unk': 0.289} t:568.0s v:180.6s
+08_06_13:17 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:1 ep:117 train:{'j': 0.129} val:{'j': 0.844, 'conf_kn': 0.627, 'conf_unk': 0.270} t:569.7s v:180.9s
+08_06_13:30 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:1 ep:118 train:{'j': 0.129} val:{'j': 0.816, 'conf_kn': 0.625, 'conf_unk': 0.283} t:570.2s v:181.0s
+08_06_13:42 openset_imagenet.binary_ensemble_combined_emnist INFO: loss:bce protocol:1 ep:119 train:{'j': 0.129} val:{'j': 0.774, 'conf_kn': 0.618, 'conf_unk': 0.288} t:569.7s v:182.6s
+08_06_13:42 openset_imagenet.binary_ensemble_combined_emnist INFO: Training finished
