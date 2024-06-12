@@ -151,10 +151,9 @@ def plot_OSCR(args, scores, ground_truths):
     fig.text(0.04, 0.5, 'CCR', va='center', rotation='vertical', fontsize=font)
 
     # add legend
-    openset_imagenet.util.oscr_legend(
+    openset_imagenet.util.oscr_legend_new(
         args.losses, args.algorithms, fig,
         bbox_to_anchor=(0.5,-0.03), handletextpad=0.6, columnspacing=1.5,
-        title="How to Read: Line Style -> SoftMax / Ensemble Approach"
     )
 
 

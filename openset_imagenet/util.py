@@ -163,8 +163,8 @@ import matplotlib.cm
 colors = matplotlib.cm.tab10(range(10))
 
 COLORS = {
-    "threshold": colors[1],
-    "binary_ensemble_combined_imagenet": colors[2],
+    "threshold": colors[0],
+    "binary_ensemble_combined_imagenet": colors[1],
     "openmax": colors[8],
     "proser": colors[2],
     "evm": colors[3],
@@ -315,7 +315,23 @@ def oscr_legend(losses, algorithms, figure, **kwargs):
 
     figure.legend(handles=legend_elements, labels=labels, loc="lower center", ncol=columns, **kwargs)
 
+def oscr_legend_new(losses, algorithms, figure, **kwargs):
+    """Creates a legend with the different line style and colors"""
+    from matplotlib.lines import Line2D
 
+    # Define the entries
+    entries = [
+        ("SoftMax", "solid", colors[0]),
+        ("EOS", "dashed", colors[0]),
+        ("Binary Ensemble", "solid", colors[1]),
+        ("Binary Ensemble (-)", "dashed", colors[1]),
+    ]
+
+    # Create legend elements
+    legend_elements = [Line2D([None], [None], linestyle=style, color=color, label=label) for label, style, color in entries]
+
+    # Add the legend to the figure
+    figure.legend(handles=legend_elements, loc="lower center", ncol=4, **kwargs)
 
 def get_histogram(scores,
                   gt,
