@@ -11,7 +11,6 @@ from matplotlib.ticker import LogLocator, NullFormatter
 from matplotlib import colors
 import matplotlib.cm as cm
 import random
-import numpy
 import torch
 from itertools import product
 from scipy.spatial.distance import pdist, squareform
@@ -372,11 +371,31 @@ def get_similarity_score_from_binary_to_label(model_binary, class_binary):
     model_binary = model_binary.view(-1,)
 
     # get the class from the binary output
-    class_similarities = numpy.empty(len(class_binary))
+    class_similarities = np.empty(len(class_binary))
     for i, (c, b) in enumerate(class_binary.items()):
-        similarity =  numpy.sum(numpy.abs(numpy.array(b) - numpy.array(model_binary)))
+        similarity =  np.sum(np.abs(np.array(b) - np.array(model_binary)))
         class_similarities[i] = num_outputs - similarity
     return torch.from_numpy(class_similarities)
+
+def get_similarity_score_from_binary_to_label_optimized(model_binary, class_binary):
+    """Optimized version using PyTorch tensor operations."""
+    num_model = model_binary.shape[1]
+    # Convert model_binary and class_binary to PyTorch tensors
+    model_binary_tensor = model_binary.clone().detach()
+    model_binary_tensor = model_binary_tensor.to(torch.float32)
+    class_binary_tensor = class_binary.clone().detach()
+    class_binary_tensor = class_binary_tensor.to(torch.float32)
+    
+    # Reshape model_binary_tensor to have an extra dimension for broadcasting
+    model_binary_tensor = model_binary_tensor.unsqueeze(1)
+    
+    # Compute the absolute difference between model_binary_tensor and class_binary_tensor
+    diff = torch.abs(model_binary_tensor - class_binary_tensor)
+    
+    # Compute the sum of the absolute differences along dim=2 (feature dimension)
+    similarity = num_model - torch.sum(diff, dim=2)
+    
+    return similarity
 
 def get_similarity_score_from_binary_to_label_new(model_binary, class_binary):
     """
@@ -391,10 +410,10 @@ def get_similarity_score_from_binary_to_label_new(model_binary, class_binary):
     model_binary = model_binary.view(-1,)
 
     # get the class from the binary output
-    class_similarities = numpy.empty(len(class_binary))
+    class_similarities = np.empty(len(class_binary))
     for i, (c, b) in enumerate(class_binary.items()):
-        b = numpy.array(b) * 2 - 1 # convert to -1 and 1
-        similarity =  numpy.sum((b * numpy.array(model_binary)))
+        b = np.array(b) * 2 - 1 # convert to -1 and 1
+        similarity =  np.sum((b * np.array(model_binary)))
         class_similarities[i] = similarity
     return torch.from_numpy(class_similarities)
 

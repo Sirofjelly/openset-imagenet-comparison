@@ -1,4 +1,4 @@
-# General Parameters
+re# General Parameters
 checkpoint:             # set the checkpoint from where to continue, leave empty to start from scratch
 log_name: training.log  # name of the file with training info
 gpu:                    # index of a GPU, if available
