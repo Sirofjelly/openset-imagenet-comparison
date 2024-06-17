@@ -102,7 +102,7 @@ def dataset(cfg, protocol):
     logger.info(f"Loaded test dataset for protocol {protocol} with len:{len(test_dataset)}, labels:{test_dataset.label_count}")
 
     # create data loaders
-    test_loader = DataLoader(test_dataset, batch_size=cfg.batch_size, num_workers=cfg.workers)
+    test_loader = DataLoader(test_dataset, batch_size=cfg.batch_size, num_workers=cfg.workers, pin_memory=True, persistent_workers=True, prefetch_factor=2)
 
     # return test loader
     return test_dataset, test_loader
