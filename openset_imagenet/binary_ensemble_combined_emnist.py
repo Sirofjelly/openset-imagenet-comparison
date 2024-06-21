@@ -173,7 +173,7 @@ def get_arrays(model, loader, garbage, pretty=False, threshold=True, remove_nega
             # hamming dist approach
             class_binary_matrix = np.array([value for _, value in class_binaries.items()]).T
             length = len(class_binaries.keys())
-            min_num_models = np.ceil(np.log2(length)).astype(int) + 1 # because else ham dist can be 0
+            min_num_models = np.ceil(np.log2(length)).astype(int)
 
             used_indices = []
             final_class_binary_matrix = None
@@ -193,8 +193,8 @@ def get_arrays(model, loader, garbage, pretty=False, threshold=True, remove_nega
         print("Starting shape of final class binary matrix: ", final_class_binary_matrix.shape)
 
         
-        if random_models:
-            while final_class_binary_matrix.shape[0] != num_models:
+        if random_models == 'random':
+            while final_class_binary_matrix.shape[0] < num_models:
                 # get a random index from the class binary matrix
                 rand_index = random.randint(0, class_binary_matrix.shape[0] - 1)
                 # check if the index is already used
@@ -209,24 +209,30 @@ def get_arrays(model, loader, garbage, pretty=False, threshold=True, remove_nega
                     used_indices = list(used_indices)
                     used_indices.append(rand_index)
                 print("Max min hamming dist is: ", ham_dist)
-        else: # we optimize ccr@fpr for the models
+        elif random_models == 'hamming':
             # we are maximizing the hamming distance
-            while final_class_binary_matrix.shape[0] != num_models:
-                """
-                index_and_ccr_fpr = defaultdict()
+            while final_class_binary_matrix.shape[0] < num_models:
+                # we check the hamming distance of all possible combinations
+                index_and_hamming = (0, 0)
                 for i, row in enumerate(class_binary_matrix):
-                    curr_index_of_class_binary = i
                     # first we check if the index is already used
                     if i in used_indices:
                         continue
-                    # if index is not used we calculate the fpr@for for each model and chose the one which maximizes it
                     test_matrix = np.vstack((final_class_binary_matrix, row))
-                    ## code duplication from below
-                    class_binaries = {}
-                    for i_s, row in enumerate(test_matrix.T):
-                        class_binaries[i_s] = row
-                    """
+                    ham_dist = hamming_distance_min_among_all(test_matrix, row=False)
+                    if ham_dist > index_and_hamming[1]:
+                        index_and_hamming = (i, ham_dist)
 
+                assert index_and_hamming != (0, 0)
+                # add the row with the minimum hamming distance to the final class binary matrix
+                final_class_binary_matrix = np.vstack((final_class_binary_matrix, class_binary_matrix[index_and_hamming[0], :]))
+                # add the index to the used indices
+                used_indices = list(used_indices)
+                used_indices.append(index_and_hamming[0])
+                print("Max min hamming dist is: ", index_and_hamming[1])
+        elif random_models == 'greedy': # we optimize ccr@fpr for the models
+            # we are maximizing the hamming distance
+            while final_class_binary_matrix.shape[0] < num_models:
                 features_dim = model.logits.in_features  # features dimensionality
                 all_targets = torch.empty(data_len, device="cpu")  # store all targets
                 # all_logits = torch.empty((data_len, class_binary_matrix.shape[0]), device="cpu")   # store all logits

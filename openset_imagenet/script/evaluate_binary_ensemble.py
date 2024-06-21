@@ -102,7 +102,10 @@ def dataset(cfg, protocol):
     logger.info(f"Loaded test dataset for protocol {protocol} with len:{len(test_dataset)}, labels:{test_dataset.label_count}")
 
     # create data loaders
-    test_loader = DataLoader(test_dataset, batch_size=cfg.batch_size, num_workers=cfg.workers, pin_memory=True, persistent_workers=True, prefetch_factor=2)
+    if cfg.algorithm.type == "binary_ensemble_emnist" or cfg.algorithm.type == "binary_ensemble_combined_emnist":
+        test_loader = DataLoader(test_dataset, batch_size=cfg.batch_size, num_workers=0) # weird bug happening else
+    else:
+        test_loader = DataLoader(test_dataset, batch_size=cfg.batch_size, num_workers=cfg.workers, pin_memory=True, persistent_workers=True, prefetch_factor=2)
 
     # return test loader
     return test_dataset, test_loader
@@ -297,8 +300,8 @@ def process_model(protocol, loss, algorithms, cfg, suffix, gpu, force, threshold
                 if base_model is not None:
                     # extract features
                     logger.info(f"Extracting base scores for protocol {protocol}, {loss}")
-                    random_models = cfg.algorithm.sets == "random"
-                    print("Using random models", random_models)
+                    random_models = cfg.algorithm.sets # can either be random, hamming or greedy
+                    print("Using models", random_models)
                     for i in range(4, cfg.algorithm.num_models+1):
                         gt, logits, features, base_scores = extract(base_model, test_loader, "binary_ensemble_combined_emnist", loss, threshold, cfg, num_models=i, random_models=random_models)
                         write_scores(gt, logits, features, base_scores, loss, "binary_ensemble_combined_emnist", suffix, output_directory, num_models=i)
