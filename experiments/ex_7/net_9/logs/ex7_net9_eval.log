@@ -1,6 +1,0 @@
-10_06_21:16 __main__ INFO: Loaded test dataset for protocol 3 with len:20600, labels:153
-10_06_21:16 __main__ INFO: Loading base models for protocol 3, bce
-10_06_21:16 __main__ INFO: Taking model from epoch 120 that achieved best score 0.9102097139517755
-10_06_21:16 __main__ INFO: Extracting base scores for protocol 3, bce
-10_06_21:18 __main__ INFO: Target labels, logits, features and scores saved in: experiments/ex_7/net_9/bce_binary_ensemble_combined_imagenet_test_arr_curr.npz
-10_06_21:18 __main__ INFO: Finished processing protocol 3, bce
