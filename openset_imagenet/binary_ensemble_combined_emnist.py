@@ -160,168 +160,176 @@ def get_arrays(model, loader, garbage, pretty=False, threshold=True, remove_nega
 
         # load the file and enlarge the matrices
         path_to_intermediate = f"{cfg.output_directory}/intermediate_state.npz"
+    
+        if not cfg.precomputed:
+            if path.exists(path_to_intermediate):
+                intermediate_state = np.load(path_to_intermediate)
+                final_class_binary_matrix = intermediate_state["final_class_binary_matrix"]
+                class_binary_matrix = intermediate_state["class_binary_matrix"]
+                used_indices = intermediate_state["used_indices"]
+                print("Loaded intermediate state with indices: ", used_indices)
+            else:
+                class_binaries = get_binary_output_for_class_per_model(model.class_split)
+                # we reduce the class binaries to the number of models
+                # hamming dist approach
+                class_binary_matrix = np.array([value for _, value in class_binaries.items()]).T
+                length = len(class_binaries.keys())
+                min_num_models = np.ceil(np.log2(length)).astype(int)
 
-        if path.exists(path_to_intermediate):
-            intermediate_state = np.load(path_to_intermediate)
-            final_class_binary_matrix = intermediate_state["final_class_binary_matrix"]
-            class_binary_matrix = intermediate_state["class_binary_matrix"]
-            used_indices = intermediate_state["used_indices"]
-            print("Loaded intermediate state with indices: ", used_indices)
-        else:
-            class_binaries = get_binary_output_for_class_per_model(model.class_split)
-            # we reduce the class binaries to the number of models
-            # hamming dist approach
-            class_binary_matrix = np.array([value for _, value in class_binaries.items()]).T
-            length = len(class_binaries.keys())
-            min_num_models = np.ceil(np.log2(length)).astype(int)
+                used_indices = []
+                final_class_binary_matrix = None
+                # we chose the minimum number of models randomly but make sure that the hamming distance is maximized
+                while True:
+                    # get for random indices in the range of class_binary_matrix
+                    random_indices = random.sample(range(class_binary_matrix.shape[0]), min_num_models)
+                    test_matrix = class_binary_matrix[random_indices, :]
+                    ham_dist = hamming_distance_min_among_all(test_matrix, row=False)
+                    if ham_dist > 0:
+                        final_class_binary_matrix = test_matrix
+                        used_indices = random_indices
+                        print("Starting ham dist: ", ham_dist, " and used indices: ", used_indices)
+                        break
+                np.savez(path_to_intermediate, final_class_binary_matrix=final_class_binary_matrix, class_binary_matrix=class_binary_matrix, used_indices=used_indices)
 
-            used_indices = []
-            final_class_binary_matrix = None
-            # we chose the minimum number of models randomly but make sure that the hamming distance is maximized
-            while True:
-                # get for random indices in the range of class_binary_matrix
-                random_indices = random.sample(range(class_binary_matrix.shape[0]), min_num_models)
-                test_matrix = class_binary_matrix[random_indices, :]
-                ham_dist = hamming_distance_min_among_all(test_matrix, row=False)
-                if ham_dist > 0:
-                    final_class_binary_matrix = test_matrix
-                    used_indices = random_indices
-                    print("Starting ham dist: ", ham_dist, " and used indices: ", used_indices)
-                    break
-            np.savez(path_to_intermediate, final_class_binary_matrix=final_class_binary_matrix, class_binary_matrix=class_binary_matrix, used_indices=used_indices)
+            print("Starting shape of final class binary matrix: ", final_class_binary_matrix.shape)
 
-        print("Starting shape of final class binary matrix: ", final_class_binary_matrix.shape)
+            
+            if random_models == 'random':
+                while final_class_binary_matrix.shape[0] < num_models:
+                    # get a random index from the class binary matrix
+                    rand_index = random.randint(0, class_binary_matrix.shape[0] - 1)
+                    # check if the index is already used
+                    if rand_index in used_indices:
+                        continue
+                    test_matrix = np.vstack((final_class_binary_matrix, class_binary_matrix[rand_index, :]))
+                    ham_dist = hamming_distance_min_among_all(test_matrix, row=False)
+                    if ham_dist > 0: # we only add the new row if it does not result in two similar columns
+                        # add the row with the minimum hamming distance to the final class binary matrix
+                        final_class_binary_matrix = np.vstack((final_class_binary_matrix, class_binary_matrix[rand_index, :]))
+                        # add the index to the used indices
+                        used_indices = list(used_indices)
+                        used_indices.append(rand_index)
+                    print("Max min hamming dist is: ", ham_dist)
+            elif random_models == 'hamming':
+                # we are maximizing the hamming distance
+                while final_class_binary_matrix.shape[0] < num_models:
+                    # we check the hamming distance of all possible combinations
+                    index_and_hamming = (0, 0)
+                    for i, row in enumerate(class_binary_matrix):
+                        # first we check if the index is already used
+                        if i in used_indices:
+                            continue
+                        test_matrix = np.vstack((final_class_binary_matrix, row))
+                        ham_dist = hamming_distance_min_among_all(test_matrix, row=False)
+                        if ham_dist > index_and_hamming[1]:
+                            index_and_hamming = (i, ham_dist)
 
-        
-        if random_models == 'random':
-            while final_class_binary_matrix.shape[0] < num_models:
-                # get a random index from the class binary matrix
-                rand_index = random.randint(0, class_binary_matrix.shape[0] - 1)
-                # check if the index is already used
-                if rand_index in used_indices:
-                    continue
-                test_matrix = np.vstack((final_class_binary_matrix, class_binary_matrix[rand_index, :]))
-                ham_dist = hamming_distance_min_among_all(test_matrix, row=False)
-                if ham_dist > 0: # we only add the new row if it does not result in two similar columns
+                    assert index_and_hamming != (0, 0)
                     # add the row with the minimum hamming distance to the final class binary matrix
-                    final_class_binary_matrix = np.vstack((final_class_binary_matrix, class_binary_matrix[rand_index, :]))
+                    final_class_binary_matrix = np.vstack((final_class_binary_matrix, class_binary_matrix[index_and_hamming[0], :]))
                     # add the index to the used indices
                     used_indices = list(used_indices)
-                    used_indices.append(rand_index)
-                print("Max min hamming dist is: ", ham_dist)
-        elif random_models == 'hamming':
-            # we are maximizing the hamming distance
-            while final_class_binary_matrix.shape[0] < num_models:
-                # we check the hamming distance of all possible combinations
-                index_and_hamming = (0, 0)
-                for i, row in enumerate(class_binary_matrix):
-                    # first we check if the index is already used
-                    if i in used_indices:
-                        continue
-                    test_matrix = np.vstack((final_class_binary_matrix, row))
-                    ham_dist = hamming_distance_min_among_all(test_matrix, row=False)
-                    if ham_dist > index_and_hamming[1]:
-                        index_and_hamming = (i, ham_dist)
+                    used_indices.append(index_and_hamming[0])
+                    print("Max min hamming dist is: ", index_and_hamming[1])
+            elif random_models == 'greedy': # we optimize ccr@fpr for the models
+                # we are maximizing the hamming distance
+                while final_class_binary_matrix.shape[0] < num_models:
+                    features_dim = model.logits.in_features  # features dimensionality
+                    all_targets = torch.empty(data_len, device="cpu")  # store all targets
+                    # all_logits = torch.empty((data_len, class_binary_matrix.shape[0]), device="cpu")   # store all logits
+                    # all_feat = torch.empty((data_len, features_dim), device="cpu")   # store all features
+                    all_scores = torch.empty((data_len, len(class_binary_matrix[1]) -1 if remove_negative else len(class_binary_matrix[1]), class_binary_matrix.shape[0]), device="cpu")
 
-                assert index_and_hamming != (0, 0)
-                # add the row with the minimum hamming distance to the final class binary matrix
-                final_class_binary_matrix = np.vstack((final_class_binary_matrix, class_binary_matrix[index_and_hamming[0], :]))
-                # add the index to the used indices
-                used_indices = list(used_indices)
-                used_indices.append(index_and_hamming[0])
-                print("Max min hamming dist is: ", index_and_hamming[1])
-        elif random_models == 'greedy': # we optimize ccr@fpr for the models
-            # we are maximizing the hamming distance
-            while final_class_binary_matrix.shape[0] < num_models:
-                features_dim = model.logits.in_features  # features dimensionality
-                all_targets = torch.empty(data_len, device="cpu")  # store all targets
-                # all_logits = torch.empty((data_len, class_binary_matrix.shape[0]), device="cpu")   # store all logits
-                # all_feat = torch.empty((data_len, features_dim), device="cpu")   # store all features
-                all_scores = torch.empty((data_len, len(class_binary_matrix[1]) -1 if remove_negative else len(class_binary_matrix[1]), class_binary_matrix.shape[0]), device="cpu")
-
-                
-                # try to load all scores from the file
-                if path.exists(f"{cfg.output_directory}/scores_sig.pt"):
-                    all_logits = torch.load(f"{cfg.output_directory}/scores_sig.pt")
-                    all_labels = torch.load(f"{cfg.output_directory}/labels.pt")
-                    print("Loaded all logits and labels from file")
-                else:
-                    print("Computing all logits")
-                    curr_index = 0
-                    all_logits = torch.empty((data_len, class_binary_matrix.shape[0]), device="cpu")   # store all logits
-                    all_labels = torch.empty(data_len, device="cpu")   # store all labels
-                    for images, labels in loader:
-                        curr_b_size = labels.shape[0]  # current batch size, very last batch has different value
-                        images = device(images)
-                        labels = device(labels)
-                        logits, feature = model(images)
-                        
-                        # only take the logits from the model we are interested in
-                        # indices_of_logits = np.append(used_indices, curr_index_of_class_binary)
-                        # logits = logits[:,indices_of_logits]
-
-                        # compute softmax scores
-                        scores_sig = torch.nn.functional.sigmoid(logits)
-                        # we save the scores that we do not have to recompute them
-                        all_logits[curr_index:curr_index + curr_b_size] = scores_sig.detach().cpu()
-                        all_labels[curr_index:curr_index + curr_b_size] = labels.detach().cpu()
-                        curr_index += curr_b_size
-                        print(f"Current index of: {curr_index} / {data_len}")
-                    torch.save(all_logits, f"{cfg.output_directory}/scores_sig.pt")
-                    torch.save(all_labels, f"{cfg.output_directory}/labels.pt")
-
-                final_class_score = torch.empty((all_logits.shape[0], class_binary_matrix.shape[1], class_binary_matrix.shape[0]), device="cpu") # batch size, number of classificators, number of final classes
-                class_binary_tensor = torch.tensor(class_binary_matrix.T, dtype=torch.float32).cpu() # Tensor of shape classes x classificators
-                if threshold == "probabilities":
-                    final_class_score[:, :, used_indices] = 0 # we initialize the scores with 0 for the used indices
-                    for j in range(len(class_binary_matrix)):
-                        if j not in used_indices:
-                            indices_of_logits = torch.tensor(np.append(used_indices, j), dtype=torch.long)
-                            class_binary = class_binary_tensor[:, indices_of_logits]
-                            final_class_score[:, :, j] = get_similarity_score_from_binary_to_label_optimized(model_binary=all_logits[:, indices_of_logits], class_binary=class_binary)
-                # shall we remove the logits of the unknown class?
-                # We do this AFTER computing softmax, of course.
-                if cfg.unknown_for_training and not cfg.unknown_in_both:
-                    # we remove the negative class from the final class score we do this only when the model does output an extra score for the negative class e.g. when training with it
-                    final_class_score = final_class_score[:,1:]
-                # accumulate results in all_tensor
-                all_targets = all_labels.detach().cpu()
-                # all_logits[curr_index:curr_index + curr_b_size] = logits.detach().cpu()
-                # all_feat[curr_index:curr_index + curr_b_size] = feature.detach().cpu()
-                all_scores = final_class_score.detach().cpu()
-                # we calculate ccr@fpr
-                THRESHOLDS = {
-                    1e-3: "$10^{-3}$",
-                    1e-2: "$10^{-2}$",
-                    1e-1: "$10^{-1}$",
-                    1: "$1$",
-                    }
-                # calculate ccr@fpr for all possible models
-                index_and_ccr_fpr = defaultdict()
-                # we calculate the ccr@fpr for each model possible
-                for i in range(all_scores.shape[2]):
-                    # check if tensor is empty
-                    if torch.count_nonzero(all_scores[:,:,i]) == 0:
-                        index_and_ccr_fpr[i] = 0
-                        continue
+                    
+                    # try to load all scores from the file
+                    if path.exists(f"{cfg.output_directory}/scores_sig.pt"):
+                        all_logits = torch.load(f"{cfg.output_directory}/scores_sig.pt")
+                        all_labels = torch.load(f"{cfg.output_directory}/labels.pt")
+                        print("Loaded all logits and labels from file")
                     else:
-                        ccr_fpr = ccr_at_fpr(all_targets.numpy(), all_scores[:, :, i].numpy(), fpr_values=THRESHOLDS)
-                        # replace None with 0
-                        ccr_fpr = [0 if x is None else x for x in ccr_fpr]
-                        index_and_ccr_fpr[i] = sum(ccr_fpr)
-            
-                # sort the dictionary by the ccr@fpr
-                index_and_ccr_fpr = dict(sorted(index_and_ccr_fpr.items(), key=lambda item: item[1], reverse=True))
-                # add the row with the maximum ccr@fpr to the final class binary matrix
-                final_class_binary_matrix = np.vstack((final_class_binary_matrix, class_binary_matrix[list(index_and_ccr_fpr.keys())[0], :]))
-                # add the index to the used indices
-                used_indices = list(used_indices)
-                used_indices.append(list(index_and_ccr_fpr.keys())[0])
-                print("Max ccr@fpr is: ", list(index_and_ccr_fpr.values())[0], "with index: ", list(index_and_ccr_fpr.keys())[0])
+                        print("Computing all logits")
+                        curr_index = 0
+                        all_logits = torch.empty((data_len, class_binary_matrix.shape[0]), device="cpu")   # store all logits
+                        all_labels = torch.empty(data_len, device="cpu")   # store all labels
+                        for images, labels in loader:
+                            curr_b_size = labels.shape[0]  # current batch size, very last batch has different value
+                            images = device(images)
+                            labels = device(labels)
+                            logits, feature = model(images)
+                            
+                            # only take the logits from the model we are interested in
+                            # indices_of_logits = np.append(used_indices, curr_index_of_class_binary)
+                            # logits = logits[:,indices_of_logits]
+
+                            # compute softmax scores
+                            scores_sig = torch.nn.functional.sigmoid(logits)
+                            # we save the scores that we do not have to recompute them
+                            all_logits[curr_index:curr_index + curr_b_size] = scores_sig.detach().cpu()
+                            all_labels[curr_index:curr_index + curr_b_size] = labels.detach().cpu()
+                            curr_index += curr_b_size
+                            print(f"Current index of: {curr_index} / {data_len}")
+                        torch.save(all_logits, f"{cfg.output_directory}/scores_sig.pt")
+                        torch.save(all_labels, f"{cfg.output_directory}/labels.pt")
+
+                    final_class_score = torch.empty((all_logits.shape[0], class_binary_matrix.shape[1], class_binary_matrix.shape[0]), device="cpu") # batch size, number of classificators, number of final classes
+                    class_binary_tensor = torch.tensor(class_binary_matrix.T, dtype=torch.float32).cpu() # Tensor of shape classes x classificators
+                    if threshold == "probabilities":
+                        final_class_score[:, :, used_indices] = 0 # we initialize the scores with 0 for the used indices
+                        for j in range(len(class_binary_matrix)):
+                            if j not in used_indices:
+                                indices_of_logits = torch.tensor(np.append(used_indices, j), dtype=torch.long)
+                                class_binary = class_binary_tensor[:, indices_of_logits]
+                                final_class_score[:, :, j] = get_similarity_score_from_binary_to_label_optimized(model_binary=all_logits[:, indices_of_logits], class_binary=class_binary)
+                    # shall we remove the logits of the unknown class?
+                    # We do this AFTER computing softmax, of course.
+                    if cfg.unknown_for_training and not cfg.unknown_in_both:
+                        # we remove the negative class from the final class score we do this only when the model does output an extra score for the negative class e.g. when training with it
+                        final_class_score = final_class_score[:,1:]
+                    # accumulate results in all_tensor
+                    all_targets = all_labels.detach().cpu()
+                    # all_logits[curr_index:curr_index + curr_b_size] = logits.detach().cpu()
+                    # all_feat[curr_index:curr_index + curr_b_size] = feature.detach().cpu()
+                    all_scores = final_class_score.detach().cpu()
+                    # we calculate ccr@fpr
+                    THRESHOLDS = {
+                        1e-3: "$10^{-3}$",
+                        1e-2: "$10^{-2}$",
+                        1e-1: "$10^{-1}$",
+                        1: "$1$",
+                        }
+                    # calculate ccr@fpr for all possible models
+                    index_and_ccr_fpr = defaultdict()
+                    # we calculate the ccr@fpr for each model possible
+                    for i in range(all_scores.shape[2]):
+                        # check if tensor is empty
+                        if torch.count_nonzero(all_scores[:,:,i]) == 0:
+                            index_and_ccr_fpr[i] = 0
+                            continue
+                        else:
+                            ccr_fpr = ccr_at_fpr(all_targets.numpy(), all_scores[:, :, i].numpy(), fpr_values=THRESHOLDS)
+                            # replace None with 0
+                            ccr_fpr = [0 if x is None else x for x in ccr_fpr]
+                            index_and_ccr_fpr[i] = sum(ccr_fpr)
                 
-        print("Used indices: ", used_indices)
-        np.savez(path_to_intermediate, final_class_binary_matrix=final_class_binary_matrix, class_binary_matrix=class_binary_matrix, used_indices=used_indices)
-        print("After Optimizing shape of final class binary matrix: ", final_class_binary_matrix.shape)
+                    # sort the dictionary by the ccr@fpr
+                    index_and_ccr_fpr = dict(sorted(index_and_ccr_fpr.items(), key=lambda item: item[1], reverse=True))
+                    # add the row with the maximum ccr@fpr to the final class binary matrix
+                    final_class_binary_matrix = np.vstack((final_class_binary_matrix, class_binary_matrix[list(index_and_ccr_fpr.keys())[0], :]))
+                    # add the index to the used indices
+                    used_indices = list(used_indices)
+                    used_indices.append(list(index_and_ccr_fpr.keys())[0])
+                    print("Max ccr@fpr is: ", list(index_and_ccr_fpr.values())[0], "with index: ", list(index_and_ccr_fpr.keys())[0])
+                    
+            print("Used indices: ", used_indices)
+            np.savez(path_to_intermediate, final_class_binary_matrix=final_class_binary_matrix, class_binary_matrix=class_binary_matrix, used_indices=used_indices)
+            print("After Optimizing shape of final class binary matrix: ", final_class_binary_matrix.shape)
+        else: # when we have already optimized the models and want to use the same classifiers
+            # we load the final class binary matrix from the file
+            intermediate_state = np.load(path_to_intermediate)
+            final_class_binary_matrix = intermediate_state["final_class_binary_matrix"][:num_models] # we only take the first num_models for the current run
+            class_binary_matrix = intermediate_state["class_binary_matrix"]
+            used_indices = intermediate_state["used_indices"][:num_models]
+            print("Loaded precomputed state with indices: ", used_indices)
 
         # we convert the final class binary matrix to a dictionary
         class_binaries = {}
