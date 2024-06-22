@@ -9,4 +9,4 @@ openset_imagenet.egg-info
 *.pth
 *.npz
 events.out.tfevents*
-/experiments/*
+experiments/*
