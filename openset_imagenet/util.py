@@ -316,7 +316,8 @@ def get_histogram(scores,
                   gt,
                   bins=100,
                   log_space=False,
-                  geomspace_limits=(1, 1e2)):
+                  geomspace_limits=(1, 1e2),
+                  binary_ensemble=False):
     """Calculates histograms of scores"""
     known = gt >= 0
     unknown = gt == -2
@@ -331,6 +332,11 @@ def get_histogram(scores,
         bins = np.geomspace(lower, upper, num=bins)
 #    else:
 #        bins = np.linspace(0, 1, num=bins+1)
+    if binary_ensemble:
+        # we have to divide the scores by 40 since we have 40 models
+        knowns = knowns / 40
+        unknowns = unknowns / 40
+        negatives = negatives / 40
     histograms = {}
     histograms["known"] = np.histogram(knowns, bins=bins)
     histograms["unknown"] = np.histogram(unknowns, bins=bins)
@@ -441,7 +447,6 @@ def get_sets_for_ensemble_hamming(number_of_models, classes):
     # Create a matrix containing all possible combinations of 0 and 1
     combinations = list(product([0, 1], repeat=number_of_classes))
     combinations = np.array(combinations)
-    print("Number of Combinations: ", len(combinations))  # should be 2^number_of_classes
 
     # remove vectors that begin with 1 to avoid inversion
     combinations = [c for c in combinations if c[0] == 0]
@@ -497,7 +502,6 @@ def get_sets_for_ensemble_hamming(number_of_models, classes):
         matrix = np.vstack((matrix, balanced_combinations[random_max_sum_index]))
         # remove the selected vector from the list of balanced combinations
         balanced_combinations.pop(random_max_sum_index)
-        print("Matrix shape: ", matrix.shape)
     
     print("Matrix: \n", matrix)
     print("Matrix shape: ", matrix.shape)
