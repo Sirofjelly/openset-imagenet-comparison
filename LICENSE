@@ -1,7 +1,8 @@
-Copyright (c) 2023 University of Zurich, Department of Informatics.
-Written by Manuel Guenther <siebenkopf@googlemail.com>, Halil Bisgin, Andres Palechor, Mike Suter, and Annesha Bhoumik
+Copyright (c) 2024 University of Zurich, Department of Informatics.
+Written by Silvan Kuebler <silvan.kuebler@uzh.ch>.
 
-This code partially includes source code inspired by the Vision and Security Technology (VAST) lab of the University of Colorado Colorado Springs (UCCS): https://github.com/Vastlab/vast
+The code is a fork from the code from the repository of the Artificial Intelligence and Machine Learning (AIML) group at University of Zurich (UZH): https://github.com/AIML-IfI/openset-imagenet-comparison
+Further this code partially includes source code inspired by the Vision and Security Technology (VAST) lab of the University of Colorado Colorado Springs (UCCS): https://github.com/Vastlab/vast
 
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
