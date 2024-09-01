@@ -65,7 +65,7 @@ def main(command_line_options = None):
     elif config.algorithm.type == "binary_ensemble_emnist":
         openset_imagenet.binary_ensemble_emnist.worker(config)
     elif config.algorithm.type == "binary_ensemble_combined_emnist" or config.algorithm.type == "binary_ensemble_combined_imagenet":
-        openset_imagenet.binary_ensemble_combined_emnist.worker(config)
+        openset_imagenet.binary_ensemble_combined.worker(config)
     else:
         raise ValueError(f"The training configuration type '{config.algorithm.type}' is not known to the system")
 

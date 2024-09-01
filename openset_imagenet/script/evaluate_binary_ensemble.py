@@ -170,7 +170,7 @@ def load_model(cfg, loss, algorithm, protocol, suffix, output_directory, n_class
     if cfg.algorithm.type == "binary_ensemble_emnist":
         start_epoch, best_score = openset_imagenet.binary_ensemble_emnist.load_checkpoint(model, model_path)
     elif cfg.algorithm.type == "binary_ensemble_combined_emnist":
-        start_epoch, best_score = openset_imagenet.binary_ensemble_combined_emnist.load_checkpoint(model, model_path)
+        start_epoch, best_score = openset_imagenet.binary_ensemble_combined.load_checkpoint(model, model_path)
     elif cfg.algorithm.type == "binary_ensemble":
             start_epoch, best_score = openset_imagenet.binary_ensemble.load_checkpoint(model, model_path)
     else: # all other models
@@ -197,7 +197,7 @@ def extract(model, data_loader, algorithm, loss, threshold, cfg):
             threshold=threshold
         )
     elif algorithm == 'binary_ensemble_combined_emnist' or algorithm == 'binary_ensemble_combined_imagenet':
-        return openset_imagenet.binary_ensemble_combined_emnist.get_arrays(
+        return openset_imagenet.binary_ensemble_combined.get_arrays(
             model=model,
             loader=data_loader,
             garbage=loss=="garbage",

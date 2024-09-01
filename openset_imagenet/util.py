@@ -361,7 +361,12 @@ def get_histogram(scores,
 
 # new util functions
 def get_binary_output_for_class_per_model(class_splits):
-    """ Get the binary class representation for each class."""
+    """ Get the binary class representation for each class.
+    Args:
+        class_splits (list): List of dictionaries with the class splits
+    Returns:
+        dict: Dictionary with the binary representation of the classes
+    """
     all_classes = []
     all_classes = class_splits[0][0] + class_splits[0][1]   
     all_classes.sort()
@@ -419,6 +424,14 @@ def get_similarity_score_from_binary_to_label_new(model_binary, class_binary):
     return torch.from_numpy(class_similarities)
 
 def hamming_distance_min_among_all(matrix, row=True):
+    """
+    Compute the minimum pairwise Hamming distance among all rows or columns of a matrix.
+    Args:
+        matrix (np.array): Matrix of binary values
+        row (bool): If True, compute the minimum distance among rows. If False, compute the minimum distance among columns.
+    Returns:
+        float: Minimum pairwise Hamming distance
+    """
     if row:
         # Compute pairwise Hamming distances between rows
         # pdist returns proportion, so we multiply by the number of columns
@@ -438,11 +451,19 @@ def hamming_distance_min_among_all(matrix, row=True):
     return np.min(min_distances)
 
 def get_sets_for_ensemble_hamming(number_of_models, classes):
+    """
+    Create the splits for the ensemble training by maximizing the minimum hamming distance between the classes.
+    Args:
+        unique_classes (list): List of unique classes
+        num_models (int): Number of models in the ensemble
+    Returns:
+        list: List of dictionaries with the class splits
+    """
     number_of_classes = len(classes)
     # Create a matrix containing all possible combinations of 0 and 1
     combinations = list(product([0, 1], repeat=number_of_classes))
     combinations = np.array(combinations)
-    print("Number of Combinations: ", len(combinations))  # should be 2^number_of_classes
+    print("Number of Combinations: ", len(combinations))
 
     # remove vectors that begin with 1 to avoid inversion
     combinations = [c for c in combinations if c[0] == 0]
@@ -458,6 +479,7 @@ def get_sets_for_ensemble_hamming(number_of_models, classes):
             balanced_combinations.append(combination)
     print("Balanced Combinations: ", balanced_combinations, "Length (Max possible Models): ", len(balanced_combinations))
 
+    # check if we have enough balanced combinations
     if len(balanced_combinations) < number_of_models:
         raise ValueError("Number of balanced combinations is less than number of models")
 

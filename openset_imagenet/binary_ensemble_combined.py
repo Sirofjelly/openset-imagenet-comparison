@@ -24,7 +24,17 @@ import tqdm
 from os import path
 from .util import get_sets_for_ensemble, get_sets_for_ensemble_hamming, hamming_distance_min_among_all, get_class_from_label, get_similarity_score_from_binary_to_label, get_similarity_score_from_binary_to_label_new, get_binary_output_for_class_per_model
 
-def optimize_labels(labels, class_dicts, unknown_in_both=False, unknown_for_training=False):
+def transform_labels(labels, class_dicts, unknown_in_both=False, unknown_for_training=False):
+    """
+    Transforms the labels to intermediate labels either 0 or 1 for the model to learn its binary classification task.
+    Args:
+        labels: The original labels
+        class_dicts: The class dictionaries for each model
+        unknown_in_both: Whether the unknown class is in both models
+        unknown_for_training: Whether the unknown class is used for training
+    Returns:
+        intermediate_labels: The intermediate labels for the model
+    """
     intermediate_labels = device(torch.zeros((len(labels), len(class_dicts))))
 
     for i, class_dict in enumerate(class_dicts):
@@ -45,8 +55,8 @@ def train(model, data_loader, class_dicts, optimizer, loss_fn, trackers, cfg):
     for images, labels in data_loader:
         images = device(images)
         labels = device(labels)
-        # Check which class the label belongs to and replace the label with that class either 0 or 1
-        intermediate_labels = optimize_labels(labels, class_dicts, unknown_in_both=cfg.unknown_in_both)
+        # Check which partition the label belongs to and replace the label with that class either 0 or 1
+        intermediate_labels = transform_labels(labels, class_dicts, unknown_in_both=cfg.unknown_in_both)
   
         model.train()  # To collect batch-norm statistics set model to train mode
         batch_len = labels.shape[0]  # Samples in current batch
@@ -104,20 +114,16 @@ def validate(model, data_loader, class_dicts, loss_fn, n_classes, trackers, cfg)
             images = device(images)
             labels = device(labels)
             logits, features = model(images)
-            scores = torch.nn.functional.sigmoid(logits)
-            # we need scores to be either 0 or 1
-            threshold = 0.5
-            
+            scores = torch.nn.functional.sigmoid(logits)          
 
             # we initialize class scores
             class_scores = torch.empty((batch_len, len(class_binaries)))
             # Apply thresholding to get binary values 0 or 1
             for indi in range(scores.shape[0]):
                 class_scores[indi, :] = get_similarity_score_from_binary_to_label(model_binary=scores[indi, :], class_binary=class_binaries)
-            # scores = (scores >= threshold).type(torch.int64) # TODO do we need to do that?
             
              # get the class from the label either 0 or 1
-            intermediate_labels = optimize_labels(labels, class_dicts, unknown_in_both=cfg.unknown_in_both, unknown_for_training=cfg.unknown_for_training)
+            intermediate_labels = transform_labels(labels, class_dicts, unknown_in_both=cfg.unknown_in_both, unknown_for_training=cfg.unknown_for_training)
 
             # targets = labels.view(-1,)
             targets = intermediate_labels.type(torch.float32)
@@ -238,6 +244,7 @@ def worker(cfg):
         level="INFO",
         mode='w')
 
+    # Load datasets
     if not cfg.data.dataset == 'emnist':
         # Set image transformations
         train_tr = transforms.Compose(
@@ -281,6 +288,7 @@ def worker(cfg):
             print("Unique classes for train: ", train_ds.unique_classes, "Unique classes for val: ", val_ds.unique_classes)
         else:
             raise FileNotFoundError("train/validation file does not exist")
+    # Load EMNIST dataset when it is set like this in the config file
     else:
         train_ds = Dataset_EMNIST(
         dataset_root=cfg.data.dataset_path,
@@ -297,7 +305,7 @@ def worker(cfg):
 
     unique_classes = train_ds.unique_classes
     if cfg.unknown_for_training and cfg.unknown_in_both:
-        # remove -1 from the class splits
+        # remove -1 from the class splits as we want the network to learn 0.5 for unknowns
         unique_classes = np.array([x for x in unique_classes if x != -1])
     if cfg.algorithm.sets == "random":
         class_splits = get_sets_for_ensemble(unique_classes, cfg.algorithm.num_models)
@@ -314,6 +322,8 @@ def worker(cfg):
         
     elif cfg.algorithm.sets == "hamming":
         class_splits = get_sets_for_ensemble_hamming(number_of_models=cfg.algorithm.num_models, classes=unique_classes)
+
+    # Create data loaders
     train_loader = DataLoader(
         train_ds,
         batch_size=cfg.batch_size,
@@ -367,38 +377,23 @@ def worker(cfg):
         class_weights = device(train_ds.calculate_class_weights())
         loss = torch.nn.CrossEntropyLoss(weight=class_weights)
     elif cfg.loss.type == "bce":
-        # Binary cross entropy loss
+        # Binary cross entropy loss with logits
         loss = torch.nn.BCEWithLogitsLoss()
     elif cfg.loss.type == "sigmoid-focal":
-        # Sigmoid focal loss
-        loss = functools.partial(ops.sigmoid_focal_loss, alpha=0.25, gamma=2, reduction="mean")
+        # Sigmoid focal loss to handle hard examples
+        loss = functools.partial(ops.sigmoid_focal_loss, alpha=-1, gamma=2, reduction="mean")
     
 
     # Create the model
     if cfg.data.dataset == 'emnist':
         model = LeNet5(fc_layer_dim=84, out_features=cfg.algorithm.num_models, logit_bias=False)
-        """
-        Comment out when same weights etc 
-        if not path.exists('experiments/ex_1/initial_model.pth'):
-            model = LeNet5(fc_layer_dim=84, out_features=cfg.algorithm.num_models, logit_bias=False)
-            torch.save(model.state_dict(), 'experiments/ex_1/initial_model.pth')
-        else:
-            model = LeNet5(fc_layer_dim=84, out_features=cfg.algorithm.num_models, logit_bias=False)
-            old_state_dict = torch.load('experiments/ex_1/initial_model.pth')
-            old_logits = old_state_dict["logits.weight"]
-            new_layer = torch.nn.Linear(in_features=84, out_features=cfg.algorithm.num_models, bias=False)
-            new_layer.weight.data = old_logits.data[:cfg.algorithm.num_models]
-            # we have no bias new_layer.bias.data = old_logits.data[:cfg.algorithm.num_models]
-
-            # Replace the logits layer with the new one
-            model.logits = new_layer
-            
-            logger.info("Loaded initial model from filesystem")
-        """
+    # If we are on ImageNet dataset and we want to use the ResNet50+ model
     elif cfg.algorithm.model == 'resnet50Plus':
         model = ResNet50Plus(fc_layer_dim=cfg.algorithm.num_models,
                      out_features=cfg.algorithm.num_models, # number of binary outputs
                      logit_bias=False)
+        
+    # If we are on ImageNet dataset and we want to use the standard ResNet50 model
     else:
         model = ResNet50(fc_layer_dim=cfg.algorithm.num_models,
                      out_features=cfg.algorithm.num_models, # number of binary outputs
