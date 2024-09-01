@@ -23,7 +23,7 @@ patience: 0     # Number of epochs to wait before stopping the training. 0 means
 
 # loss parameters
 loss:
-  type: softmax  # either {entropic, softmax, garbage}
+  type: entropic  # either {entropic, softmax, garbage}
   # Entropic Parameters
   w: 1.
 

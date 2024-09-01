@@ -88,7 +88,7 @@ def command_line_options(command_line_arguments=None):
 
     args = parser.parse_args(command_line_arguments)
 
-    args.plots = args.plots or f"experiments/ex_7/results/Results_{'best' if args.use_best else 'last'}.pdf"
+    args.plots = args.plots or f"experiments/results/Results_{'best' if args.use_best else 'last'}.pdf"
 #    args.table = args.table or f"results/Results_{suffix}.tex"
     return args
 

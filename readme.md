@@ -87,13 +87,24 @@ Please set all parameters as required (the default values are as used in the pap
 where `[config]` is the configuration file, `[protocol]` one of the three protocols.
 The `-g` option can be used to specify that the training should be performed on the GPU (**highly recommended**), and you can also specify a GPU index in case you have several GPUs at your disposal.
 
+An example command to train the binary_ensemble on protocol 2 is:
+
+`python3 openset_imagenet/script/train.py config/binary_ensemble_no_negatives.yaml 2 -g 0`
+
 ### Evaluation
 
 In order to evaluate all models on the test sets, you can make use of the `evaluate_binary_ensemble.py` script. The evaluation method needs to be specified using `--threshold`, the loss must be selected using `--losses`, the protocols using `--protocols`, the model which was used using `--algorithms`, the configuration file path `--configuration`.
 
+An example command to evaluate the model trained above is:
+
+`python3 openset_imagenet/script/evaluate_binary_ensemble.py --configuration config/binary_ensemble_no_negatives.yaml --protocols 2 --threshold probabilities --losses bce --algorithms binary_ensemble_combined_imagenet  -g 0`
+
 ### Plotting
 
 Finally, the `plot_all.py` script can be used to create the oscr plots from the master thesis.
+
+An example command to plot the model evaluated above is:
+`python3 openset_imagenet/script/plot_all.py --configuration config/binary_ensemble_no_negatives.yaml --protocols 2  --losses bce --algorithms binary_ensemble_combined_imagenet --plots dev_experiments/results`
 
 ## Getting help
 
