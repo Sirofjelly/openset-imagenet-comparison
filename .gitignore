@@ -10,3 +10,4 @@ openset_imagenet.egg-info
 *.npz
 events.out.tfevents*
 experiments
+/local/scratch/kuebler/experiments
